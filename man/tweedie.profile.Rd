@@ -3,11 +3,11 @@
 \title{Tweedie Distributions: mle estimation of p}
 \description{Maximum likelihood estimation of the Tweedie index parameter \eqn{p}{power}.}
 \usage{tweedie.profile(formula, p.vec, smooth=FALSE, do.plot=FALSE, do.ci=smooth,
-eps=1/6, method="series", conf.level=0.95, 
+eps=1/6, do.points=do.plot, method="series", conf.level=0.95, 
 phi.method=ifelse(method == "saddlepoint", "saddlepoint", "mle"))}
 \arguments{
 \item{formula}{a formula expression as for other regression models and generalized linear models, 
-of the form \code{response \eqn{\sim}{~} predictors}. 
+of the form \code{response ~ predictors}. 
 For details, 
 see the documentation for \code{\link{lm}}, 
 \code{\link{glm}} and \code{\link{formula}}}
@@ -38,13 +38,20 @@ the confidence interval is not computed.
 By default,
 \code{do.ci} is the same value as \code{smooth},
 since a confidence interval will only be accurate if
-smoothing has been performed.}
+smoothing has been performed.
+Indeed,
+if \code{smooth=FALSE},
+confidence intervals are never computed and
+\code{do.ci} is forced to \code{FALSE} if it is given as \code{TRUE}.}
 \item{eps}{the offset in computing the variance function.
 The default is \code{eps=1/6}
 (as suggested by Nelder and Pregibon, 1987).
-Note that \code{eps} is ignored unless the 
+Note \code{eps} is ignored unless the 
 \code{method="saddlepoint"}
 as it makes no sense.}
+\item{do.points}{plot the points on the plot where the
+(log-) likelihood is computed for the given values of \code{p};
+defaults to the same value as \code{do.plot}}
 \item{method}{the method for computing the (log-) likelihood.
 One of
 \code{"series"} (the default),

@@ -6325,9 +6325,10 @@ else {
     }
     as.vector(rt)
 }
+
 tweedie.profile <- function(formula, p.vec, smooth=FALSE, do.plot=FALSE, do.ci=smooth, eps=1/6,
-                            method="series", conf.level=0.95, 
-			    phi.method=ifelse(method=="saddlepoint","saddlepoint","mle")) {
+    do.points=do.plot, method="series", conf.level=0.95, 
+    phi.method=ifelse(method=="saddlepoint","saddlepoint","mle")) {
 # Determine the value of  p  to use to fit a Tweedie distribution
 # A profile likelihood is used (can can be plotted with do.plot=TRUE)
 
@@ -6340,10 +6341,10 @@ tweedie.profile <- function(formula, p.vec, smooth=FALSE, do.plot=FALSE, do.ci=s
 # Likewise for out$p and out$x.)
 
 # Peter Dunn
-# 06 Feb 2002
+# 07 Dec 2004
 
 cat("---\n This function may take some time to complete;\n")
-cat(" Please be patient.  If it fails, try using  method=\"inversion\n")
+cat(" Please be patient.  If it fails, try using  method=\"inversion\"\n")
 cat(" rather than the default  method=\"series\"\n")
 cat(" Another possible reason for failure is the range of p:\n")
 cat(" Try a different input for  p.vec\n---\n")
@@ -6364,6 +6365,11 @@ if ( smooth & (length(p.vec) < 5) ) {
 }
 if ( (conf.level >= 1) | (conf.level <=0)  ){
    error("Confidence level must be between 0 and 1.")
+}
+
+if ( !smooth & do.ci ) {
+   do.ci <- FALSE
+	warning("Confidence intervals only computed if smooth=TRUE\n")
 }
    
 
@@ -6496,32 +6502,57 @@ for (i in (1:p.len)) {
 }
 
 ### Smoothing
+   # If there are infs etc in the log-likelihood,
+	# the smooth cant happen.  Perhaps this can be worked around.
+	# But at present, we not when it happens to ensure no future errors
+	# (eg in computing confidence interval for p).
+
+# y and x are the smoothed plot produced; here we set them
+# as NA so they are defined when the function is returned to
+# the workspace
+y <- NA
+x <- NA
+
 if ( smooth ) {
-    if ( any( is.nan(L) ) | any (is.infinite(L)) ) {
-        cat("Smooth cannot be found--problem computing the log-likelihood.\n")
-        smooth <- FALSE
-    }
+    L.fix <- L
+    p.vec.fix <- p.vec
+	 phi.vec.fix <- phi.vec
     
-    else{
+	 if ( any( is.nan(L) ) | any (is.infinite(L)) ) {
+	    p.vec.fix <- p.vec.fix[ !is.na(L.fix) ]
+		 phi.vec.fix <- phi.vec.fix[ !is.na(L.fix) ]
+	    L.fix <- L.fix[ !is.na(L.fix) ]
+		 
+	    p.vec.fix <- p.vec.fix[ !is.infinite(L.fix) ]
+	    phi.vec.fix <- phi.vec.fix[ !is.infinite(L.fix) ]
+	    L.fix <- L.fix[ !is.infinite(L.fix) ]
+	 
+        cat("Smooth perhaps inaccurate--log-likelihood contains Inf or NA.\n")
+    }
+	 #else {
       cat(" --- \n")
         cat("* Smoothing: ")
     # Smooth the points
        # - get smoothing spline
-    ss <- splinefun( p.vec, L )
+    ss <- splinefun( p.vec.fix, L.fix )
 
       # Plot smoothed data
-      p.smooth <- seq(min(p.vec), max(p.vec), length=50 )
+      p.smooth <- seq(min(p.vec.fix), max(p.vec.fix), length=50 )
       L.smooth <- ss(p.smooth )
 
       if ( do.plot) {
 
          plot( range(p.smooth), range(L.smooth),
             type="n",
+				las=1,
             xlab="p",
             ylab="L")
          lines( p.smooth, L.smooth,
             lwd=2)
-      }
+			if (do.points) {
+			   points( L ~ p.vec, pch=19)
+			}
+      #}
       x <- p.smooth
       y <- L.smooth
    }
@@ -6532,9 +6563,13 @@ else {
       # Plot the data we have
       plot( range(p.vec), range(L),
          type="n",     
+			las=1,
             xlab="p",
            ylab="L")
       lines( p.vec, L, lwd=2)
+		if (do.points) {
+		   points( L ~ p.vec, pch=19)
+		}
 
    }
    x <- p.vec
@@ -6556,12 +6591,18 @@ if ( smooth ){
 
    # Now need to find mle of  phi  at this very value of  p
    # - Find bounds
-   phi.lo <- max( phi.vec[ p.vec<=p.max ] )
-   phi.hi <- min( phi.vec[ p.vec>=p.max ] )
-
+   phi.1 <- max( phi.vec.fix[ p.vec.fix<=p.max ] )
+   phi.2 <- min( phi.vec.fix[ p.vec.fix>=p.max ] )
+	if ( phi.1 > phi.2 ) {
+	   phi.hi <- phi.1
+		phi.lo <- phi.2 
+	} else {
+	   phi.hi <- phi.2
+		phi.lo <- phi.1
+	}
+	
    # Now, if the maximum happens to be at an endpoint,
    # we have to do things differently:
-
    if ( (p.max==p.vec[1]) | (p.max==p.vec[length(p.vec)]) ) {
       phi.max <- phi.lo # and is same as phi.max
       warning("True maximum possibly not detected.")
@@ -6578,8 +6619,8 @@ if ( smooth ){
 #                    hessian=FALSE,
 #                    power=p, mu=mu, y=data, 
 #                    gradient=dtweedie.dldphi)$estimate
-        phi.max <- optimize( f=dtweedie.nlogl, interval=c(1.0e-10, phi.hi ),
-                             power=p, mu=mu, y=data)$minimum
+        phi.max <- optimize( f=dtweedie.nlogl, interval=c(1.0e-10, phi.hi ), # set lower limit phi.lo???
+                             power=p.max, mu=mu, y=data)$minimum
         
 #       Note that using the Hessian often produces computational problems
 #       for little (no?) advantage.
@@ -6597,16 +6638,19 @@ else{
 
 # Now report
 cat("ML Estimates:  p=",p.max," with phi=",phi.max," giving L=",L.max,"\n")
-
+cat(" ---\n")
 
 # Now find approximate, nominal 95% CI info
 ht <- L.max - ( qchisq(conf.level, 1) / 2 )
 ci <- array( dim=2, NA )
 
+
 if ( do.ci ) {
     cat("* Finding confidence interval:")
    if ( !smooth ) {
-      warning("Confidence interval may be inaccurate without smoothing.\n")
+      warning("Confidence interval may be very inaccurate without smoothing.\n")
+		y <- L
+		x <- p.vec
    }
 
    if ( do.plot ) {
@@ -6618,11 +6662,12 @@ if ( do.ci ) {
    # - fit a smoothing spline the other way:  based on L predicting p
    #   so we can ensure that the limits on  p  are found OK
 
-   # Left side
+   # --- Left side ---
    cond.left <- (y < ht ) & (x < p.max )
    if ( all(cond.left==FALSE) ) {
       warning("Confidence interval cannot be found: insufficient data to find left CI.\n")
    }else{
+		# Now find it!
       approx.left <- max( x[cond.left] )
       index.left <- seq(1, length(cond.left) )
       index.left <- index.left[x==approx.left]
@@ -6636,7 +6681,7 @@ if ( do.ci ) {
       ci[1] <- ci.new.left
    }
 
-   # Right side
+   # --- Right side ---
    cond.right <- (y < ht ) & (x > p.max )
    if ( all( cond.right==FALSE ) ) {
       warning("Confidence interval cannot be found: insufficient data to find right CI.\n")
