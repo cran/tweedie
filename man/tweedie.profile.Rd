@@ -2,9 +2,10 @@
 \alias{tweedie.profile}
 \title{Tweedie Distributions: mle estimation of p}
 \description{Maximum likelihood estimation of the Tweedie index parameter \eqn{p}{power}.}
-\usage{tweedie.profile(formula, p.vec, smooth=FALSE, do.plot=FALSE, do.ci=smooth,
+\usage{tweedie.profile(formula, p.vec, link.power=0, fit.glm=FALSE, do.smooth=FALSE,
+do.plot=FALSE, do.ci=do.smooth,
 eps=1/6, do.points=do.plot, method="series", conf.level=0.95, 
-phi.method=ifelse(method == "saddlepoint", "saddlepoint", "mle"))}
+phi.method=ifelse(method == "saddlepoint", "saddlepoint", "mle"), verbose=TRUE)}
 \arguments{
 \item{formula}{a formula expression as for other regression models and generalized linear models, 
 of the form \code{response ~ predictors}. 
@@ -16,7 +17,20 @@ The values must all be larger than one
 (if the response variable has exact zeros,
 the values must all be between one and two).
 See the DETAILS section below for further details.}
-\item{smooth}{logical flag.
+\item{link.power}{the power link function to use.
+These link functions \eqn{g(\cdot)}{g()} are of the form 
+\eqn{g(\eta)=\eta^{\rm link.power}}{g(eta) = eta^link.power},
+and the special case of \code{link.power=0} (the default)
+refers to the logarithm link function.
+See the documentation for 
+\code{\link[statmod]{tweedie}} also.}
+\item{fit.glm}{logical flag.
+If \code{TRUE},
+the Tweedie generalized linear model is fitted using the value of \eqn{p}{p}
+found by the profiling function.
+If \code{FALSE} (the default),
+no model is fitted.}
+\item{do.smooth}{logical flag.
 If \code{TRUE},
 a spline is fitted to the data to smooth the profile likelihood plot.
 If \code{FALSE} (the default),
@@ -36,11 +50,11 @@ is computed.
 If \code{FALSE},
 the confidence interval is not computed.
 By default,
-\code{do.ci} is the same value as \code{smooth},
+\code{do.ci} is the same value as \code{do.smooth},
 since a confidence interval will only be accurate if
 smoothing has been performed.
 Indeed,
-if \code{smooth=FALSE},
+if \code{do.smooth=FALSE},
 confidence intervals are never computed and
 \code{do.ci} is forced to \code{FALSE} if it is given as \code{TRUE}.}
 \item{eps}{the offset in computing the variance function.
@@ -80,6 +94,13 @@ Note that using
 \code{phi.method="saddlepoint"}
 is equivalent to using the mean deviance estimator of \code{phi}.
 }
+\item{verbose}{the amount of feedback requested:
+\code{0} or \code{FALSE} means minimal feedback, 
+\code{1} or \code{TRUE} means some feedback (the default),
+or \code{2} means to show all feedback.
+Since the function can be slow and sometimes problematic,
+feedback can be good;
+but it can also be unnecessary when one knows all is well.}
 }
 \value{
 A list containing the components:
@@ -89,11 +110,19 @@ recreates the profile likelihood plot);
 \code{ht} (the height of the nominal confidence interval);
 \code{L} (the estimate of the (log-) likelihood at each given value of \code{p});
 \code{p} (the \code{p}-values used);
+\code{phi} (the computed values of \code{phi} at the values in \code{p});
 \code{p.max} (the estimate of the mle of \code{p});
 \code{L.max} (the estimate of the (log-) likelihood at \code{p.max});
-\code{phi} (the estimate of \code{phi} at \code{p.max});
+\code{phi.max} (the estimate of \code{phi} at \code{p.max});
 \code{ci} (the lower and upper limits of the confidence interval for \code{p});
-\code{method} (the method used).
+\code{method} (the method used for estimation: \code{series}, \code{inversion}, 
+\code{interpolation} or \code{saddlepoint});
+\code{phi.method} (the method used for estimation of \code{phi}:
+\code{saddlepoint} or \code{phi}).
+
+If \code{glm.fit} is \code{TRUE},
+the list also contains a component \code{glm.obj},
+a \code{glm} object  for the fitted Tweedie generalized linear model.
 }
 \note{The estimates of \code{p}
 and \code{phi} are printed.
@@ -122,7 +151,7 @@ are suitable for the data
 It is recommended that for the first use with a data set,
 use \code{p.vec} with only a small number of values
 and set
-\code{smooth=FALSE},
+\code{do.smooth=FALSE},
 \code{do.ci=FALSE}.
 If this is successful,
 a larger vector \code{p.vec}
@@ -168,6 +197,7 @@ Proceedings of the Indian Statistical Institute Golden Jubilee International Con
 \seealso{
 \code{\link{dtweedie}}
 \code{\link{dtweedie.saddle}}
+\code{\link[statmod]{tweedie}}
 }
 \examples{
 library(statmod) # Needed to use  tweedie.profile
@@ -175,10 +205,8 @@ library(statmod) # Needed to use  tweedie.profile
 test.data <- rgamma(n=200, scale=1, shape=1)
 # The gamma is a Tweedie distribution with power=2;
 # let's see if the profile plot shows this
-out <- tweedie.profile( test.data ~1, p.vec=seq(1.7, 2.3, length=10),
-       do.plot=TRUE, method="interpolation", smooth=TRUE, do.ci=TRUE)
-# And plot the points to see how the smooth went
-points( out$p, out$L)
+out <- tweedie.profile( test.data ~ 1, p.vec=seq(1.7, 2.3, length=6),
+       do.plot=TRUE, method="interpolation", do.smooth=TRUE, do.ci=TRUE)
 }
 
 \keyword{models}

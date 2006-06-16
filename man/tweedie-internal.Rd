@@ -1,6 +1,4 @@
-\name{dtweedie-internal}
-\alias{dtweedie.dldphi}
-\alias{dtweedie.dldphi.saddle}
+\name{Tweedie internals}
 \alias{dtweedie.dlogfdphi}
 \alias{dtweedie.logl}
 \alias{dtweedie.logl.saddle}
@@ -11,7 +9,6 @@
 \alias{dtweedie.kv.bigp}
 \alias{dtweedie.series.bigp}
 \alias{dtweedie.series.smallp}
-\alias{tweedie.dev}
 \alias{stored.grids}
 
 \title{Tweedie internal function}
@@ -19,8 +16,6 @@
 \description{Internal tweedie functions.}
 
 \usage{
-dtweedie.dldphi( phi, mu, power, y)
-dtweedie.dldphi.saddle( y, mu, phi, power)
 dtweedie.dlogfdphi(y, mu, phi, power)
 dtweedie.logl(phi, y, mu, power)
 dtweedie.logl.saddle( phi, power, y, mu, eps=0)
@@ -31,7 +26,6 @@ dtweedie.jw.smallp(y, phi, power )
 dtweedie.kv.bigp(y, phi, power)
 dtweedie.series.bigp(power, y, mu, phi)
 dtweedie.series.smallp(power, y, mu, phi)
-tweedie.dev(y, mu, power)
 stored.grids(power)
 }
 

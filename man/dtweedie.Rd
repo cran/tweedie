@@ -1,4 +1,4 @@
-\name{dtweedie}
+\name{Tweedie}
 \alias{dtweedie}
 \alias{dtweedie.series}
 \alias{dtweedie.inversion}
@@ -9,11 +9,11 @@
 \alias{rtweedie}
 \title{Tweedie Distributions}
 \description{Density, distribution function, quantile function and random
-     generation for the Tweedie distributions}
+     generation for the Tweedie family of distributions}
 \usage{
 dtweedie(y, power, mu, phi)
 dtweedie.series(y, power, mu, phi)
-dtweedie.inversion(y, power, mu, phi, exact=FALSE, rotate=TRUE)
+dtweedie.inversion(y, power, mu, phi, exact=TRUE, method)
 ptweedie(q, power, mu, phi)
 ptweedie.series(q, power, mu, phi)
 qtweedie(p, power, mu, phi)
@@ -28,17 +28,17 @@ rtweedie(n, power, mu, phi)
 \item{mu}{the mean}
 \item{phi}{the dispersion}
 \item{exact}{logical flag; 
-if \code{TRUE},
+if \code{TRUE} (the default),
 the exact zero \eqn{W}{W}-algorithm of Sidi (1982) is used.
-If \code{FALSE} (the default),
+If \code{FALSE},
 the (approximate zero) modified \eqn{W}{W}-algorithm of Sidi (1988) is used.
 The modified algorithm requires less computation but is often less accurate;
-the exact zero \eqn{W}{W}-algorithm can be slower but generally improves accuracy.
-}
-\item{rotate}{logical flag;
-if \code{TRUE} (the default),
-the algorithm rotates before inverting the solution, 
-which has the effect of increasing the relative accuracy.}
+the exact zero \eqn{W}{W}-algorithm can be slower but generally improves accuracy.}
+\item{method}{either \code{1}, \code{2} or \code{3},
+determining which of three methods to use to compute the density
+using the inversion method.
+If \code{method} is code{NULL} (the default),
+the optimal method (in terms of relative accuracy) is used.}
 }
 \value{
 density (\code{dtweedie}),
@@ -153,12 +153,14 @@ Proceedings of the Indian Statistical Institute Golden Jubilee International Con
 power <- 2.5
 mu <- 1 
 phi <- 1 
-y <- seq(0, 10, length=100) 
+y <- seq(0, 6, length=500) 
 fy <- dtweedie( y=y, power=power, mu=mu, phi=phi) 
-plot(y, fy, type="l")
+plot(y, fy, type="l", lwd=2, ylab="Density")
 # Compare to the saddlepoint density
 f.saddle <- dtweedie.saddle( y=y, power=power, mu=mu, phi=phi) 
 lines( y, f.saddle, col=2 )
+legend("topright", col=c(1,2), lwd=c(2,1),
+    legend=c("Actual","Saddlepoint") )
 
 ### A histogram of Tweedie random numbers
 hist( rtweedie( 1000, power=1.2, mu=1, phi=1) )

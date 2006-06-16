@@ -5,51 +5,8 @@
 
 
 ptweedie.inversion <- function(q, mu, phi,  power, exact=FALSE ){ 
-#
-# ptweedie.INVERSION
-#
-# ptweedie.inversion( y, power, mu, phi, exact )
-#
-# Evaluating Tweedie cdf using cgf inversion
-#
-# Arguments:
-#   y:  The values of a the random variable.  y  can be 
-#       a vector, and all elements must be non-negative.
-#
-#   mu: The (positive) mean of the distribution.
-#
-#   phi:    The (positive) dispersion parameter for the 
-#       distribution, such that the variance of the 
-#       observations is  var(Y) = phi * mu^power
-#
-#   power:  The index for the Tweedie distribution, such that 
-#       the variance of the observation is 
-#       var(Y) = phi * mu^power .  
-#
-#   exact:  If exact is TRUE, the exact zero acceleration algorithm 
-#       is used, otherwise the approx zero algorithm is used
-#
-# Description
-#   This function evaluates the Tweedie family of distributions
-#   distribution function by inverting the cgf.
-#
-# Value
-#   A list is returned with the following components:
-#   density:    The value of the density 
-#   
-# See Also:
-#   dtweedie.series.bigp (using series evaluation for evaluation)
-#   dtweedie (density evaluation using fast methods based on the
-#       series evaluation and cgf inversion)
-#
-# Examples
-#   dtweedie.inversion(mu=1, phi=1, y=data, power=3.3)
- 
- 
-# 
 # Peter K Dunn 
-# 08 Feb 2000 
-#
+# 08 Feb 2000--2005
 
 y <- q
 # Error checks
@@ -100,8 +57,8 @@ density
 }
       
 
-dtweedie.dldphi.saddle <- function( y, mu, phi, power){
-# This S-Plus function calculates the derivative of log f wrt phi
+dtweedie.dldphi.saddle <- function(phi, mu, power, y ){
+# Calculates the derivative of log f wrt phi
 # where the density is the saddlepoint density
 
 # Peter Dunn
@@ -119,7 +76,7 @@ l <-  (-1)/(2*phi) + dev/(2*phi^2)
 
 
 dtweedie.logl <- function(phi, y, mu, power) {
-# This S-Plus function computes the log-likelihood for
+# Computes the log-likelihood for
 # a Tweedie density.  
 
 # Peter Dunn
@@ -130,7 +87,7 @@ sum( log( dtweedie( y=y, mu=mu, phi=phi, power=power ) ) )
 }
 
 dtweedie.logl.saddle <- function( phi, power, y, mu, eps=0){
-# This S-Plus function calculates the log likelihood of Tweedie densities
+# Calculates the log likelihood of Tweedie densities
 # where the density is the saddlepoint density
 
 # Peter Dunn
@@ -140,54 +97,6 @@ sum( log( dtweedie.saddle(power=power, phi=phi, y=y, mu=mu, eps=eps) ) )
 }
 
 dtweedie.logv.bigp <- dtweedie.logv.bigp <- function( y, phi, power){ 
-#
-# DTWEEDIE.LOGV.BIGP
-#
-# dtweedie.logv.bigp( y, phi, power )
-#
-# Evaluating the infinite series in the series expansion of
-# the Tweedie densities (power>2)
-#
-# Arguments:
-#	y:	The values of a the random variable.  y  can be 
-#		a vector, and all elements must be strictly 
-#		positive.
-#
-#	phi:	The (positive) dispersion parameter for the 
-# 		distribution, such that the variance of the 
-#		observations is  var(Y) = phi * mu^power
-#
-#	power:  The index for the Tweedie distribution, such that 
-#		the variance of the observation is 
-#		var(Y) = phi * mu^power .  
-#		Here, we require power > 2.
-#
-# Description
-#	This function evaluates the infinite series part of the
-#	series expansion for the Tweedie family of distributions
-#	when power > 2. It uses Stirling's approximation to
-#	determine where the individual terms are greatest, and 
-#	therefore over what values of the index to sum.  It is 
-#	generally quite fast, but can be slow when  power  is near 2.
-#
-# Value
-#	A list is returned with the following components:
-#	logv:	The value of log of the infinite series summation
-#	lo.k:	The lower index of summation used
-#	hi.k:	The upper index of summation used
-#	k.max:	The (approx) value of  k  for which the series 
-#		is a maximum
-#	
-# See Also:
-#	dtweedie.series.bigp
-#	dtweedie (density evaluation using fast methods based on the
-#		series evaluation and cgf inversion)
-#
-# Examples
-# 	dtweedie.logv.bigp(phi=1, y=data, power=3.3)
- 
- 
-# 
 # Peter K Dunn 
 # 02 Feb 2000 
 # 
@@ -301,51 +210,6 @@ list(lo=lo.k, hi=hi.k, logv=logv, k.max=k.max )
 
 dtweedie.logw.smallp <- function(y, phi, power){ 
 #
-# DTWEEDIE.LOGW.SMALLP
-#
-# Evaluating Wright's Bessel function for Tweedie density evaluation
-#
-# dtweedie.logw.smallp( y, phi, power)
-#
-# Arguments:
-#	y:	The values of a the random variable.  y  can be a 
-#		vector,	and all elements must be strictly positive.
-#
-#	phi:	The (positive) dispersion parameter for the 
-#		distribution, such that the variance of the 
-#		observations is  var(Y) = phi * mu^power .
-#
-#	power:  The index for the Tweedie distribution, such that 
-#		the variance of the observation is 
-#		var(Y) = phi * mu^power .
-#		Here, we require 1 < power < 2.
-#
-# Description
-#	This function evaluates Wright's Bessel function, as part
-#	of the procedure to evaluating Tweedie family densities
-#	when 1 < power < 2.  It uses Stirling's approximation
-#	to determine where the individual terms are greatest, and 
-#	therefore over what values of the index to sum.  It is 
-#	generally quite fast, but can be slow when  power  is near 1.
-#
-# Value
-#	A list is returned with the following components:
-#	logw:	The value of the log of the infinite series summation
-#	lo.j:	The lower index of summation used
-#	hi.j:	The upper index of summation used
-#	j.max:	The (approx) value of  j  for which the series is a 
-#		maximum
-#	
-# See Also:
-#	dtweedie.series.smallp
-#	dtweedie (density evaluation using fast methods based on the
-#		series evaluation and cgf inversion)
-#
-# Examples
-# 	dtweedie.logw.smallp(phi=1, y=data, power=1.3)
- 
-
-#
 # Peter K Dunn
 # 02 Feb 2000
 #
@@ -450,7 +314,7 @@ dtweedie <- function(y, power, mu, phi)
 #
 #
 # FIRST, establish whether the series or the cgf
-# inversion is the better method.
+# # inversion is the better method.
 #
 
 #
@@ -704,42 +568,6 @@ density
 
 dtweedie.saddle <- function(y, power, mu, phi, eps=1/6) {
 #
-# DTWEEDIE.SADDLE
-#
-# Evaluating Tweedie densities using the saddlepoint approximation.
-#
-# dtweedie.saddle(y, power, mu, phi)
-#
-# Arguments:
-#	y:	The values of the random variable.  y  can be a 
-#		vector,	and all elements must be strictly positive.
-#
-#	mu:	The (positive) mean of the distribution
-#
-#	phi:	The (positive) dispersion parameter for the 
-#		distribution, such that the variance of the 
-#		observations is  var(Y) = phi * mu^power .
-#
-#	power:  The index for the Tweedie distribution, such that 
-#		the variance of the observation is 
-#		var(Y) = phi * mu^power .
-#
-# Description
-#	This function evaluates the Tweedie family of distributions
-#	by evaluating the saddlepoint approximation.
-#
-# Value
-#	The approximate value of the density at the given parameters
-#	
-# See Also:
-#	dtweedie.series (using the seres expansion to evaluate the dnesity)
-#	dtweedie.inversion (using the cgf inversion for evaluation)
-#	dtweedie (density evaluation using fast methods based on the
-#		series evaluation and cgf inversion)
-#
-# Examples
-# 	dtweedie.series(mu=1, phi=1, y=data, power=1.3)
-#
 # Peter K Dunn
 # 09 Jan 2002
 #
@@ -796,53 +624,6 @@ dtweedie.saddle <- function(y, power, mu, phi, eps=1/6) {
 }
 
 dtweedie.series.bigp <- function(power, y, mu, phi){ 
-#
-# DTWEEDIE.SERIES.BIGP
-#
-# dtweedie.series.bigp( y, power, mu, phi )
-#
-# Evaluating Tweedie densities (power>2) using series evaluation
-#
-# Arguments:
-#	power:  The index for the Tweedie distribution, such that 
-#		the variance of the observation is 
-#		var(Y) = phi * mu^power .  
-#		Here, we require power > 2.
-#
-#	y:	The values of a the random variable.  y  can be 
-#		a vector, and all elements must be strictly 
-#		positive.
-#
-#	mu:	The (positive) mean of the distribution.
-#
-#	phi:	The (positive) dispersion parameter for the 
-# 		distribution, such that the variance of the 
-#		observations is  var(Y) = phi * mu^power
-#
-# Description
-#	This function evaluates the Tweedie family of distributions
-#	when power > 2 by evaluating an infinite series.  It uses 
-#	Stirling's approximation for the gamma functions to 
-#	determine where the individual terms are greatest, and 
-#	therefore over what values of the index to sum.  It is 
-#	generally quite fast, but can be slow when  power  is near 2.
-#
-# Value
-#	A list is returned with the following components:
-#	density:	The value of the density 
-#	logv:	The value of log of the infinite series summation
-#	lo:	The lower value of the index of summation
-#	hi:	The upper value of the index of summation
-#	
-# See Also:
-#	dtweedie.series.smallp (for use when 1 < power < 2 )
-#	dtweedie.inversion.bigp (using cgf inversion for evaluation)
-#	dtweedie (density evaluation using fast methods based on the
-#		series evaluation and cgf inversion)
-#
-# Examples
-# 	dtweedie.series.bigp(mu=1, phi=1, y=data, power=3.3)
- 
  
 # 
 # Peter K Dunn 
@@ -887,45 +668,6 @@ list(density=f, logv=logv, lo=result$lo, hi=result$hi )
 }
 
 dtweedie.series <- function(y, power, mu, phi){ 
-#
-# DTWEEDIE.SERIES
-#
-# Evaluating Tweedie densities using series evaluation
-#
-# dtweedie.series( y, power, mu, phi)
-#
-# Arguments:
-#	power:  The index for the Tweedie distribution, such that 
-#		the variance of the observation is 
-#		var(Y) = phi * mu^power .
-#		Here, we require power>1
-#
-#	y:	The values of the random variable.  y  can be a 
-#		vector,	and all elements must be strictly positive.
-#
-#	mu:	The (positive) mean of the distribution
-#
-#	phi:	The (positive) dispersion parameter for the 
-#		distribution, such that the variance of the 
-#		observations is  var(Y) = phi * mu^power .
-#
-# Description
-#	This function evaluates the Tweedie family of distributions
-#	by evaluating an infinite series.
-#
-# Value
-#	The value of the density at the given parameters
-#	
-# See Also:
-#	dtweedie.series.bigp (for use when power > 2 )
-#	dtweedie.series.smallp (for use when 1 < power < 2 )
-#	dtweedie (density evaluation using fast methods based on the
-#		series evaluation and cgf inversion)
-#
-# Examples
-# 	dtweedie.series(mu=1, phi=1, y=data, power=1.3)
- 
-
 #
 # Peter K Dunn
 # 09 Jan 2002
@@ -999,52 +741,6 @@ density
 
 
 dtweedie.series.smallp <- function(power, y, mu, phi){ 
-#
-# DTWEEDIE.SERIES.SMALLP
-#
-# Evaluating Tweedie densities (1<power<2) using series evaluation
-#
-# dtweedie.series.smallp( y, power, mu, phi)
-#
-# Arguments:
-#	power:  The index for the Tweedie distribution, such that 
-#		the variance of the observation is 
-#		var(Y) = phi * mu^power .
-#		Here, we require 1 < power < 2.
-#
-#	y:	The values of a the random variable.  y  can be a 
-#		vector,	and all elements must be strictly positive.
-#
-#	mu:	The (positive) mean of the distribution
-#
-#	phi:	The (positive) dispersion parameter for the 
-#		distribution, such that the variance of the 
-#		observations is  var(Y) = phi * mu^power .
-#
-# Description
-#	This function evaluates the Tweedie family of distributions
-#	when 1 < power < 2 by evaluating an infinite series.  It uses
-#	Stirling's approximation for the gamma functions to 
-#	determine where the individual terms are greatest, and 
-#	therefore over what values of the index to sum.  It is 
-#	generally quite	fast, but can be slow when  power  is near 1.
-#
-# Value
-#	A list is returned with the following components:
-#	density:	The value of the density 
-#	w:	      The value of just the infinite series summation
-#	lo:      The lower value of the index of summation
-#	hi:      The upper value of the index of summation
-#	
-# See Also:
-#	dtweedie.series.bigp (for use when power > 2 )
-#	dtweedie.inversion.smallp (using cgf inversion for evaluation)
-#	dtweedie (density evaluation using fast methods based on the
-#		series evaluation and cgf inversion)
-#
-# Examples
-# 	dtweedie.series.smallp(mu=1, phi=1, y=data, power=1.3)
- 
 
 #
 # Peter K Dunn
@@ -1089,7 +785,7 @@ list(density=f, logw=logw, hi=result$hi, lo=result$lo)
 
 
 ptweedie <- function(q, power, mu, phi) {
-# This S-Plus function evaluates the cdf for
+# Evaluates the cdf for
 # Tweedie distributions.
 
 # Peter Dunn
@@ -1151,44 +847,6 @@ return(f)
 
 }
 ptweedie.series <- function(q, power, mu, phi) {
-#
-# ptweedie.series
-#
-# ptweedie.series( y, power, mu, phi )
-#
-# Evaluating Tweedie cdf using a Poisson sum of incomplete gamma
-# functions.
-#
-# Arguments:
-#   y:  The values of a the random variable.  y  can be 
-#       a vector, and all elements must be non-negative.
-#
-#   mu: The (positive) mean of the distribution.
-#
-#   phi:    The (positive) dispersion parameter for the 
-#       distribution, such that the variance of the 
-#       observations is  var(Y) = phi * mu^power
-#
-#   power:  The index for the Tweedie distribution, such that 
-#       the variance of the observation is 
-#       var(Y) = phi * mu^power .  
-#
-# Description
-#   This function evaluates the Tweedie family of distributions
-#   distribution function by a Poisson sum of incomplete gammas functions.
-#
-# Value
-#   A list is returned with the following components:
-#   density:    The value of the density 
-#   
-# See Also:
-#   dtweedie.series.bigp (using series evaluation for evaluation)
-#   dtweedie (density evaluation using fast methods based on the
-#       series evaluation and cgf inversion)
-#
-# Examples
-#   ptweedie.series.smallp(mu=1, phi=1, y=data, power=3.3)
- 
 # 
 # Peter K Dunn 
 # 14 March 2000 
@@ -5509,41 +5167,6 @@ grid
 
 tweedie.dev <- function(y, mu, power)
 {
-#
-# TWEEDIE.DEV
-#
-# tweedie.dev( power, y, mu )
-#
-# Evaluating the deviance of the Tweedie densities
-#
-# Arguments:
-#	power:  The index for the Tweedie distribution, such that 
-#		the variance of the observation is 
-#		var(Y) = phi * mu^power .  
-#		Here, we require power > 2.
-#
-#	y:	The values of a the random variable.  y  can be 
-#		a vector, and all elements must be strictly 
-#		positive.
-#
-#	mu:	The (positive) mean of the distribution.
-#
-#
-# Description
-#	This function evaluates the deviance for the Tweedie
-#	family of distributions, for any  power >= 1 .
-#
-# Value
-# 	The value of the deviance is returned.
-#
-# See Also:
-#	dtweedie (Tweedie density functions)
-#	ctweedie (Tweedie distribution functions)
-#
-# Examples
-# 	tweedie.dev(mu=1, y=data, power=3.3)
- 
- 
 # 
 # Peter K Dunn 
 # 29 Oct 2000 
@@ -5576,10 +5199,7 @@ tweedie.dev <- function(y, mu, power)
 }
 
 dtweedie.dldphi <- function(phi, mu, power, y ){
-#
-# DTWEEDIE.DLDPHI
-#
-# This S-Plus function calculates the log-likelihood
+# Calculates the log-likelihood
 # function, wrt phi, for p>2.  In particular, it returns
 #    sum{ d(log f)/d(phi) } = d( log-likelihood )/d(phi).
 # The mle of phi can be found, therefore, by setting this to zero.
@@ -5593,8 +5213,10 @@ dtweedie.dldphi <- function(phi, mu, power, y ){
 if ( (power != 2 ) & ( power != 1 ) ) {
 
    k <- phi^(1/(power-2))
-
-   if ( k < 1 ) {
+# cat("k=",k,"\n")
+# cat("phi=",phi,"\n")
+# cat("power=",power,"\n")
+   if ( k < 1  & k > 0 ) {
       # Use the transform f(y; mu, phi) = c f(c*y; c*mu, c^(2-p)*phi)
       # and differentiate with c=phi^(1/(p-2)):
       #    d log f / d phi = c^(2-p) * {df(cy; c*mu, 1)/dphi} / f(cy; c*mu, 1)
@@ -5617,25 +5239,11 @@ else{
 d
 }
 
-dtweedie.dldphi.saddle <- function( y, mu, phi, power){
-# This S-Plus function calculates the derivative of log f wrt phi
-# where the density is the saddlepoint density
-
-# Peter Dunn
-# 13 August 2002
-
-dev <- tweedie.dev( power=power, y=y, mu=mu)
-l <-  (-1)/(2*phi) + dev/(2*phi^2)
-
--2* sum(l)
-}
 
 dtweedie.dlogfdphi <- function(y, mu, phi, power)
 {
 #
-# DTWEEDIE.DLOGFDPHI
-#
-# This S-Plus function calculates d(log f)/d(phi) for the Tweedie
+# Calculates d(log f)/d(phi) for the Tweedie
 # densities.
 # It is used, for example, in mle fitting of phi.  We would then
 # sum over  y  and set this function to 0.
@@ -5711,7 +5319,7 @@ dtweedie.dlogfdphi <- function(y, mu, phi, power)
 
 dtweedie.interp <- function(grid, nx, np, xix.lo, xix.hi,
                             p.lo, p.hi, power, xix) {
-#This S-Plus function does the interpolation calculation
+# Does the interpolation calculation
 
 # Peter Dunn
 # 17 April 2001
@@ -5750,51 +5358,9 @@ if ( power >= 3) {
 rho
 
 }
-dtweedie.inversion <- function(y, power, mu, phi, exact=FALSE, rotate=TRUE){ 
-#
-# DTWEEDIE.INVERSION
-#
-# dtweedie.inversion( y, power, mu, phi, exact, rotate )
-#
-# Evaluating Tweedie densities using cgf inversion
-#
-# Arguments:
-#   y:  The values of a the random variable.  y  can be 
-#       a vector, and all elements must be non-negative.
-#
-#   mu: The (positive) mean of the distribution.
-#
-#   phi:    The (positive) dispersion parameter for the 
-#       distribution, such that the variance of the 
-#       observations is  var(Y) = phi * mu^power
-#
-#   power:  The index for the Tweedie distribution, such that 
-#       the variance of the observation is 
-#       var(Y) = phi * mu^power .  
-#
-#   exact:  If exact is TRUE, the exact zero acceleration algorithm 
-#       is used, otherwise the approx zero algorithm is used
-#
-#   rotate: If rotate is TRUE, a rotation formula is used to increase
-#       relative accuracy; otherwise, it is not used.
-#
-# Description
-#   This function evaluates the Tweedie family of distributions
-#   by inverting the cgf.
-#
-# Value
-#   A list is returned with the following components:
-#   density:    The value of the density 
-#   
-# See Also:
-#   dtweedie.series.bigp (using series evaluation for evaluation)
-#   dtweedie (density evaluation using fast methods based on the
-#       series evaluation and cgf inversion)
-#
-# Examples
-#   dtweedie.inversion(mu=1, phi=1, y=data, power=3.3)
- 
- 
+
+
+dtweedie.inversion <- function(y, power, mu, phi, exact=TRUE, method=3){ 
 # 
 # Peter K Dunn 
 # 06 Aug 2002
@@ -5819,103 +5385,124 @@ else {
    phi <- array( dim=length(y), phi )
    # A vector of all phi's
 }
+save.method <- method
+if ( !is.null(method)){
+   if ( length(method)>1 ) {
+      method <- save.method <- method[1]
+   }
+   if ( !(method %in% c(1,2,3)) ) stop("method must be 1, 2 or 3 (or left empty).")
+}
 
 y.len <- length(y)
 density <- y
 its <- y
 
+
 for (i in (1:y.len)) {
 
-    if ( rotate ) {
-
-        dev <- tweedie.dev( power=power, mu=mu, y=y )
-
-       tmp <- .Fortran( name="pdf",
-         as.double(power),
-         as.double(phi[i]),
-         as.double(y[i]),
-         as.double(y[i]), # mu
-         as.integer( exact ), #exact as an integer
-         as.double(0), # funvalue
-         as.integer(0), # exitstatus
-         as.double(0), # relerr
-         as.integer(0), # its
-         PACKAGE="tweedie")
-
-    den <- tmp[[6]]
-        den <- den * exp( -1/(2*phi[i]) * dev[i] )
-        density[i] <- den
-
-    } else {
-       tmp <- .Fortran( name="pdf",
-         as.double(power),
-         as.double(phi[i]),
-         as.double(y[i]),
-         as.double(mu[i]),
-         as.integer( exact ), #exact as an integer
-         as.double(0), # funvalue
-         as.integer(0), # exitstatus
-         as.double(0), # relerr
-         as.integer(0), # its
-	 PACKAGE="tweedie")
-
-        density[i] <- tmp[[6]]      
-
-    }
+   # There are three approaches, each a product of a simple bit
+   # and a complicated bit computed in FORTRAN
+   # We choose Method 3 if no other is requested.
+   
+   if ( y[i] == 0 ) {
+      density[i] <- exp( -mu[i] ^ (2-p) / ( phi[i] * (2-p) ) )
+   } else {
+      # Here, y > 0
+      m1 <- 1/mu[i]
+      
+      theta <- ( mu[i]^(1-power) - 1 ) / ( 1 - power )
+      if ( ( abs(power - 2 ) ) < 1.0e-07 ){
+         kappa <- log(mu[i]) + (2 - power) * ( log(mu[i])^2 ) / 2
+      } else {
+         kappa <- ( mu[i]^(2-power) - 1 ) / ( 2 - power )
+      }
+      m2 <- exp( (y[i]*theta - kappa )/phi[i] )
+   
+      dev <- tweedie.dev(y=y[i], mu=mu[i], power=power )
+      m3 <- exp( -dev/(2*phi[i]) ) / y[i]
+   
+      min.method <- min( m1, m2, m3 )
+   
+      # Now if no method requested, find the notional "optimal"
+      if ( is.null(method) ) {
+         if ( min.method==m1 ){
+            use.method <- 1
+         } else {
+            if ( min.method==m2 ) {
+               use.method <- 2
+            } else {
+               use.method <- 3
+            }
+         }
+      } else {
+         use.method <- method
+      }
+   
+      # Now use the method
+      # NOTE: FOR ALL  METHODS, WE HAVE mu=1
+      verbose <- FALSE
+      
+      if ( use.method==1 ) {
+         tmp <- .Fortran( name="pdf",
+            as.double(power),
+            as.double(phi[i] / (mu[i]^(2-power)) ), # phi
+            as.double(y[i]/mu[i]), # y
+            as.double(1), # mu
+            as.integer( exact ), #exact as an integer
+            as.integer( verbose ), #verbose as an integer
+            as.double(0), # funvalue
+            as.integer(0), # exitstatus
+            as.double(0), # relerr
+            as.integer(0), # its
+            PACKAGE="tweedie")
+   
+         den <- tmp[[7]]
+         density[i] <- den * m1
+   
+      } else {
+         if ( use.method==2 ) {
+            tmp <- .Fortran( name="pdf",
+               as.double(power),
+               as.double(phi[i]), # phi
+               as.double(y[i]), # y
+               as.double(1), # mu
+               as.integer( exact ), #exact as an integer
+               as.integer( verbose ), #verbose as an integer
+               as.double(0), # funvalue
+               as.integer(0), # exitstatus
+               as.double(0), # relerr
+               as.integer(0), # its
+               PACKAGE="tweedie")
+   
+            den <- tmp[[7]]
+            density[i] <- den * m2
+   
+         } else { # use.method==3
+            tmp <- .Fortran( name="pdf",
+               as.double(power),
+               as.double(phi[i]/(y[i]^(2-power))), # phi
+               as.double(1), # y
+               as.double(1), # mu
+               as.integer( exact ), #exact as an integer
+               as.integer( verbose ), #verbose as an integer
+               as.double(0), # funvalue
+               as.integer(0), # exitstatus
+               as.double(0), # relerr
+               as.integer(0), # its
+               PACKAGE="tweedie")
+   
+            den <- tmp[[7]]
+            density[i] <- den * m3
+         }
+      }
+   }
 }
-
 
 density
 
 }
       
 dtweedie.jw.smallp <- function(y, phi, power ){ 
-#
-# DTWEEDIE.JW.SMALLP
-#
-# Evaluating a derivative of Wright's Bessel function for 
-# Tweedie density evaluation
-#
-# dtweedie.jw.smallp( y, phi, power)
-#
-# Arguments:
-#	y:	The values of a the random variable.  y  can be a 
-#		vector,	and all elements must be strictly positive.
-#
-#	phi:	The (positive) dispersion parameter for the 
-#		distribution, such that the variance of the 
-#		observations is  var(Y) = phi * mu^power .
-#
-#	power:  The index for the Tweedie distribution, such that 
-#		the variance of the observation is 
-#		var(Y) = phi * mu^power .
-#		Here, we require 1 < power < 2.
-#
-# Description
-#	This function evaluates the index times Wright's Bessel 
-# 	function, as part
-#	of the procedure to evaluating Tweedie family densities
-#	when 1 < power < 2.  It uses Stirling's approximation
-#	to determine where the individual terms are greatest, and 
-#	therefore over what values of the index to sum.  It is 
-#	generally quite fast, but can be slow when  power  is near 1.
-#
-# Value
-#	A list is returned with the following components:
-#	jw:	The value of the infinite series summation by j
-#	lo.j:	The lower index of summation used
-#	hi.j:	The upper index of summation used
-#	j.max:	The (approx) value of  j  for which the series is a 
-#		maximum
-#	
-# See Also:
-#	dtweedie.kv.bigp
-#	dtweedie
-#
-# Examples
-# 	dtweedie.jw.smallp(phi=1, y=data, power=1.3)
- 
-
 #
 # Peter K Dunn
 # 18 Jun 2002
@@ -6002,53 +5589,6 @@ list(lo=lo.j, hi=hi.j, jw=jw, j.max=j.max )
  
 
 dtweedie.kv.bigp <- function(y, phi, power){ 
-#
-# DTWEEDIE.KV.BIGP
-#
-# dtweedie.kv.bigp( y, phi, power )
-#
-# Evaluating a derivative of the infinite series in the series 
-# expansion of the Tweedie densities (power>2)
-#
-# Arguments:
-#	y:	The values of a the random variable.  y  can be 
-#		a vector, and all elements must be strictly 
-#		positive.
-#
-#	phi:	The (positive) dispersion parameter for the 
-# 		distribution, such that the variance of the 
-#		observations is  var(Y) = phi * mu^power
-#
-#	power:  The index for the Tweedie distribution, such that 
-#		the variance of the observation is 
-#		var(Y) = phi * mu^power .  
-#		Here, we require power > 2.
-#
-# Description
-#	This function evaluates a derivavtive of the infinite series 
-# 	part of the
-#	series expansion for the Tweedie family of distributions
-#	when power > 2. It uses Stirling's approximation to
-#	determine where the individual terms are greatest, and 
-#	therefore over what values of the index to sum.  It is 
-#	generally quite fast, but can be slow when  power  is near 2.
-#
-# Value
-#	A list is returned with the following components:
-#	kv:	The value of the infinite series summation
-#	lo.k:	The lower index of summation used
-#	hi.k:	The upper index of summation used
-#	k.max:	The (approx) value of  k  for which the series 
-#		is a maximum
-#	
-# See Also:
-#	dtweedie.jw.smallp
-#	dtweedie
-#
-# Examples
-# 	dtweedie.kv.bigp(phi=1, y=data, power=3.3)
- 
- 
 # 
 # Peter K Dunn 
 # 18 Jun 2002
@@ -6160,7 +5700,7 @@ list(lo=lo.k, hi=hi.k, kv=kv, k.max=k.max )
 qtweedie <- function(p, power, mu, phi){
 
 # Error checks
-if ( power<1) stop("power must be greater than 1.\n")
+if ( any(power)<1) stop("power must be greater than 1.\n")
 if ( any(phi <= 0) ) stop("phi must be positive.")
 if ( any(p<0) ) stop("p must be between zero and one.\n")
 if ( any(p>1) ) stop("p must be between zero and one.\n")
@@ -6178,6 +5718,12 @@ if ( length(phi)>1) {
 else {
    phi <- array( dim=length(p), phi )
    # A vector of all phi's
+}
+# Now, if mu is a vector, make power correct length
+if ( length(power) == 1 ) {
+   if ( length(mu) > 1 ) {
+      power <- rep( power, length(mu) ) 
+   }
 }
 
 #
@@ -6198,76 +5744,74 @@ p.vec   <- p[ ( (p>0) & (p<1) ) ]
 
 for (i in (1:length(ans)) ) {
 
-mu.1 <- mu.vec[i]
-phi.1 <- phi.vec[i]
-p.1 <- p.vec[i]
-
-prob <- p.1 # Rename p to avoid confusion with  power
-
-if ( power<2 ) {
-    qp <- qpois(prob, lambda=mu.1/phi.1)
-    if ( power == 1 ) ans[i] <- qp   
-}
-
-qg <- qgamma(prob,  rate=1/(phi.1*mu.1), shape=1/phi.1 )
-if ( power==2 ) ans[i] <- qg
-
-# Starting values
-# - for 1<power<2, linearly interpolate between Poisson and gamma
-if ( (power>1) & ( power<2) ) {
-    start <- (qg - qp)*power + (2*qp - qg)
-}
-
-# - for power>2, start with gamma
-if ( power>2 ) start <- qg
-
-# Solve!
-if ( ( power>1) & (power<2) ) { # This gives a *lower* bound on the value of the answer (if y>0)
-    step <- dtweedie(y=0, mu=mu.1, phi=phi.1, power=power)
-    # This is P(Y=0), the discrete "step"
-    if ( prob <= step ) {
-        ans[i] <- 0
-    }
-}
-
-if ( is.na(ans[i]) ) { # All cases except Y=0 when 1 < power < 2
-        
-        pt2 <- function( q, mu, phi, power, p.given=prob ){ 
-            ptweedie(q=q, mu=mu, phi=phi, power=power ) - p.given
-        }
-        pt <- pt2( q=start, mu=mu.1, phi=phi.1, power=power, p.given=prob)
-        
-        if ( pt == 0 ) ans2[i] <- start		  
-        
-        if ( pt > 0 ) { 
-		      loop <- TRUE
+   mu.1 <- mu.vec[i]
+   phi.1 <- phi.vec[i]
+   p.1 <- p.vec[i]
+   pwr <- power[i]
+   
+   prob <- p.1 # Rename p to avoid confusion with  pwr
+   
+   if ( pwr<2 ) {
+      qp <- qpois(prob, lambda=mu.1/phi.1)
+      if ( pwr == 1 ) ans[i] <- qp   
+   }
+   
+   qg <- qgamma(prob,  rate=1/(phi.1*mu.1), shape=1/phi.1 )
+   if ( pwr==2 ) ans[i] <- qg
+   
+   # Starting values
+   # - for 1<pwr<2, linearly interpolate between Poisson and gamma
+   if ( (pwr>1) & ( pwr<2) ) {
+      start <- (qg - qp)*pwr + (2*qp - qg)
+   }
+   
+   # - for pwr>2, start with gamma
+   if ( pwr>2 ) start <- qg
+   
+   # Solve!
+   if ( ( pwr>1) & (pwr<2) ) { # This gives a *lower* bound on the value of the answer (if y>0)
+      step <- dtweedie(y=0, mu=mu.1, phi=phi.1, power=pwr)
+      # This is P(Y=0), the discrete "step"
+      if ( prob <= step ) {
+         ans[i] <- 0
+      }
+   }
+   
+   if ( is.na(ans[i]) ) { # All cases except Y=0 when 1 < pwr < 2
+         
+      pt2 <- function( q, mu, phi, pwr, p.given=prob ){ 
+            ptweedie(q=q, mu=mu, phi=phi, power=pwr ) - p.given
+      }
+      pt <- pt2( q=start, mu=mu.1, phi=phi.1, pwr=pwr, p.given=prob)
+      
+      if ( pt == 0 ) ans2[i] <- start
+      
+      if ( pt > 0 ) { 
+		    loop <- TRUE
 				start.2 <- start
-	         while ( loop ) {
-                # Try harder
-                start.2 <- 0.5*start.2
-                if (pt2( q=start.2, mu.1, phi.1, power, p.given=prob )<0 ) loop=FALSE
-					 # RECALL:  We are only is this part of the loop if  pt>0
+	        while ( loop ) {
+               # Try harder
+               start.2 <- 0.5*start.2
+               if (pt2( q=start.2, mu.1, phi.1, pwr, p.given=prob )<0 ) loop=FALSE
+					# RECALL:  We are only is this part of the loop if  pt>0
             }
-        }
-#				cat("start/start.2:", start, start.2,"\n")
-#				cat(pt2( q=start, mu.1, phi.1, power, p.given=prob ),
-#				     pt2( q=start.2, mu.1, phi.1, power, p.given=prob ), "\n")
-        
-		  if ( pt < 0) {
-            loop <- TRUE
-            start.2 <- start
-            
-            while ( loop ) {
-                # Try harder
-                start.2 <- 1.5*(start.2 + 2)
-                if (pt2( q=start.2, mu.1, phi.1, power, p.given=prob )>0 ) loop=FALSE
-					 # RECALL:  We are only is this part of the loop if  pt<0
-            }
-        }
+      }
+      
+		if ( pt < 0) {
+         loop <- TRUE
+         start.2 <- start
+         
+         while ( loop ) {
+            # Try harder
+            start.2 <- 1.5*(start.2 + 2)
+            if (pt2( q=start.2, mu.1, phi.1, pwr, p.given=prob )>0 ) loop=FALSE
+				# RECALL:  We are only is this part of the loop if  pt<0
+         }
+      }
 
-        ans[i] <- uniroot(pt2, c(start, start.2), mu=mu.1, phi=phi.1, power=power, 
+       ans[i] <- uniroot(pt2, c(start, start.2), mu=mu.1, phi=phi.1, p=pwr, 
                         p.given=prob )$root
-    }
+   }
     
 }
 
@@ -6326,9 +5870,15 @@ else {
     as.vector(rt)
 }
 
-tweedie.profile <- function(formula, p.vec, smooth=FALSE, do.plot=FALSE, do.ci=smooth, eps=1/6,
-    do.points=do.plot, method="series", conf.level=0.95, 
-    phi.method=ifelse(method=="saddlepoint","saddlepoint","mle")) {
+tweedie.profile <- function(formula, p.vec, link.power = 0, fit.glm=FALSE,
+      do.smooth=FALSE, do.plot=FALSE, 
+      do.ci=do.smooth, eps=1/6,
+      do.points=do.plot, method="series", conf.level=0.95, 
+      phi.method=ifelse(method=="saddlepoint","saddlepoint","mle"), verbose=TRUE) {
+# verbose gives feedback on screen:
+#    0 : minimal (FALSE)
+#    1 : small amount (TRUE)
+#    2 : lots
 # Determine the value of  p  to use to fit a Tweedie distribution
 # A profile likelihood is used (can can be plotted with do.plot=TRUE)
 
@@ -6343,33 +5893,44 @@ tweedie.profile <- function(formula, p.vec, smooth=FALSE, do.plot=FALSE, do.ci=s
 # Peter Dunn
 # 07 Dec 2004
 
-cat("---\n This function may take some time to complete;\n")
-cat(" Please be patient.  If it fails, try using  method=\"inversion\"\n")
-cat(" rather than the default  method=\"series\"\n")
-cat(" Another possible reason for failure is the range of p:\n")
-cat(" Try a different input for  p.vec\n---\n")
+if ( is.logical( verbose ) ) {
+   verbose <- as.numeric(verbose)
+}
+
+if (verbose >= 1 ) {
+	cat("---\n This function may take some time to complete;\n")
+	cat(" Please be patient.  If it fails, try using  method=\"inversion\"\n")
+	cat(" rather than the default  method=\"series\"\n")
+	cat(" Another possible reason for failure is the range of p:\n")
+	cat(" Try a different input for  p.vec\n---\n")
+}
 
 # First define the function to *minimize*;
 # since we want a *maximum* likeihood estimator,
 # define the negative.
 dtweedie.nlogl <- function(phi, y, mu, power) {
     ans <- -2 * sum( log( dtweedie( y=y, mu=mu, phi=phi, power=power ) ) )
+    if ( is.infinite( ans ) ) {
+      # If infinite, replace with saddlepoint estimate?
+        ans <- sum( tweedie.dev(y=y, mu=mu, power=power) )/length( y )
+     }
     attr(ans, "gradient") <- dtweedie.dldphi(y=y, mu=mu, phi=phi, power=power)
+    
     ans
 }
 
-if ( smooth & (length(p.vec) < 5) ) {
+if ( do.smooth & (length(p.vec) < 5) ) {
    warning("Smoothing needs at least five values of p.")
-   smooth <- FALSE
+   do.smooth <- FALSE
    do.ci <- FALSE
 }
 if ( (conf.level >= 1) | (conf.level <=0)  ){
    error("Confidence level must be between 0 and 1.")
 }
 
-if ( !smooth & do.ci ) {
+if ( !do.smooth & do.ci ) {
    do.ci <- FALSE
-	warning("Confidence intervals only computed if smooth=TRUE\n")
+	warning("Confidence intervals only computed if  do.smooth=TRUE\n")
 }
    
 
@@ -6381,7 +5942,7 @@ data <- dummy.model$y
 
 # Warnings
 if ( any( data == 0 ) & any( p.vec > 2 ) ) {
-    stop("The response variable contains exact zeros; ensure all values in p.vec are between 1 and 2")
+    stop("The response variable contains exact zeros; ensure all values in  p.vec  are between 1 and 2")
 }
 
 
@@ -6402,7 +5963,11 @@ b.mat <- array( dim=c(p.len, length(data) ) )
 
 for (i in (1:p.len)) {
 
-    cat("p=",p.vec[i],"\n")
+   if ( verbose>0) {
+      cat("p=",p.vec[i],"\n")
+   } else {
+      cat(".")
+   }
 
    # We find the mle of phi.
    # We try to bound it as well as we can, 
@@ -6415,24 +5980,24 @@ for (i in (1:p.len)) {
    bnd.neg <- -Inf
    bnd.pos <- Inf
 
-    cat("* Fitting initial model:")
+    if (verbose==2) cat("* Fitting initial model:")
 
    # Fit the model with given p
    fit.model <- glm.fit( x=model.x, y=data,
-         family=tweedie(var.power=p, link.power=0),
+         family=tweedie(var.power=p, link.power=link.power),
         control=glm.control(epsilon=1e-10) )
    # NOTE:  We need epsilon to be very small to make a
    #        smooth likelihood plot
 
    mu <- fitted( fit.model )
 
-    cat(" Done\n")
+    if (verbose==2) cat(" Done\n")
 
     ### -- Start:  Estimate phi
-    cat("* Phi estimation, method: ", phi.method)
+    if (verbose>=1) cat("* Phi estimation, method: ", phi.method)
    if ( phi.method=="mle"){
 
-    cat(" (using optimize): ")
+    if (verbose>=1) cat(" (using optimize): ")
 
       # Saddlepoint approx of phi:
       phi.saddle <- sum( tweedie.dev(y=data, mu=mu, power=p) )/length( data )
@@ -6457,13 +6022,13 @@ for (i in (1:p.len)) {
                     power=p, mu=mu, y=data )
 #       phi <- phi.vec[i] <- ans$estimate
     phi <- phi.vec[i] <- ans$minimum
-    cat(" Done (phi.vec=",phi.vec[i],")\n")
+    if (verbose>=1) cat(" Done (phi =",phi.vec[i],")\n")
 
    }else{ # phi.method=="saddlepoint")
 
-       cat(" (using mean deviance/saddlepoint): ")
+       if (verbose>=1) cat(" (using mean deviance/saddlepoint): ")
         phi <- phi.est <- phi.vec[i] <- sum( tweedie.dev(y=data, mu=mu, power=p) )/length( data )
-        cat(" Done (phi=",phi,")\n")
+        if (verbose>=1) cat(" Done (phi=",phi,")\n")
     }
     
     ### -- Done:  estimate phi
@@ -6471,10 +6036,10 @@ for (i in (1:p.len)) {
     # Now determine log-likelihood at this p
     # Best to use the same density evaluation for all:  series or inversion
     
-    cat("* Computing the log-likelihood ")
+    if (verbose>=1) cat("* Computing the log-likelihood ")
 
    # Now compute the log-likelihood
-    cat("(method=",method,"):")
+    if (verbose>=1) cat("(method =",method,"):")
 
    if ( method=="saddlepoint") {
       L[i] <- dtweedie.logl.saddle(y=data, mu=mu, power=p, phi=phi, eps=eps)
@@ -6498,7 +6063,11 @@ for (i in (1:p.len)) {
        }
    }
 
-    cat(" Done: L=",L[i],"\n")
+    if (verbose>=1) {
+       cat(" Done: L=",L[i],"\n")
+    } else {
+       cat(" Done\n")
+    }
 }
 
 ### Smoothing
@@ -6513,7 +6082,7 @@ for (i in (1:p.len)) {
 y <- NA
 x <- NA
 
-if ( smooth ) {
+if ( do.smooth ) {
     L.fix <- L
     p.vec.fix <- p.vec
 	 phi.vec.fix <- phi.vec
@@ -6527,11 +6096,14 @@ if ( smooth ) {
 	    phi.vec.fix <- phi.vec.fix[ !is.infinite(L.fix) ]
 	    L.fix <- L.fix[ !is.infinite(L.fix) ]
 	 
-        cat("Smooth perhaps inaccurate--log-likelihood contains Inf or NA.\n")
+        cat("Smooth perhaps inaccurate--log-likelihood contains  Inf  or  NA.\n")
     }
 	 #else {
-      cat(" --- \n")
-        cat("* Smoothing: ")
+    
+    if ( length( L.fix ) > 0 ) {
+	   if (verbose==0) cat(".")
+      if (verbose>=1) cat(" --- \n")
+      if (verbose>=1) cat("* Smoothing: ")
     # Smooth the points
        # - get smoothing spline
     ss <- splinefun( p.vec.fix, L.fix )
@@ -6552,9 +6124,13 @@ if ( smooth ) {
 			if (do.points) {
 			   points( L ~ p.vec, pch=19)
 			}
-      #}
+      }
       x <- p.smooth
       y <- L.smooth
+      
+   } else {
+      cat("  No valid values of the likelihood computed: smooth aborted\n",
+          "  Consider trying another value for the input  method.\n")
    }
 }
 else {
@@ -6575,16 +6151,18 @@ else {
    x <- p.vec
    y <- L
 }
-cat(" Done\n")
+if (verbose>=2) cat(" Done\n")
 
 
 ### Maximum likelihood estimates
 
-if ( smooth ){
+if ( do.smooth ){
    # WARNING:  This spline does not necessarily pass
    #           through the given points.  This should
    #           be seen as a deficiency in the method.
 
+   if (verbose>=2) cat(" Estimating phi:  ")
+   
    # Find maximum from profile
    L.max <- max(y)
    p.max <- x[ y==L.max ]
@@ -6600,6 +6178,8 @@ if ( smooth ){
 	   phi.hi <- phi.2
 		phi.lo <- phi.1
 	}
+   
+   if (verbose>=2) cat(" Done\n")
 	
    # Now, if the maximum happens to be at an endpoint,
    # we have to do things differently:
@@ -6607,33 +6187,38 @@ if ( smooth ){
       phi.max <- phi.lo # and is same as phi.max
       warning("True maximum possibly not detected.")
 
-   }else{
+   } else {
 
       # - solve
 
       if ( phi.method=="saddlepoint"){
-        phi.max <- sum( tweedie.dev(y=data, mu=mu, power=p) )/length( data )
-       }
-      else{
+         phi.max <- sum( tweedie.dev(y=data, mu=mu, power=p) )/length( data )
+      } else {
 #        phi.max <- nlm(p=phi.est, f=dtweedie.nlogl, 
 #                    hessian=FALSE,
 #                    power=p, mu=mu, y=data, 
 #                    gradient=dtweedie.dldphi)$estimate
-        phi.max <- optimize( f=dtweedie.nlogl, interval=c(1.0e-10, phi.hi ), # set lower limit phi.lo???
-                             power=p.max, mu=mu, y=data)$minimum
         
+        phi.max <- optimize( f=dtweedie.nlogl, interval=c(phi.lo, phi.hi ), 
+            # set lower limit phi.lo???
+                             power=p.max, mu=mu, y=data)$minimum
+       
 #       Note that using the Hessian often produces computational problems
 #       for little (no?) advantage.
-
+      
       }
    }
 }
 else{
    # Find maximum from computed data
+   if (verbose>=2) cat(" Finding maximum likelihood estimates:  ")
+   
    L.max <- max(L)
 
    p.max <- p.vec[ L==L.max ]
    phi.max <- phi.vec[ L==L.max ]
+   
+   if (verbose>=2) cat(" Done\n")
 }
 
 # Now report
@@ -6646,8 +6231,8 @@ ci <- array( dim=2, NA )
 
 
 if ( do.ci ) {
-    cat("* Finding confidence interval:")
-   if ( !smooth ) {
+    if (verbose==2) cat("* Finding confidence interval:")
+   if ( !do.smooth ) {
       warning("Confidence interval may be very inaccurate without smoothing.\n")
 		y <- L
 		x <- p.vec
@@ -6698,10 +6283,23 @@ if ( do.ci ) {
 
       ci[2] <- ci.new.right
    }
-    cat(" Done\n")
+    if (verbose==2) cat(" Done\n")
 }
 
-invisible(list( y=y, x=x, ht=ht, L=L, p=p.vec, p.max=p.max, L.max=L.max, 
-        phi=phi.vec, phi.max=phi.max, ci=ci, method=method))
+if ( fit.glm ) {
+   out <- glm( formula,
+         family=tweedie(var.power=p.max, link.power=link.power) )
+
+   out <- list( y=y, x=x, ht=ht, L=L, p=p.vec, p.max=p.max, L.max=L.max, 
+           phi=phi.vec, phi.max=phi.max, ci=ci, method=method, phi.method=phi.method,
+           glm.obj = out)
+
+} else {
+   out <- list( y=y, x=x, ht=ht, L=L, p=p.vec, p.max=p.max, L.max=L.max, 
+           phi=phi.vec, phi.max=phi.max, ci=ci, method=method, phi.method=phi.method)
+
+}
+
+invisible( out )
 
 }

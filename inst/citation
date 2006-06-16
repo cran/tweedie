@@ -1,0 +1,16 @@
+citHeader("To cite the tweedie package in publications use:")
+
+citEntry(entry="Manual",
+         title = "The  tweedie  package for R:  Tweedie exponential family models"},
+         author = "Peter K Dunn",
+         address      = "Toowoomba, Queensland, Australia",
+         year         = 2006,
+         note = "R package version 1.2",
+
+         
+         textVersion = 
+         paste("Peter K Dunn (2006)", 
+               "The  tweedie  package for R: Tweedie exponential family models. ",
+               "R package version 1.2, Toowoomba, Queensland, Australia.",
+               sep="")
+         )

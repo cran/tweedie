@@ -1,18 +1,25 @@
-* The entry points are  pdf  and  cdf  employ the asymptotic Sidi method,
-* or the exact zeros method
-*
-* IN R, print statements for debugging as follows:
-*    call dblepr("The value of y is ",-1, y, 1)
-*    call intpr("The value of exact is ",-1, exact, 1)
-******************************************************************
-
-      subroutine pdf(p, phi, y, mu, exact, 
-     &               funvalue, exitstatus, relerr, its )
-
 ***
 *     Author:         Peter Dunn
 *     Creation date:  15 February 1999
-*     Last revision:  28 September 2004
+*     Last revision:  11 January 2005
+***
+*
+*** 25 NOV 2005:  removed the IF statements in the integration loops
+***               where we stopped if flag==1.
+***               Now we continue anyway.  We did this because often we
+***               stopped after 2, 3 or 4 iterations, without really knowing why.
+*
+* The entry points are  pdf  and  cdf  and employ the asymptotic Sidi method,
+* or the exact zeros method
+*
+* IN R, print statements for debugging as follows:
+*     call dblepr("The value of y is ",-1, y, 1)
+*     call intpr("The value of exact is ",-1, exact, 1)
+******************************************************************
+
+      subroutine pdf(p, phi, y, mu, exact, verbose,
+     &               funvalue, exitstatus, relerr, its )
+
 ***
 *
 *     Calculates the density of the log-likelihood
@@ -23,13 +30,13 @@
 *     IN:   p, phi, y, mu, exact
 *     OUT:  funvalue, exitstatus, relerr, its
 ***
+*** NOTE:  WE SHOULD ALWAYS GET mu=1 FROM R
 
       double precision  p, phi, y, funvalue, mu, savemu,
      &                  lambda, calclambda, pi, area,
-     &                  result, relerr, c, D, aimrerr
+     &                  result, relerr, c, aimrerr
       integer  ier, maxit, m, iteratn, exitstatus,
-     &         its, exact
-      logical restore
+     &         its, exact, verbose
 
 ***
 * VARIABLES:
@@ -41,7 +48,6 @@
 *    lambda   : for 1<p<2, P(Y=0) = exp( -lambda )
 *    p        : the index (ie variance function is V(mu) = mu^p)
 *    phi      : the dispersion parameter
-*    restore  : TRUE if the old values have to be restored after altering
 *    funvalue : the value of the function at the given value of  x
 *    bound    : The bound using Chebyshev theorm.
 *    exitstatus:  1  if relative error is smaller than wished (aimrerr)
@@ -49,13 +55,15 @@
 *               -10  if neither rel or abs error any good
 *    exact    : 1 if the exact zero acceleration algorithms is used;
 *               0 if the approx zeros acceleration algorithm is used.
+*    verbose  : 1 to print lots of diagnostic information
+*             : 0 to keep quiet
 ***
 
 *     Set defaults
       exitstatus = 1
       relerr = 0.0d00
       its = 0
-
+      
 *     SPECIAL CASES {
 	   if ( p .EQ. 1.0d00 ) then
 		   funvalue = -10.d00
@@ -99,12 +107,14 @@
 
 *     SET ACCURACY REQUIREMENTS
 *     maximum number of iterations in calculating errors
-      maxit = 200
-      aimrerr = 1.0d-12
+      maxit = 100
+      aimrerr = 1.0d-10
 
 *     set other parameters
       m = -1
-      pi = 3.14159 26535 89793 23846 26433d00
+      pi = acos( -1.0d00 )
+*      pi = atan( 1.0d00 ) * 4.0d00
+*     pi = 3.14159 26535 89793 23846 26433d00
       area = 0.0d00
       iteratn = 0
       relerr = 1.0d00
@@ -117,46 +127,24 @@
 *     evaluate  f( y/\mu, 1, (\mu)^{2-p}\phi)
 *     and the actual density should be c times this.
         
-      D = ( y * ( mu ** (1.0d00 - p) - 1.0d00 ) ) /
-     &         ( 1.0d00 - p ) -
-     &     ( mu ** (2.0d00 - p) - 1.0d00 ) / ( 2.0d00 - p )
-
-      restore = .FALSE.
-
+	  
 *     DETERMINE a(y,phi) (except in normal and gamma cases, where
 *     the distribution is determined from the closed form result).
 
-      if ( (D/phi) . GT. 0.0d00 ) then
-
-         c = 1.0d00 / mu
-
-         mu = 1.0d00
-         phi = c ** ( 2.0d00 - p ) * phi
-         y = c * y
-
-         restore = .TRUE.
-
-      else
-
-*        if not using above, we find a(y,phi) = f(y; mu=1, phi)
-         mu = 1.0d00
-
-      endif
 
       if ( exact .EQ. 1 ) then
 *        Use exact zero acceleration algorithm
          if ( (p .GT. 1.0d00).AND.(p .LE. 2.0d00) ) then
             call smallp( p, phi, y, mu, aimrerr, result,
      &                   maxit, ier, exitstatus, relerr, 
-     &                   its )
+     &                   its, verbose )
 *           This has found P(y|y>0); must convert back to P(Y)
 
          elseif ( p .GT. 2.0d00 ) then
 
             call bigp( p, phi, y, mu, aimrerr, result,
      &                 maxit, ier, exitstatus, relerr, 
-     &                 its )
-
+     &                 its, verbose )
 
          endif
 
@@ -165,33 +153,12 @@
 *        Use approx zero acceleration algorithm
          call evlint( p, phi, y, mu, aimrerr, result,
      &                maxit, ier, exitstatus, relerr, 
-     &                its )
+     &                its, verbose )
 *         result = -1000.0d00
 
       endif
 
       funvalue = result
-
-      if ( restore ) then
-
-         funvalue = c * funvalue
-
-*        return parameters to old values
-         mu = 1.0d00 / c
-         y = y / c
-         phi = phi * c ** ( p - 2.0d00 )
-
-      else
-
-         mu = savemu
-
-         D = ( y * ( mu ** (1.0d00 - p) - 1.0d00 ) ) 
-     &               / ( 1.0d00-p ) -
-     &       ( mu ** (2.0d00 - p) - 1.0d00 ) / 
-     &               ( 2.0d00-p )
-         funvalue = funvalue * exp( D / phi )
-
-      endif
 
 *     Some tidy-ups
       if ( funvalue .LT. 0.0d00 ) funvalue = 0.0d00
@@ -199,15 +166,13 @@
       return
       end
 
-***
+******************************************************************
+******************************************************************
+******************************************************************
 
       subroutine cdf(p, phi, y, mu, exact,
      &			     funvalue, exitstatus, relerr, its )
 
-***
-*     Author:         Peter Dunn
-*     Creation date:  15 February 1999
-*     Last revision:  05 August 2002
 ***
 *
 *     Calculates the cdf of the log-likelihood
@@ -224,7 +189,7 @@
      &                  result, relerr, aimrerr,
      &                  result0
       integer  ier, maxit, iteratn, exitstatus,
-     &         its, exact
+     &         its, exact, verbose
 
 ***
 * VARIABLES:
@@ -246,6 +211,7 @@
 ***
 
 *     Set defaults
+      verbose = 0
       exitstatus = 1
       relerr = 0.0d00
       its = 0
@@ -290,8 +256,8 @@
 
 
 *     SET ACCURACY REQUIREMENTS
-      maxit = 200
-      aimrerr = 1.0d-14
+      maxit = 100
+      aimrerr = 1.0d-10
 
 *     set other parameters
       iteratn = 0
@@ -333,7 +299,7 @@
 
 *        	Poisson-gamma case
          	call cumsmallp( p, phi, y, mu, aimrerr, 
-     &    	   resulta, ier, relerr, its )
+     &    	   resulta, ier, relerr, its, verbose )
 
          	result0 = 0.5d00
 
@@ -348,7 +314,7 @@
 
       	    call cumbigp( p, phi, y, mu, aimrerr, 
      &               resulta, maxit, ier, exitstatus, 
-     &               relerr, its )
+     &               relerr, its, verbose )
          	 result0 = 0.5d00
 
           	funvalue = resulta + result0
@@ -387,7 +353,7 @@
 ****************************************************************
 
       subroutine evlint( p, phi, y, mu, aimrerr, result,
-     &              maxit, ier, exitstatus, relerr, its )
+     &              maxit, ier, exitstatus, relerr, its, verbose )
 
 ***
 *     Calculates the density in the case of distributions.
@@ -399,7 +365,7 @@
      &                  xvec(200), w, wold(3), area0, 
      &                  mu, f, tmax, kmax, sumarea
       integer  its, ier, maxit, flag, exitstatus, itsidi, 
-     &         mmax
+     &         mmax, verbose
 
       external  f, f2
 
@@ -410,7 +376,9 @@
 *                  -10  if neither rel or abs error any good
 ***
 *     SET OTHER PARAMETERS
-      pi = 3.14159 26535 89793 23846 26433d00
+      pi = acos( -1.0d00 )
+*      pi = atan( 1.0d00 ) * 4.0d00
+*      pi = 3.14159 26535 89793 23846 26433d00
       area = 0.0d00
       area0 = 0.0d00
       its = 0
@@ -508,10 +476,10 @@
 
          call sidiacc( area, result, xvec, mmatrix,
      &        nmatrix, w, itsidi, relerr, wold, 
-     &        sumarea, flag )
+     &        sumarea, flag, verbose )
 
          relerr = ( abs( w-wold(1) ) + 
-     &               abs( ( w-wold(2) ) ) ) /w
+     &               abs( ( w-wold(2) ) ) ) / w 
 
          area = area + result
 
@@ -708,7 +676,9 @@
 ***
 
 *     Set-up some parameters
-      pi = 3.14159 26535 89793 32846 26433d+00
+      pi = acos( -1.0d00 )
+*      pi = atan( 1.0d00 ) * 4.0d00
+*      pi = 3.14159 26535 89793 32846 26433d+00
 
 *     Now, in the case 1<p<2, we need to alter the mgf as we have to
 *     use the conditional distribution of y given y>0.
@@ -748,6 +718,7 @@
 ***
 *     Calculates lambda, such that  P(Y=0) = exp( -lambda )
 *     in the case  1<p<2.
+*     NOTE:  IF p>2, this code is not used
 ***
 
       double precision  p,  phi, mu
@@ -765,7 +736,7 @@
 
       subroutine sidiacc( FF, psi, xvec, mmatrix, nmatrix, w,
      &                    znum, relerr, wold, sumarea, 
-     &                    flag )
+     &                    flag, verbose )
 
 ***
 *     Accelerates the series using Sidi's (1988) method.  Works
@@ -776,7 +747,7 @@
       double precision  mmatrix(2, 200), nmatrix(2, 200),
      &          xvec(200), FF, psi, w, relerr, wold(3),
      &          denom, sumarea, abserr, largest, wsave
-      integer  i, znum, ell, flag
+      integer  i, znum, ell, flag, verbose
 
 ***
 *     VARIABLES
@@ -810,11 +781,26 @@
          mmatrix(2, 1) = FF / psi
          nmatrix(2, 1) = 1.0d00 / psi
          sumarea = sumarea + psi
+*         call intpr("In sidiacc, verbose = ", -1, verbose, 1)
+         
+         if ( verbose .EQ. 1 ) then
+            call dblepr("    w(x) = ", -1, psi, 1)
+            call dblepr("    F(x) = ", -1, FF, 1)
+            call dblepr("    M-matrix (2,1) = ", -1, 
+     &                  mmatrix(2,1), 1)
+            call dblepr("    N-matrix (2,1) = ", -1, 
+     &                  nmatrix(2,1), 1)
+         endif
 
 *        Add the new information
          flag = 0
          do i = 2, znum
-
+   
+            if ( verbose .EQ. 1 ) then
+               call intpr("    Adding new info at element ", 
+     &                     -1, i, 1)
+            endif
+            
             denom = 1.0d00 / xvec(znum+1-i) - 
      &                        1.0d00 / xvec(znum)
    
@@ -825,6 +811,15 @@
      &                        nmatrix(2, i-1) ) 
      &                      / denom
 
+            
+            if ( verbose .EQ. 1 ) then
+               call dblepr("    demoninator = ", -1, denom, 1)
+               call dblepr("    New M-matrix entry = ", -1, 
+     &                     mmatrix(2,i), 1)
+               call dblepr("    New N-matrix entry = ", -1, 
+     &                     nmatrix(2,i), 1)
+            endif
+            
             if ( (abs(mmatrix(2, i)) .GT. largest) .OR.
      &           (abs(nmatrix(2, i)) .GT. largest) ) then
 
@@ -834,6 +829,9 @@
 
          enddo
 
+         
+         
+         
          if ( (abs(mmatrix(2,znum)) .GT. largest) .OR.
      &        (abs(nmatrix(2,znum)) .GT. largest) ) then
 
@@ -845,6 +843,9 @@
 
             if ( znum .GT. 1 ) then
                w = mmatrix(2, znum) / nmatrix(2, znum)
+               if ( verbose .EQ. 1 ) then
+                  call dblepr("    New W value = ", -1, w, 1)
+               endif
             endif
 
             wold(1) = wold(2)
@@ -859,13 +860,17 @@
 *        This causes problems here though, and failure to work?????
 *        (eg, try it with p=1.5, mu=phi=1, y=0(100)10)?????????????
 
-      if ( ell .GT. 3 ) then
-         relerr = abs( w - wold(1) ) + 
-     &            abs( ( w - wold(2) ) ) / w
-         abserr = abs( wold(3) - wold(2) )
-      else
-         relerr = 1.0d00
-      endif
+         if ( ell .GT. 3 ) then
+            relerr = abs( w - wold(1) ) + 
+     &               abs( ( w - wold(2) ) ) / w
+            abserr = abs( wold(3) - wold(2) )
+            if ( verbose .EQ. 1 ) then
+               call dblepr("    Rel. error estimate = ", 
+     &                     -1, relerr, 1)
+            endif
+         else
+            relerr = 1.0d00
+         endif
 
          if ( w .NE. 0.0d00 ) then
             relerr = relerr
@@ -903,7 +908,9 @@
 
 ***
 
-      pi = 3.14159 26535 89793 23846 26433d00
+      pi = acos( -1.0d00 )
+*      pi = atan( 1.0d00 ) * 4.0d00
+*      pi = 3.14159 26535 89793 23846 26433d00
       ier = 0
       allok = 1
       largest = 1.0d30
@@ -1824,7 +1831,7 @@
 
          endif
 
-          if ( abs( dx ) .LT. 1.0d-12 ) return
+!           if ( abs( dx ) .LT. 1.0d-13 ) return
 
          f = fun( p, phi, y, sfzro )
          df = dfun( p, phi, y, sfzro )
@@ -1899,11 +1906,12 @@
 
  
       subroutine smallp( p, phi, y, mu, aimrerr, result,
-     &                     maxit, ier, exitstatus, relerr, its )
+     &                   maxit, ier, exitstatus, relerr, its, 
+     &                   verbose )
 
 ***
-*     Calculates the density in the case of distributions with
-*     p<1.05<p<2
+*     Calculates the density in the case of distributions with 
+*     1 < p < 2
 ***
 
       double precision  p, phi, y,  pi, area, aimrerr,
@@ -1914,10 +1922,10 @@
      &         sumarea, sfzro2, mu, area1, 
      &         sbuffer, sfzro, zerofn, zerodfn, 
      &         lower, upper, tstep,     
-     &         zarea0, z1lo, z1hi, zdelta, resultp,
-     &         lambda, calclambda
+     &         zarea0, z1lo, z1hi, zdelta, resultp
       integer  m, iteratn, ier, maxit, flag, numzr, tier,
-     &         exitstatus, its, i, go, exitflag
+     &         exitstatus, its, i, go, exitflag, totalits,
+     &         verbose
 
       external  f, g, intim, dk, sfzro2, zerofn,
      &          zerodfn, sfzro, f2
@@ -1931,7 +1939,9 @@
 
 *     SET OTHER PARAMETERS
       m = -1
-      pi = 3.14159 26535 89793 23846 26433d00
+      pi = acos( -1.0d00 )
+*      pi = atan( 1.0d00 ) * 4.0d00
+*      pi = 3.14159 26535 89793 23846 26433d00
       area = 0.0d00
       area0 = 0.0d00
       area1 = 0.0d00
@@ -1939,10 +1949,12 @@
       relerr = 1.0d00
       sbuffer = 0
       flag = 0
-      its = 0
+      totalits = 1
+*     totalits = 1 (not 0) as the first region is done separately; 
+*     this is that one region     
       ier = 0
       tier = 0
-		resultp = 0.0d00
+      resultp = 0.0d00
 
       wold(1) = 0.0d00
       wold(2) = 0.0d00
@@ -1950,28 +1962,32 @@
 
 *     FIND FIRST ZERO
       zero1 = 0.0d00
+      
 *     Find bounds on the other zero
       call findsp( p, mu, phi, y, lower, upper, flo, fhi )
-*      print *,'Starting point bounds: ',lower, upper
-*      print *,' with values:          ',flo, fhi
 
 *     This is linear interpolation between lower and upper:
       t0 = upper - fhi * ( upper - lower ) / ( fhi - flo )
 
-*      print *,'sfzro with ', lower, upper, t0
       zero2 = sfzro( p, phi, y, lower, upper, t0, 
      &               zerofn, zerodfn, ier )
       tier = tier + ier
-*      print *,'zero1, zero2: ',zero1, zero2
-*     FIND FIRST AREA
-*      print *,'zero1,zero2,p,phi,y,mu'
-*      print *, zero1,zero2,p,phi,y,mu
 
+*     FIND FIRST AREA
 *     The first region can be very strange.  For care, we use a
 *     very high order Gaussian method, and break the region into
 *     small pieces and operate on each separately.  Any funny business
 *     should then hopefully be cornered.
       numzr = 20
+* WAS 20:  Changed 07/Dec/2005
+      
+      if ( verbose .EQ. 1 ) then
+         call dblepr(" Integrating between ",-1,zero1,1)
+         call dblepr(" and ",-1,zero2,1)
+         call intpr(" using this many sub-regions: ",-1,numzr,1)
+      endif
+      
+      
       zdelta = zero2 / dble( numzr )
       z1lo = 0.0d00
       z1hi = 0.0d00
@@ -1979,38 +1995,35 @@
          zarea0 = 0.0d00
          z1lo = z1hi
          z1hi = z1hi + zdelta
-*         call gaussq0( f2, zarea0, z1lo, z1hi, p, phi, y, mu )
-      call gaussq(f2, zarea0, z1lo, z1hi, p, phi, y, mu )
-*      print *,  zarea0, z1lo, z1hi, p, phi, y, mu
-*         print *,'z1lo, z1hi,zarea0: ',z1lo, z1hi, zarea0
+         call gaussq(f2, zarea0, z1lo, z1hi, p, phi, y, mu )
          area0 = area0 + zarea0
       enddo
-*      print *,'INT0: ',zero1,zero2,area0
+*     So that is one iteration (between t=0 and t=<first zero>: 
+*     hence totalits = 1 up to here
 
       zero1 = zero2
       tstep = zero2 / 2.0d00
-***CHeck this step
-*      print *,'tstep = ',tstep
 
 *     NOW, DO A FEW MORE ITS FOR SAFETY'S SAKE
+*     as the regions can be dodgy when 1<p<2
       go = 1
       flag = 0
       area1 = 0.0d00
 
 550   if ( go .EQ. 1 ) then
 
-         its = its + 1
+         totalits = totalits + 1
 
 *        FIND THE ZERO
 *        We don't jump too far ahead of ourselves--especially
 *        early on, when some intervals can be pretty dodgy.
          lower = zero1 + tstep*0.05d00
          upper = zero1 + 0.3d00*tstep
-*      print *,'lower, upper: ',lower, upper
 
          flo = zerofn( p, phi, y, lower )
          fhi = zerofn( p, phi, y, upper )
 
+*        Try harder to bound the zero        
  650     if ( ( flo * fhi ) .GT. 0.0 ) then
 
             lower = upper
@@ -2018,44 +2031,36 @@
 
             flo = zerofn(p, phi, y, lower)
             fhi = zerofn(p, phi, y, upper)
-*      print *,'  TRY HARDER: lower, upper: ',lower, upper
-*      print *,'              valuesL       ',flo, fhi
 
             goto 650
-
+         
          endif
 
 
          zero2 = sfzro( p, phi, y, lower, upper, t0,
      &                   zerofn, zerodfn, ier )
-****TESTING:
-*      if ( ier .LT. 0 ) print *,'ERR here IASUjii'
-*      print *,'Finding zero b/t: ',lower,upper,zero2
-          tier = tier + ier
+         tier = tier + ier
 
-*         if ( flag .EQ. 0 ) then
-   
-*           Keep track of last result, too
-            resultp = result
+*        Keep track of last result, too
+         resultp = result
 
-*           INTEGRATE
-            call gaussq( f2, result, zero1, zero2, 
-     &                   p, phi, y, mu )
-*            call gaussq0( f2, result, zero1, zero2, p, phi, y, mu )
-*            call gausscos( f2, result, tlo, thi, 1, p, phi, y, mu )
+*        INTEGRATE
+         call gaussq( f2, result, zero1, zero2, 
+     &                p, phi, y, mu )
+         if ( verbose .EQ. 1 ) then
+            call dblepr(" Integrating between ",-1,zero1,1)
+            call dblepr(" and ",-1,zero2,1)
+         endif
 
-*           SUM AREA
-            area1 = area1 + result
-*      print *,'PRE sidi: ',zero1,zero2,result, area1
+*        SUM AREA
+         area1 = area1 + result
 
-*           PREPARE FOR NEXT ITERATION
-            tstep = zero2 - zero1
-            zero1 = zero2 
-            t0 = zero2 + ( 0.8d00 * tstep )
+*        PREPARE FOR NEXT ITERATION
+         tstep = zero2 - zero1
+         zero1 = zero2 
+         t0 = zero2 + ( 0.8d00 * tstep )
 
-***BUT we must find a way of stopping if we can, otherwise we can have a
-*  *large* number of iterations, some of which are zero, and so are unnecessary.
-
+*        See if we can stop now
          if ( sbuffer .GE. 3 ) then
             go = 0
          endif
@@ -2063,33 +2068,32 @@
          sbuffer = sbuffer + 1
 
 *        Also stop if the areas are getting really small
-***MAKE SURE this is OK:  Might have some small regions here that
-*  don't mean we've finished.  Any other way to test?
-         if ( ( abs(result) .LT. aimrerr/10000.d00 ) .AND.
-     &        (abs(resultp) .LT. aimrerr/10000.d00 ) .AND.
-     &        ( its .GT. 10 ) ) then
-            go = 0
-         endif
+*         if ( ( abs(result) .LT. aimrerr/10000.d00 ) .AND.
+*     &        (abs(resultp) .LT. aimrerr/10000.d00 ) .AND.
+*     &        ( its .GT. 10 ) ) then
+*            go = 0
+*         endif
 
-         if ( result .EQ. 0.0d00 ) then
-            go=0
-         endif
+*         if ( result .EQ. 0.0d00 ) then
+*            go=0
+*         endif
+* Those lines above commented out 15 Sep 2005
 
          goto 550
 
       endif
 
-
-*     NOW, INTEGRATE PAST  sidit  WITH ACCELERATION
+*     NOW, INTEGRATE WITH ACCELERATION
 *     We only need to do this if the regions have any significant area
-      if ( ( abs(result) .LT. aimrerr/10000.d00 ) .AND.
-     &     (abs(resultp) .LT. aimrerr/10000.d00 ) .AND.
-     &     ( its .GT. 10 ) ) then
-         go = 0
-         exitflag = 1
-      else
-         go = 1
-      endif
+*      if ( ( abs(result) .LT. aimrerr/10000.d00 ) .AND.
+*     &     (abs(resultp) .LT. aimrerr/10000.d00 ) .AND.
+*     &     ( its .GT. 10 ) ) then
+*         go = 0
+*         exitflag = 1
+*      else
+*         go = 1
+*      endif
+      go = 1
       flag = 0
       its = 0
       area = 0.0d00
@@ -2097,21 +2101,19 @@
 
  1550 if ( go .EQ. 1 ) then
 
-*      print *,'    ~~~~ its = ',its,' ~~~~'
          its = its + 1
-
+         totalits = totalits + 1
+         
 *        FIND THE ZERO
 *        Our jumps here can be a little more bold, since most of the
 *        initial antics should have been sorted out.
          lower = zero1 + 0.05d00*tstep
          upper = zero1 + 0.8d00 *tstep
-
+ 
 *        Note:  zero1 has been set above
 
          flo = zerofn( p, phi, y, lower )
          fhi = zerofn( p, phi, y, upper)
-*       print *,'lower, upper, flo, fhi'
-*       print *,lower, upper, flo, fhi
 
  1650    if ( ( flo * fhi ) .GT. 0.0 ) then
 
@@ -2121,8 +2123,6 @@
             flo = zerofn(p, phi, y, lower)
             fhi = zerofn(p, phi, y, upper)
 
-*      print *,'  HARDER: lower, upper: ',lower, upper
-*      print *,'  with values of: ',flo, fhi
             goto 1650
 
          endif
@@ -2130,64 +2130,44 @@
 *        This is linear interpolation:
          t0 = lower - flo * (upper -  lower ) / 
      &            ( fhi - flo )  
-*         print *,'lower, t0, upper, flo,fhi:'
-*         print *,lower, t0, upper, flo,fhi
-******
          zero2 = sfzro( p, phi, y, lower, upper, t0,
      &                   zerofn, zerodfn, ier )
           tier = tier + ier
 
-*      if ( ier .LT. 0 ) print *,'ERR here QSZQEii',lower,upper,t0
-
             call gaussq( f2, result, zero1, zero2,
      &                     p, phi, y, mu )
-*            call gausscos( f2, result, zero1, zero2, 1, 
-*     &                     p, phi, y, mu )
-*           SURELY gausscos OK NOW?
 
 *           ACCELERATE CONVERGENCE
             xvec( its + 1 ) = zero2
             call sidiacc( area, result, xvec, mmatrix,
      &           nmatrix, w, its, relerr, wold, sumarea, 
-     &           flag )
-*YYYYYYYYYYYYYYYYYYYYYYYYYYY
-            if ( its .GT. 3 ) then
-***IS THIS CORRECT????
-               relerr =  ( abs( w-wold(1) ) + 
+     &           flag, verbose )
+            
+            if ( its .GE. 3 ) then
+               
+               relerr =  ( abs(   w-wold(1) ) + 
      &                     abs( ( w-wold(2) ) ) )
      &               / (area0 + area1 + w)
-***Added area1+w on 22/11/99:  was just area1
-***Added *all* the top line all as numerator!  10/12/1999
             endif
-*      print *,' ITERATION ',its,':'
-*      print *,'POST sidi: ', zero1, zero2,result,w,wold(1),relerr
-*      print *,'area0, area1, w =', area0, area1, w
-*      print 1234, w, wold(1), wold(2),relerr, (area0+area1+w)
-* 1234 format('w = ', f20.15,'; wold(1,2) = ',f20.15,f20.15,
-*     &       '; relerr = ',f20.15, '; total area = ',f20.15)
+         
          if ( flag .EQ.1 ) then
 *            print *,'Machine limits being reached...'
          endif
 
+*        SUM AREA
+         area = area + result
 
-*           SUM AREA
-            area = area + result
-*      print *,'Running sum of area: ',area
-
-*           PREPARE FOR NEXT ITERATION
-            tstep = zero2 - zero1
-            zero1 = zero2 
-            t0 = zero2 + ( 0.8d00 * tstep )
+*        PREPARE FOR NEXT ITERATION
+         tstep = zero2 - zero1
+         zero1 = zero2 
+         t0 = zero2 + ( 0.8d00 * tstep )
 
 *        NOTE IF FLAG=1, the limits of the machine are being reached.
 *        We stop and report that required accuracy may not be achieved.
 
-         if (     ( ( its .LT. 4 ) .AND.
-     &              ( flag .NE. 1 )
-     &            )
+         if (     ( its .LT. 3 ) 
      &         .OR.
      &            ( ( its .LT. maxit ) .AND.
-     &              ( flag .NE. 1 ) .AND.
      &              ( abs(relerr) .GT. aimrerr )
      &            )
      &      ) then
@@ -2206,7 +2186,6 @@
 *        error isn't that small.  Since w is small, we can make
 *        do with it anyway.  So we check this case too.
 
-
          if ( flag .EQ. 1 ) then
 
             ier = -90
@@ -2214,30 +2193,29 @@
 
          endif
 
-*      print *,'--------->  w, relerr: ',w, relerr
          goto 1550
 
       endif
 
 
-      lambda = calclambda(p, phi, mu)
 
-*      print *,'--->  area0, area1, w: ', area0, area1, w
       result = area0 + area1 + w
       result = result / pi
       ier = tier
+      
+*     Now report the total number of iterations.
+*     This is stored as  totalits; we used  its  above
+*     as it was needed for Sidi acceleration.  Now we
+*     revert to  its
+      its = totalits
 
-*     Recall that the function we integrate has the division by
+*     Recall that the function we integrate (which one?) has the division by
 *     (1.0d00 - exp( -lambda ) ) already built into it.
             
-*      print *,'  -- Y=',y,' GIVES: result, area0, area1, w, ier, tier'
-*      print *, result, area0, area1, w, ier, tier
-
-
 *     Determine the error
-*     (Keep in this order so the most important aspect is returned)
+*     In this order, the most important aspect is returned.
 *     Note also that if we don't use Sidi, and w=0 as set initially,
-*     We have good relative error, so that line should be OK.
+*     we have good relative error, so that line should be OK.
       if ( ( abs(w-wold(1))+abs(w-wold(2)) ) .LT. aimrerr ) then
 *        Absolute error isn't too bad
          exitstatus = -1
@@ -2249,11 +2227,6 @@
 *        Relative error is inside the required accuracy
          exitstatus = 1
       endif
-*      print *,'exitstatus: ',exitstatus
-*      print *,' '
-
-      
-
 
       return
 
@@ -2282,7 +2255,9 @@
 
 ***
 
-      pi = 3.14159 26535 89793 23846 26433d00
+      pi = acos( -1.0d00 )
+*      pi = atan( 1.0d00 ) * 4.0d00
+*      pi = 3.14159 26535 89793 23846 26433d00
 
 		
 ***SURELY can improve when y is small, when t gets large.  This
@@ -2449,10 +2424,22 @@
 
       call calccgf(p, phi, y, x, rl, im)
       imkdash = imgdcgf(p, phi, x)
-
-      D = ( y * ( mu ** (1.0d00-p) - 1.0d00 ) / 
-     &         ( 1.0d00 - p ) ) -
-     &    (     ( mu ** (2.0d00-p) - 1.0d00 ) / ( 2.0d00 - p ) )
+      
+! *     Compute theta
+!       theta = ( mu ** (1.0d00-p) - 1.0d00 ) / 
+!      &         ( 1.0d00 - p ) )
+! 
+! *     Compute kappa(theta)
+!       if ( abs( 2.0d00 - p ) .LT. 1.0d-06 ) 
+! *        Use one more term in Taylor series expansion
+!          kappa = log( mu ) + 
+!      &      (2.0d00 - p) / 2.0d00 * ( ( log(mu) ) ^ 2.0d00 )
+!       
+!       else
+!          mu ** (2.0d00-p) - 1.0d00 ) / ( 2.0d00 - p )
+!       endif
+! 
+!       D = y * theta - kappa
 
       g = exp( rl ) / imkdash
       g = exp( rl ) / ( imkdash - y )
@@ -2468,13 +2455,18 @@
       double precision function intim( p, phi, y, x, m )
 
 ***
+*     Computes
+*       Im( k(t) ) - pi/2 - m*pi
+*     for finding zeros of the imginary part of he integrand for given  m
+***
 
       double precision  pi, x, p, phi, y, im, rl
       integer  m
 
 ***
-
-      pi = 3.14159 26535 89793 23846 26433d00
+      pi = acos( -1.0d00 )
+*      pi = atan( 1.0d00 ) * 4.0d00
+*      pi = 3.14159 26535 89793 23846 26433d00
 
       call calccgf(  p, phi, y, x, rl, im )
 
@@ -2504,7 +2496,7 @@
 ***
 
 *     SET PARAMETERS
-      maxit = 200
+      maxit = 100
       ier = 0
 
 *      print *,'SFZERO2'
@@ -2559,6 +2551,7 @@
      &          .GT. 0.0d00
      &                .OR.
      &        abs(2.0d00*f) .GT. abs( dxold*df) ) then
+*           Then use bisection
 
             dxold = dx
             dx = 0.5d00 * ( xh - xl )
@@ -2568,6 +2561,7 @@
             endif
 
          else
+*           Then use Newton's method
 
             dxold = dx
             dx = f/df
@@ -2580,7 +2574,7 @@
 
          endif
 
-         if ( abs( dx ) .LT. 1.0d-12 ) then
+         if ( abs( dx ) .LT. 1.0d-11 ) then
             return
          endif
 
@@ -2630,8 +2624,10 @@
       smallest= 1.0d-30
 
       ier = 0
-      maxit =  100
-      pi = 3.14159 26535 89793 23846 26433d00
+      maxit = 100
+      pi = acos( -1.0d00 )
+*      pi = atan( 1.0d00 ) * 4.0d00
+*      pi = 3.14159 26535 89793 23846 26433d00
 
 *     This is the point of inflection: a starting point for the zeroing:
       psi = ( pi / 2.0d00 ) * ( 1.0d00-p ) / 
@@ -2707,7 +2703,7 @@
 
       subroutine bigp( p, phi, y, mu, aimrerr, result,
      &                    maxit, ier, exitstatus, relerr, 
-     &                    its )
+     &                    its, verbose )
 
 
 ***
@@ -2722,7 +2718,7 @@
      &          xvec(200), w, wold(3), area0, sumarea,
      &          dk, sfzro2, diff, largest, smallest
       integer  m, its, mmax, firstm, ier, maxit, flag,
-     &         allok, kmaxok, tier, exitstatus
+     &         allok, kmaxok, tier, exitstatus, verbose
 
       external  f, g, intim, dk, sfzro2
 
@@ -2733,13 +2729,20 @@
 *                  -10  if neither rel or abs error any good
 ***
 
+      if ( verbose .EQ. 1 ) then
+         call dblepr("Using p>2 code since p = ",-1, p, 1)
+      endif
+
+
 *     SET ACCURACY REQUIREMENTS
       largest = 1.0d30
       smallest = 1.0d-30
 
 *     SET OTHER PARAMETERS
       m = -1
-      pi = 3.14159 26535 89793 23846 26433d00
+      pi = acos( -1.0d00 )
+*      pi = atan( 1.0d00 ) * 4.0d00
+*      pi = 3.14159 26535 89793 23846 26433d00
       area = 0.0d00
       area0 = 0.0d00
       its = 0
@@ -2752,7 +2755,13 @@
       wold(2) = 0.0d00
       wold(3) = 0.0d00
 
+
+
       if ( y .GE. 1.0) then
+      
+         if ( verbose .EQ. 1 ) then
+            call dblepr(" Using y .GE. 1 since y = ",-1, y, 1)
+         endif
 *        In this case, Im(k) heads down straight away.
 
 *        FIND ZEROS
@@ -2761,24 +2770,19 @@
 *        An approximation to the first zero:
          zero = pi / ( 2.0d00 * y )
 
-*        Now try to find this first zero
-         zlo = 0.0d00
-         zhi = zero*2.0d00
-
-         if ( zhi .GT. largest/10.0d00 ) then
-
-            allok = 0
-            flo = 0.0d00
-            fhi = 0.0d00
-
-         else
-
-            allok = 1
-            flo = intim( p, phi, y, zlo, m )
+*        Bracket first zero
+         zlo = 0.9d00 * pi / (2.0d00 * y )
+         
+         if ( y .GT. 1.0d00 ) then
+            zhi = pi / (2.0d00 * ( y - 1.0d00 ) )
             fhi = intim( p, phi, y, zhi, m )
-
+         else
+            zhi = zero * 2.0d00  
          endif
-
+         flo = intim( p, phi, y, zlo, m )
+         
+         allok = 1
+ 
  565     if ( ( allok .EQ. 1 ) .AND.
      &        (fhi * flo ) .GT. 0.0d00 ) then
 
@@ -2804,27 +2808,54 @@
             return
          endif
 
+         if ( verbose .EQ. 1 ) then
+            call dblepr("  First zero bound by ",-1, zlo, 1)
+            call dblepr("  and ",-1, zhi, 1)
+         endif
          zero2 = sfzro2( p, phi, y, zlo, zhi, zero, 
      &                   intim, dk, m, ier )
+         if ( verbose .EQ. 1 ) then
+            call dblepr("  Found first zero = ",-1, zero2, 1)
+         endif
 
          xvec( 1 ) = zero2
 
 *        special case: between 0 and first zero
+         if ( verbose .EQ. 1 ) then
+            call dblepr("   Integrating between y = ",-1, zero1, 1)
+            call dblepr("                   and y = ",-1, zero2, 1)
+         endif
          call gaussq( f, area0, zero1, zero2, 
      &                p, phi, y, mu )
+         if ( verbose .EQ. 1 ) then
+            call dblepr("   Are is ",-1, area0, 1)
+         endif
 
-*        Set its to one as we have done one integration above         
+*        NOTE:  We don't update the iteration count here, since
+*        we keep it all to work with Sidi acceleration; we instead
+*        add one later (after accelerating)
 
-*        Now do some more integrations and use sidi acceleration
-  500    if (    ( ( its .LT. 4 ) .AND.
-     &             ( flag .NE. 1 )
-     &           )
+*        Now do some more integrations and use Sidi acceleration
+!   500    if (    ( ( its .LT. 4 ) .AND.
+!      &             ( flag .NE. 1 )
+!      &           )
+!      &        .OR.
+!      &           ( ( its .LT. maxit ) .AND.
+!      &             ( flag .NE. 1 ) .AND.
+!      &             ( abs(relerr) .GT. aimrerr )
+!      &           ) 
+!      &      ) then
+  500    if (    ( its .LT. 4 )
      &        .OR.
      &           ( ( its .LT. maxit ) .AND.
-     &             ( flag .NE. 1 ) .AND.
      &             ( abs(relerr) .GT. aimrerr )
      &           ) 
      &      ) then
+     
+            if ( verbose .EQ. 1 ) then
+               call intpr("   Iterating; iteration ",-1, its, 1)
+            endif
+     
 
 *           get next zeros
             m = m - 1
@@ -2875,7 +2906,7 @@
                exitstatus = -10
                return
             endif
-
+     
             zero2 = sfzro2( p, phi, y, zlo, zhi, zero, 
      &                      intim, dk, m, ier )
 
@@ -2885,10 +2916,18 @@
 
 
 *           integrate between zeros
+            if ( verbose .EQ. 1 ) then
+               call dblepr("   Integrating between y = ",-1, zero1, 1)
+               call dblepr("                   and y = ",-1, zero2, 1)
+            endif
+
             call gaussq( f, result, zero1, zero2, 
      &                   p, phi, y, mu )
+            if ( verbose .EQ. 1 ) then
+               call dblepr("   Giving area = ",-1, result, 1)
+            endif
 
-*           Updata iteration count
+*           Update iteration count
             its = its + 1
 
 *           accelerate convergence of infinite sequence
@@ -2896,13 +2935,20 @@
 
             call sidiacc( area, result, xvec, mmatrix,
      &           nmatrix, w, its, relerr, wold, sumarea, 
-     &           flag )
+     &           flag, verbose )
+            if ( verbose .EQ. 1 ) then
+               call dblepr("   Accelerating; w = ",-1, w, 1)
+            endif
 
             relerr = (abs( w-wold(1))+abs(( w-wold(2))))
      &               / (area0 + w)       
 
             area = area + result
 
+            if ( verbose .EQ. 1 ) then
+               call dblepr("  Area = ",-1, area, 1)
+            endif
+            
             go to 500
 
          endif
@@ -2927,19 +2973,30 @@
       else
 *        that is:    if ( y .LT. 1) then
 *        In this case, Im(k) may head up before going to  -infinity
+         if ( verbose .EQ. 1 ) then
+            call dblepr(" Using y .LT. 1 since y = ",-1, y, 1)
+         endif
 
 
 *        FIND k_max AND t_max
          kmaxok = 1
          call fndkmax(p, phi, y, kmax, tmax, mmax, ier)
+         if ( verbose .EQ. 1 ) then
+            call dblepr(" Found kmax = ",-1, kmax, 1)
+         endif
 
          if ( ier .NE. 0 ) then
             tier = tier + ier
             kmaxok = 0
          endif
+         
 
          if ( kmax .LT. pi/2.0d00 ) then
 
+            if ( verbose .EQ. 1 ) then
+               call dblepr(" Using kmax .LT. pi/2; kmax = ",
+     &                     -1, kmax, 1)
+            endif
             m = -1
 
 *           FIND ZEROS
@@ -2999,18 +3056,34 @@
             xvec(1) = zero2
 
 *           integrate between zeros
+            if ( verbose .EQ. 1 ) then
+               call dblepr("  Integrating between y = ",
+     &                     -1, zero1, 1)
+               call dblepr("                  and y = ",
+     &                     -1, zero2, 1)
+            endif
+            
             call gaussq( f, area0, zero1, zero2, 
      &                   p, phi, y, mu )
+            
+            if ( verbose .EQ. 1 ) then
+               call dblepr("  Giving area = ",-1, area0, 1)
+            endif
 
-  600       if (    ( ( its .LT. 4 ) .AND.
-     &                 ( flag .NE. 1 )
-     &               )
+*        NOTE:  We don't update the iteration count here, since
+*        we keep it all to work with Sidi acceleration; we instead
+*        add one later (after accelerating)
+
+
+  600       if (    ( its .LT. 4 )
      &            .OR.
      &               ( ( its .LT. maxit ) .AND.
-     &                 ( flag .NE. 1 ) .AND.
      &                 ( abs(relerr) .GT. aimrerr )
      &               ) ) then
 
+            if ( verbose .EQ. 1 ) then
+               call intpr("  Iteration ",-1, its, 1)
+            endif
 
 *              get next zeros
                m = m - 1
@@ -3076,8 +3149,15 @@
 
 
 *              integrate between zeros
+               if ( verbose .EQ. 1 ) then
+                  call dblepr("  Integrating between y = ",-1, zero1, 1)
+                  call dblepr("                  and y = ",-1, zero2, 1)
+               endif
                call gaussq( f, result, zero1, zero2, 
      &                      p, phi, y, mu )
+               if ( verbose .EQ. 1 ) then
+                  call dblepr("  Giving area ",-1, result, 1)
+               endif
      
 *              Update interation count
                its = its + 1
@@ -3087,12 +3167,19 @@
 
                call sidiacc( area, result, xvec, mmatrix, 
      &              nmatrix, w, its, relerr, wold, 
-     &              sumarea, flag )
+     &              sumarea, flag, verbose )
+               if ( verbose .EQ. 1 ) then
+                  call dblepr("  Accelerating; w = ",-1, w, 1)
+               endif
                relerr = ( abs( w-wold(1) ) + 
      &                 abs( ( w-wold(2) ) ) )
      &                  / (area0 + w)       
 
                area = area + result
+               
+               if ( verbose .EQ. 1 ) then
+                  call dblepr("  Area = ",-1, area, 1)
+               endif
 
                go to 600
 
@@ -3108,7 +3195,7 @@
                ier = -70
                tier = tier + ier
             endif
-
+      
             result = area0 + w
 
 *           Now, the very first integration has not been counted
@@ -3117,9 +3204,15 @@
             its = its + 1
 
          else
+         
 *           that is:   case where kmax >= pi/2
 *           In this case, the upward trend is goes above  pi/2, and so
 *           the first zero will be at  m=0.
+
+            if ( verbose .EQ. 1 ) then
+               call dblepr(" Using kmax .GE. pi/2; kmax = ",
+     &                     -1, kmax, 1)
+            endif
 
 *           Now, kmax may not have been found accurately.  IF, however,
 *           the corresponding max > maxit, it won't matter a great deal
@@ -3201,19 +3294,31 @@
 
             xvec( 1 ) = zero2
 
+            if ( verbose .EQ. 1 ) then
+               call dblepr("  Integrating between y = ",-1, zero1, 1)
+               call dblepr("                  and y = ",-1, zero2, 1)
+            endif
             call gaussq( f, area0, zero1, zero2, 
      &                   p, phi, y, mu )
+            if ( verbose .EQ. 1 ) then
+               call dblepr("  Giving area = ",-1, area0, 1)
+            endif
+*           NOTE:  We don't update the iteration count here, since
+*           we keep it all to work with Sidi acceleration; we instead
+*           add one later (after accelerating)
+
 
             diff = zero2 - zero1
 
-  700       if (    ( ( its .LT. 4 ) .AND.
-     &                ( flag .NE. 1 )
-     &              )
+  700       if (    ( its .LT. 4 )
      &           .OR.
      &              ( ( its .LT. maxit ) .AND.
-     &                ( flag .NE. 1 ) .AND.
      &                ( abs(relerr) .GT. aimrerr )
      &              ) ) then
+
+               if ( verbose .EQ. 1 ) then
+                  call intpr("  Iteration ", 1, its, 1)
+               endif
 
 *              get next zeros
 
@@ -3275,8 +3380,18 @@
                tier = tier + ier
                endif
 
+               if ( verbose .EQ. 1 ) then
+                  call dblepr("  Iteragrating between y = ", 
+     &                        1, zero1, 1)
+                  call dblepr("                   and y = ", 
+     &                        1, zero2, 1)
+               endif
                call gaussq( f, result,  zero1, zero2,
      &                      p, phi, y, mu )
+               if ( verbose .EQ. 1 ) then
+                  call dblepr("  giving area = ", 1, 
+     &                        result, 1)
+               endif
 
 *              Update iteration count
                its = its + 1
@@ -3285,9 +3400,17 @@
                xvec( its+1 ) = zero2
                call sidiacc( area, result, xvec, mmatrix, 
      &            nmatrix, w, its, relerr, wold, sumarea, 
-     &            flag )
+     &            flag, verbose )
+               if ( verbose .EQ. 1 ) then
+                  call dblepr("  Accelerating; w = ", 
+     &                        1, w, 1)
+               endif
 
                area = area + result
+               
+               if ( verbose .EQ. 1 ) then
+                  call dblepr("  Area = ", 1, area, 1)
+               endif
 
                go to 700
 
@@ -3363,6 +3486,10 @@
       endif
       if ( abs(relerr) .LT. aimrerr ) exitstatus = 1
 
+      if ( verbose .EQ. 1 ) then
+         call dblepr("Final result = ", 1, result, 1)
+      endif
+      
       return
       end
 
@@ -3440,7 +3567,7 @@
      &          area1, zerofn, zerodfn,
      &          kmax, tmax
       integer  its, ier, maxit, flag, 
-     &         mmax, exitstatus,
+     &         mmax, exitstatus, verbose,
      &         itsidi
 
       external  cumdk, cumsfzro2, cumintim, imgddcgf,
@@ -3457,7 +3584,9 @@
 
 
 *     SET OTHER PARAMETERS
-      pi = 3.14159 26535 89793 23846 26433d00
+      pi = acos( -1.0d00 )
+*      pi = atan( 1.0d00 ) * 4.0d00
+*      pi = 3.14159 26535 89793 23846 26433d00
       area = 0.0d00
       area0 = 0.0d00
       area1 = 0.0d00
@@ -3547,7 +3676,8 @@
          xvec( itsidi+1 ) = zero2
 
          call sidiacc( area, result, xvec, mmatrix,
-     &        nmatrix, w, itsidi, relerr, wold, sumarea, flag )
+     &        nmatrix, w, itsidi, relerr, wold, sumarea, 
+     &        flag, verbose )
 
          relerr = ( abs( w-wold(1) ) + 
      &              abs( ( w-wold(2) ) ) )
@@ -3625,7 +3755,9 @@
 *                (where sin( Im k(t) ) = m\pi )
 ***
 
-      pi = 3.14159 26535 89793 23846 26433d00
+      pi = acos( -1.0d00 )
+*      pi = atan( 1.0d00 ) * 4.0d00
+*      pi = 3.14159 26535 89793 23846 26433d00
       delta = 1.0d00
       ier = 0
       allok = 1
@@ -3930,7 +4062,6 @@
 *     Uses a modified Newton's Method to find a root between
 *     x1 and x2.  Used when functions called doesn't need
 *     an  m  input; otherwise, use cumsfzro2.
-*     Routine borrowed from Numerical Recipies, with some modifications.
 ***
 *     IN:  p, phi, y, x1, x2, x0, mu, acc, fun, dfun
 *     OUT: cumsfzro
@@ -3946,7 +4077,7 @@
 ***
 
 *     SET PARAMETERS
-      maxit = 200
+      maxit = 100
       ier = 0
 
       fl = fun(p, phi, y, mu, x1)
@@ -4006,7 +4137,7 @@
 
          endif
 
-         if ( abs( dx ) .LT. 1.0d-12 ) then
+         if ( abs( dx ) .LT. 1.0d-11 ) then
             return
          endif
 
@@ -4032,7 +4163,7 @@
 ******************************************************************
 
       subroutine cumsmallp( p, phi, y, mu, aimrerr, 
-     &               resulta, ier, relerr, its )
+     &               resulta, ier, relerr, its, verbose )
 
 ***
 *     Calculates the density in the case of distributions with
@@ -4052,7 +4183,7 @@
      &         cumddk, rl, workvec1, workvec2, lobnd,
      &         hibnd
       integer  m, ier, n, go, its, ceil, floor,
-     &         tpt, mdirn, boost, flag, its1
+     &         tpt, mdirn, boost, flag, its1, verbose
 
       external  cumf2, cumdk, cumsfzro2, cumintim, 
      &          imgddcgf, cumsfzro, ceil, floor, cumddk, 
@@ -4327,7 +4458,7 @@
          xvec( its+1 ) = z1
          call sidiacc( area, result, xvec, mmatrix,
      &          nmatrix,w, its, relerr, wold, sumarea,
-     &          flag )
+     &          flag, verbose )
 
 *        Update
          zold = z1
@@ -4361,7 +4492,7 @@
 
       subroutine cumbigp( p, phi, y, mu, aimrerr, 
      &         resulta, maxit, ier, exitstatus, relerr, 
-     &         its )
+     &         its, verbose )
 
 ***
 *     Calculates the density in the case of distributions when
@@ -4378,13 +4509,12 @@
      &          area1, zero, zerofn, zerodfn, zstep2,
      &          kmax, tmax, zlo, zhi, zstep
       integer  m, its, ier, maxit, flag, allok, kmaxok, 
-     &         mmax, firstm, exitstatus
+     &         mmax, firstm, exitstatus, verbose
 
       external  cumdk, cumsfzro2, cumintim, imgddcgf,
      &          cumsfzro, cumf,zerofn, zerodfn
 
 ***
-
 *     SET ACCURACY REQUIREMENTS
       largest = 1.0d30
       smallest = 1.0d-30
@@ -4393,7 +4523,9 @@
 
 
 *     SET OTHER PARAMETERS
-      pi = 3.14159 26535 89793 23846 26433d00
+      verbose = 0
+      pi = acos( -1.0d00 )
+*      pi = 3.14159 26535 89793 23846 26433d00
       area = 0.0d00
       area0 = 0.0d00
       area1 = 0.0d00
@@ -4545,7 +4677,7 @@
 
             call sidiacc( area, result, xvec, mmatrix,
      &           nmatrix, w, its, relerr, wold, sumarea, 
-     &           flag )
+     &           flag, verbose )
 
             relerr = ( abs( w-wold(1) ) + 
      &                  abs( ( w-wold(2) ) ) )
@@ -4735,7 +4867,7 @@
 
                call sidiacc( area, result, xvec, mmatrix, 
      &            nmatrix, w, its, relerr, wold, 
-     &            sumarea, flag )
+     &            sumarea, flag, verbose )
 
                area = area + result
 
@@ -4921,7 +5053,7 @@
                xvec( its+1 ) = zero2
                call sidiacc( area, result, xvec, mmatrix,
      &                   nmatrix, w, its, relerr, wold, 
-     &                   sumarea, flag )
+     &                   sumarea, flag, verbose )
 
                area = area + result
 
@@ -5083,7 +5215,8 @@
 
 ***
 
-      pi = atan(1.0d00)*4.0d00
+      pi = acos( -1.0d00 )
+*      pi = atan(1.0d00)*4.0d00
       if ( abs( p - 1.5) .LT. 1.0d-02 ) then
          fndst = 0.0d00
       else
@@ -5123,7 +5256,8 @@
 *   im         : the imaginary part of the cgf
 ***
 
-      pi = 3.14159 26535 89793 23846 26433d00
+      pi = acos( -1.0d00 )
+*      pi = 3.14159 26535 89793 23846 26433d00
 
       if ( x .EQ. 0.0d00 ) then
 
@@ -5149,7 +5283,6 @@
 *     Uses a modified Newton's Method to find a root between
 *     x1 and x2 to find kmax.  Used when functions called need
 *     an  m  input; otherwise, use cumsfzro.
-*     Routine borrowed from Numerical Recipies with some modifications.
 ***
 *     IN:  p, phi, y, x1, x2, x0, mu, acc, fun, dfun, m
 *     OUT: cumsfzro2
@@ -5165,7 +5298,7 @@
 ***
 
 *     SET PARAMETERS
-      maxit = 200
+      maxit = 100
       ier = 0
 
       fl = fun(p, phi, y, x1, mu, m)
@@ -5226,7 +5359,7 @@
 
          endif
 
-         if ( abs( dx ) .LT. 1.0d-12 ) then
+         if ( abs( dx ) .LT. 1.0d-11 ) then
             return
          endif
 
