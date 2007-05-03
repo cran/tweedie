@@ -1,9 +1,13 @@
+
+#############################################################################
 .First.lib <- function(lib, pkg)
 {
     library.dynam( "tweedie", pkg, lib )
 }
 
 
+
+#############################################################################
 ptweedie.inversion <- function(q, mu, phi,  power, exact=FALSE ){ 
 # Peter K Dunn 
 # 08 Feb 2000--2005
@@ -57,6 +61,8 @@ density
 }
       
 
+
+#############################################################################
 dtweedie.dldphi.saddle <- function(phi, mu, power, y ){
 # Calculates the derivative of log f wrt phi
 # where the density is the saddlepoint density
@@ -75,6 +81,8 @@ l <-  (-1)/(2*phi) + dev/(2*phi^2)
  
 
 
+
+#############################################################################
 dtweedie.logl <- function(phi, y, mu, power) {
 # Computes the log-likelihood for
 # a Tweedie density.  
@@ -86,6 +94,8 @@ sum( log( dtweedie( y=y, mu=mu, phi=phi, power=power ) ) )
 
 }
 
+
+#############################################################################
 dtweedie.logl.saddle <- function( phi, power, y, mu, eps=0){
 # Calculates the log likelihood of Tweedie densities
 # where the density is the saddlepoint density
@@ -96,6 +106,8 @@ sum( log( dtweedie.saddle(power=power, phi=phi, y=y, mu=mu, eps=eps) ) )
 
 }
 
+
+#############################################################################
 dtweedie.logv.bigp <- dtweedie.logv.bigp <- function( y, phi, power){ 
 # Peter K Dunn 
 # 02 Feb 2000 
@@ -208,6 +220,8 @@ list(lo=lo.k, hi=hi.k, logv=logv, k.max=k.max )
 
 }
 
+
+#############################################################################
 dtweedie.logw.smallp <- function(y, phi, power){ 
 #
 # Peter K Dunn
@@ -299,6 +313,8 @@ list(lo=lo.j, hi=hi.j, logw=logw, j.max=j.max )
 
 }
 
+
+#############################################################################
 dtweedie <- function(y, power, mu, phi)
 {
 #
@@ -566,6 +582,8 @@ density
 
 }
 
+
+#############################################################################
 dtweedie.saddle <- function(y, power, mu, phi, eps=1/6) {
 #
 # Peter K Dunn
@@ -623,6 +641,8 @@ dtweedie.saddle <- function(y, power, mu, phi, eps=1/6) {
 	density
 }
 
+
+#############################################################################
 dtweedie.series.bigp <- function(power, y, mu, phi){ 
  
 # 
@@ -667,6 +687,8 @@ list(density=f, logv=logv, lo=result$lo, hi=result$hi )
 
 }
 
+
+#############################################################################
 dtweedie.series <- function(y, power, mu, phi){ 
 #
 # Peter K Dunn
@@ -740,6 +762,8 @@ density
  
 
 
+
+#############################################################################
 dtweedie.series.smallp <- function(power, y, mu, phi){ 
 
 #
@@ -784,6 +808,8 @@ list(density=f, logw=logw, hi=result$hi, lo=result$lo)
  
 
 
+
+#############################################################################
 ptweedie <- function(q, power, mu, phi) {
 # Evaluates the cdf for
 # Tweedie distributions.
@@ -846,6 +872,10 @@ else{
 return(f)
 
 }
+
+
+
+#############################################################################
 ptweedie.series <- function(q, power, mu, phi) {
 # 
 # Peter K Dunn 
@@ -939,6 +969,10 @@ its <- hi.N - lo.N + 1
 cdf
 
 }
+
+
+
+#############################################################################
 stored.grids <- function(power){
 # This S-Plus function contains all the stored interpolation
 # grids for interpolating the Tweedie densities.
@@ -5165,6 +5199,7 @@ grid
 
 
 
+#############################################################################
 tweedie.dev <- function(y, mu, power)
 {
 # 
@@ -5198,6 +5233,8 @@ tweedie.dev <- function(y, mu, power)
 	dev * 2
 }
 
+
+#############################################################################
 dtweedie.dldphi <- function(phi, mu, power, y ){
 # Calculates the log-likelihood
 # function, wrt phi, for p>2.  In particular, it returns
@@ -5240,6 +5277,8 @@ d
 }
 
 
+
+#############################################################################
 dtweedie.dlogfdphi <- function(y, mu, phi, power)
 {
 #
@@ -5317,6 +5356,8 @@ dtweedie.dlogfdphi <- function(y, mu, phi, power)
 	f
 }
 
+
+#############################################################################
 dtweedie.interp <- function(grid, nx, np, xix.lo, xix.hi,
                             p.lo, p.hi, power, xix) {
 # Does the interpolation calculation
@@ -5360,6 +5401,8 @@ rho
 }
 
 
+
+#############################################################################
 dtweedie.inversion <- function(y, power, mu, phi, exact=TRUE, method=3){ 
 # 
 # Peter K Dunn 
@@ -5372,7 +5415,9 @@ if ( any(phi)<= 0) stop("phi must be positive.")
 if ( any(y<0) ) stop("y must be a non-negative vector.")
 if ( any(mu)<=0 ) stop("mu must be positive.")
 if ( length(mu)>1) {
-   if ( length(mu)!=length(y) ) stop("mu must be scalar, or the same length as y.")
+   if ( length(mu)!=length(y) ) {
+      stop("mu must be scalar, or the same length as y.")
+   }
 }
 else {
    mu <- array( dim=length(y), mu )
@@ -5403,12 +5448,17 @@ for (i in (1:y.len)) {
    # There are three approaches, each a product of a simple bit
    # and a complicated bit computed in FORTRAN
    # We choose Method 3 if no other is requested.
+   #
+   # The methods are documented in Dunn and Smyth (2008):
+   # Method 1: Evaluate a: compute a(y, phi) = f(y; 1, phi)
+   # Method 2: Rescale the mean to 1
+   # Method 3: Rescale y to 1 and evaluate b.
    
    if ( y[i] == 0 ) {
-      density[i] <- exp( -mu[i] ^ (2-p) / ( phi[i] * (2-p) ) )
+      density[i] <- exp( -mu[i] ^ (2-p) / ( phi[i] * (2-power) ) )
    } else {
       # Here, y > 0
-      m1 <- 1/mu[i]
+      m2 <- 1/mu[i]
       
       theta <- ( mu[i]^(1-power) - 1 ) / ( 1 - power )
       if ( ( abs(power - 2 ) ) < 1.0e-07 ){
@@ -5416,7 +5466,7 @@ for (i in (1:y.len)) {
       } else {
          kappa <- ( mu[i]^(2-power) - 1 ) / ( 2 - power )
       }
-      m2 <- exp( (y[i]*theta - kappa )/phi[i] )
+      m1 <- exp( (y[i]*theta - kappa )/phi[i] )
    
       dev <- tweedie.dev(y=y[i], mu=mu[i], power=power )
       m3 <- exp( -dev/(2*phi[i]) ) / y[i]
@@ -5442,7 +5492,7 @@ for (i in (1:y.len)) {
       # NOTE: FOR ALL  METHODS, WE HAVE mu=1
       verbose <- FALSE
       
-      if ( use.method==1 ) {
+      if ( use.method==2 ) {
          tmp <- .Fortran( name="pdf",
             as.double(power),
             as.double(phi[i] / (mu[i]^(2-power)) ), # phi
@@ -5457,10 +5507,10 @@ for (i in (1:y.len)) {
             PACKAGE="tweedie")
    
          den <- tmp[[7]]
-         density[i] <- den * m1
+         density[i] <- den * m2
    
       } else {
-         if ( use.method==2 ) {
+         if ( use.method==1 ) {
             tmp <- .Fortran( name="pdf",
                as.double(power),
                as.double(phi[i]), # phi
@@ -5475,7 +5525,7 @@ for (i in (1:y.len)) {
                PACKAGE="tweedie")
    
             den <- tmp[[7]]
-            density[i] <- den * m2
+            density[i] <- den * m1
    
          } else { # use.method==3
             tmp <- .Fortran( name="pdf",
@@ -5502,6 +5552,8 @@ density
 
 }
       
+
+#############################################################################
 dtweedie.jw.smallp <- function(y, phi, power ){ 
 #
 # Peter K Dunn
@@ -5588,6 +5640,8 @@ list(lo=lo.j, hi=hi.j, jw=jw, j.max=j.max )
 }
  
 
+
+#############################################################################
 dtweedie.kv.bigp <- function(y, phi, power){ 
 # 
 # Peter K Dunn 
@@ -5697,6 +5751,8 @@ list(lo=lo.k, hi=hi.k, kv=kv, k.max=k.max )
 
 }
 
+
+#############################################################################
 qtweedie <- function(p, power, mu, phi){
 
 # Error checks
@@ -5818,6 +5874,10 @@ for (i in (1:length(ans)) ) {
 ans2[ is.na(ans2) ] <-  ans
 ans2
 }
+
+
+
+#############################################################################
 rtweedie <- function(n, power, mu, phi){
 
 # Error checks
@@ -5870,6 +5930,8 @@ else {
     as.vector(rt)
 }
 
+
+#############################################################################
 tweedie.profile <- function(formula, p.vec, link.power = 0, fit.glm=FALSE,
       do.smooth=FALSE, do.plot=FALSE, 
       do.ci=do.smooth, eps=1/6,
@@ -5925,7 +5987,7 @@ if ( do.smooth & (length(p.vec) < 5) ) {
    do.ci <- FALSE
 }
 if ( (conf.level >= 1) | (conf.level <=0)  ){
-   error("Confidence level must be between 0 and 1.")
+   stop("Confidence level must be between 0 and 1.")
 }
 
 if ( !do.smooth & do.ci ) {
@@ -5964,7 +6026,7 @@ b.mat <- array( dim=c(p.len, length(data) ) )
 for (i in (1:p.len)) {
 
    if ( verbose>0) {
-      cat("p=",p.vec[i],"\n")
+      cat("p =",p.vec[i],"\n")
    } else {
       cat(".")
    }
@@ -5974,7 +6036,7 @@ for (i in (1:p.len)) {
    # then use  uniroot to solve for it.
 
    # Set things up
-    p <- p.vec[i]
+   p <- p.vec[i]
 
    phi.pos <- 1.0e2
    bnd.neg <- -Inf
@@ -5983,52 +6045,75 @@ for (i in (1:p.len)) {
     if (verbose==2) cat("* Fitting initial model:")
 
    # Fit the model with given p
-   fit.model <- glm.fit( x=model.x, y=data,
-         family=tweedie(var.power=p, link.power=link.power),
-        control=glm.control(epsilon=1e-10) )
-   # NOTE:  We need epsilon to be very small to make a
-   #        smooth likelihood plot
-
-   mu <- fitted( fit.model )
-
+   catch.possible.error <- try(
+      fit.model <- glm.fit( x=model.x, y=data,
+                            family=tweedie(var.power=p, link.power=link.power),
+                            control=glm.control(epsilon=1e-9) ),
+      silent = TRUE
+   )
+   
+   skip.obs <- FALSE
+   if ( class( catch.possible.error )=="try-error" ) {
+      skip.obs <- TRUE 
+   }
+   
+   if( skip.obs ) {
+      warning(paste("  Problem near p = ",p,"; this error reported:\n     ",
+                     catch.possible.error,
+                    " Examine the data and function inputs carefully.") )
+   
+      # NOTE:  We need epsilon to be very small to make a
+      #        smooth likelihood plot
+      cat("*")
+      mu <- rep(NA, length(data) )
+      
+    } else {
+      mu <- fitted( fit.model )
+    }
     if (verbose==2) cat(" Done\n")
 
     ### -- Start:  Estimate phi
     if (verbose>=1) cat("* Phi estimation, method: ", phi.method)
-   if ( phi.method=="mle"){
-
-    if (verbose>=1) cat(" (using optimize): ")
-
-      # Saddlepoint approx of phi:
-      phi.saddle <- sum( tweedie.dev(y=data, mu=mu, power=p) )/length( data )
-
-      if ( is.nan(phi) ) {
-
-         # NOTE:  This is only used for first p.
-         #        The remainder use the previous estimate of phi as a starting point
-
-          # Starting point for phi:  use saddlepoint approx/EQL.
-        phi.est <- phi.saddle
-
-      }else{
-         phi.est <- phi
+    
+    if( skip.obs ) {
+      if (verbose>=1) cat("; but skipped for this obs\n")
+      phi.est <- phi <- phi.vec[i] <- NA
+    } else {
+      if ( phi.method=="mle"){
+   
+         if (verbose>=1) cat(" (using optimize): ")
+      
+            # Saddlepoint approx of phi:
+            phi.saddle <- sum( tweedie.dev(y=data, mu=mu, power=p) )/length( data )
+      
+            if ( is.nan(phi) ) {
+      
+               # NOTE:  This is only used for first p.
+               #        The remainder use the previous estimate of phi as a starting point
+      
+               # Starting point for phi:  use saddlepoint approx/EQL.
+            phi.est <- phi.saddle
+      
+            } else {
+               phi.est <- phi
+            }
+            low.limit <- min( 0.001, phi.saddle/2)
+            
+      #    ans <- nlm(p=phi.est, f=dtweedie.nlogl, 
+      #                hessian=FALSE,
+      #                power=p, mu=mu, y=data)
+         ans <- optimize(f=dtweedie.nlogl, maximum=FALSE, interval=c(low.limit, 10*phi.est),
+                        power=p, mu=mu, y=data )
+      #       phi <- phi.vec[i] <- ans$estimate
+         phi <- phi.vec[i] <- ans$minimum
+         if (verbose>=1) cat(" Done (phi =",phi.vec[i],")\n")
+   
+      } else{ # phi.method=="saddlepoint")
+   
+         if (verbose>=1) cat(" (using mean deviance/saddlepoint): ")
+         phi <- phi.est <- phi.vec[i] <- sum( tweedie.dev(y=data, mu=mu, power=p) )/length( data )
+         if (verbose>=1) cat(" Done (phi =",phi,")\n")
       }
-       low.limit <- min( 0.001, phi.saddle/2)
-       
-#    ans <- nlm(p=phi.est, f=dtweedie.nlogl, 
-#                hessian=FALSE,
-#                power=p, mu=mu, y=data)
-    ans <- optimize(f=dtweedie.nlogl, maximum=FALSE, interval=c(low.limit, 10*phi.est),
-                    power=p, mu=mu, y=data )
-#       phi <- phi.vec[i] <- ans$estimate
-    phi <- phi.vec[i] <- ans$minimum
-    if (verbose>=1) cat(" Done (phi =",phi.vec[i],")\n")
-
-   }else{ # phi.method=="saddlepoint")
-
-       if (verbose>=1) cat(" (using mean deviance/saddlepoint): ")
-        phi <- phi.est <- phi.vec[i] <- sum( tweedie.dev(y=data, mu=mu, power=p) )/length( data )
-        if (verbose>=1) cat(" Done (phi=",phi,")\n")
     }
     
     ### -- Done:  estimate phi
@@ -6041,39 +6126,41 @@ for (i in (1:p.len)) {
    # Now compute the log-likelihood
     if (verbose>=1) cat("(method =",method,"):")
 
-   if ( method=="saddlepoint") {
-      L[i] <- dtweedie.logl.saddle(y=data, mu=mu, power=p, phi=phi, eps=eps)
-   }
-   else{
-    if (p==2) {
-         L[i] <- sum( log( dgamma( rate=1/(phi*mu), shape=1/phi, x=data ) ) )
+    if ( skip.obs ) {
+      if (verbose>=1) cat(" but skipped for this obs\n")
+      L[i] <- NA
+    } else {   
+      if ( method=="saddlepoint") {
+         L[i] <- dtweedie.logl.saddle(y=data, mu=mu, power=p, phi=phi, eps=eps)
+      } else{
+      if (p==2) {
+            L[i] <- sum( log( dgamma( rate=1/(phi*mu), shape=1/phi, x=data ) ) )
+         }
+         else{
+            if ( p == 1 ) {
+               L[i] <- sum( log( dpois(x=y/phi, lambda=mu/phi ) ) )
+         }
+         else{
+               L[i] <- switch(
+                  pmatch(method, c("interpolation","series", "inversion"), 
+                                 nomatch=2),
+                  "1" = dtweedie.logl( mu=mu, power=p, phi=phi, y=data),
+                  "2" = sum( log( dtweedie.series( y=data, mu=mu, power=p, phi=phi) ) ),
+                  "3" = sum( log( dtweedie.inversion( y=data, mu=mu, power=p, phi=phi) ) ) )
+         }
+         }
       }
-      else{
-         if ( p == 1 ) {
-            L[i] <- sum( log( dpois(x=y/phi, lambda=mu/phi ) ) )
-        }
-        else{
-            L[i] <- switch(
-                pmatch(method, c("interpolation","series", "inversion"), 
-                                nomatch="2"),
-                "1" = dtweedie.logl( mu=mu, power=p, phi=phi, y=data),
-                "2" = sum( log( dtweedie.series( y=data, mu=mu, power=p, phi=phi) ) ),
-                "3" = sum( log( dtweedie.inversion( y=data, mu=mu, power=p, phi=phi) ) ) )
-        }
-       }
    }
 
     if (verbose>=1) {
-       cat(" Done: L=",L[i],"\n")
-    } else {
-       cat(" Done\n")
-    }
+       cat(" Done: L =",L[i],"\n")
+    } 
 }
 
 ### Smoothing
    # If there are infs etc in the log-likelihood,
-	# the smooth cant happen.  Perhaps this can be worked around.
-	# But at present, we not when it happens to ensure no future errors
+	# the smooth can't happen.  Perhaps this can be worked around.
+	# But at present, we note when it happens to ensure no future errors
 	# (eg in computing confidence interval for p).
 
 # y and x are the smoothed plot produced; here we set them
@@ -6082,21 +6169,22 @@ for (i in (1:p.len)) {
 y <- NA
 x <- NA
 
+
 if ( do.smooth ) {
     L.fix <- L
     p.vec.fix <- p.vec
 	 phi.vec.fix <- phi.vec
-    
-	 if ( any( is.nan(L) ) | any (is.infinite(L)) ) {
-	    p.vec.fix <- p.vec.fix[ !is.na(L.fix) ]
-		 phi.vec.fix <- phi.vec.fix[ !is.na(L.fix) ]
-	    L.fix <- L.fix[ !is.na(L.fix) ]
+	 if ( any( is.nan(L) ) | any( is.infinite(L) ) | any( is.na(L) ) ) {
+       retain.these <- !( ( is.nan(L) ) | ( is.infinite(L) ) | ( is.na(L) ) )
+	    p.vec.fix <- p.vec.fix[ retain.these ]
+		 phi.vec.fix <- phi.vec.fix[ retain.these ]
+	    L.fix <- L.fix[ retain.these ]
 		 
-	    p.vec.fix <- p.vec.fix[ !is.infinite(L.fix) ]
-	    phi.vec.fix <- phi.vec.fix[ !is.infinite(L.fix) ]
-	    L.fix <- L.fix[ !is.infinite(L.fix) ]
+# 	    p.vec.fix <- p.vec.fix[ !is.infinite(L.fix) ]
+# 	    phi.vec.fix <- phi.vec.fix[ !is.infinite(L.fix) ]
+# 	    L.fix <- L.fix[ !is.infinite(L.fix) ]
 	 
-        cat("Smooth perhaps inaccurate--log-likelihood contains  Inf  or  NA.\n")
+        if (verbose>=1) cat("Smooth perhaps inaccurate--log-likelihood contains  Inf  or  NA.\n")
     }
 	 #else {
     
@@ -6111,16 +6199,28 @@ if ( do.smooth ) {
       # Plot smoothed data
       p.smooth <- seq(min(p.vec.fix), max(p.vec.fix), length=50 )
       L.smooth <- ss(p.smooth )
-
+      
       if ( do.plot) {
-
-         plot( range(p.smooth), range(L.smooth),
+         keep.these <- is.finite(L.smooth) & !is.na(L.smooth)
+         L.smooth <- L.smooth[ keep.these ] 
+         p.smooth <- p.smooth[ keep.these ] 
+# cat("PRE-phi.vec=",phi.vec,"\n")         
+#          phi.vec <- phi.vec[ keep.these ]
+# cat("POST-phi.vec=",phi.vec,"\n")         
+         if ( verbose>=1 & any( keep.these ) ) {
+            cat(" (Some values of L are infinite or NA, and hence ignored)\n")
+         }
+        
+         yrange <- range( L.smooth, na.rm=TRUE )
+         
+         plot( yrange ~ range(p.vec),
             type="n",
 				las=1,
-            xlab="p",
-            ylab="L")
+            xlab=expression(paste( italic(p)," index")),
+            ylab=expression(italic(L)))
          lines( p.smooth, L.smooth,
             lwd=2)
+         rug( p.vec )
 			if (do.points) {
 			   points( L ~ p.vec, pch=19)
 			}
@@ -6135,14 +6235,24 @@ if ( do.smooth ) {
 }
 else {
    if ( do.plot) {
+         
+      keep.these <- is.finite(L) & !is.na(L)
+      p.vec <- p.vec[ keep.these ] 
+      L <- L[ keep.these ] 
+      phi.vec <- phi.vec[ keep.these ]
+      if ( verbose>=1 & any( keep.these ) ) {
+         cat(" Some values of L are infinite or NA, and hence ignored\n")
+      }
 
+      yrange <- range( L, na.rm=TRUE )
       # Plot the data we have
-      plot( range(p.vec), range(L),
+      plot( yrange ~ range(p.vec),
          type="n",     
-			las=1,
-            xlab="p",
-           ylab="L")
-      lines( p.vec, L, lwd=2)
+         las=1,
+         xlab=expression(paste(italic(p)," index")),
+         ylab=expression(italic(L)))
+      lines( L ~ p.vec, lwd=2)
+      rug( p.vec )
 		if (do.points) {
 		   points( L ~ p.vec, pch=19)
 		}
@@ -6155,7 +6265,6 @@ if (verbose>=2) cat(" Done\n")
 
 
 ### Maximum likelihood estimates
-
 if ( do.smooth ){
    # WARNING:  This spline does not necessarily pass
    #           through the given points.  This should
@@ -6164,13 +6273,16 @@ if ( do.smooth ){
    if (verbose>=2) cat(" Estimating phi:  ")
    
    # Find maximum from profile
-   L.max <- max(y)
-   p.max <- x[ y==L.max ]
 
+   L.max <- max(y, na.rm=TRUE)
+   p.max <- x[ y==L.max ]
+   
    # Now need to find mle of  phi  at this very value of  p
    # - Find bounds
-   phi.1 <- max( phi.vec.fix[ p.vec.fix<=p.max ] )
-   phi.2 <- min( phi.vec.fix[ p.vec.fix>=p.max ] )
+   
+   phi.1 <- 2 * max( phi.vec.fix, na.rm=TRUE )
+   phi.2 <-0.5* min( phi.vec.fix, na.rm=TRUE )
+   
 	if ( phi.1 > phi.2 ) {
 	   phi.hi <- phi.1
 		phi.lo <- phi.2 
@@ -6184,6 +6296,7 @@ if ( do.smooth ){
    # Now, if the maximum happens to be at an endpoint,
    # we have to do things differently:
    if ( (p.max==p.vec[1]) | (p.max==p.vec[length(p.vec)]) ) {
+   
       phi.max <- phi.lo # and is same as phi.max
       warning("True maximum possibly not detected.")
 
@@ -6192,13 +6305,17 @@ if ( do.smooth ){
       # - solve
 
       if ( phi.method=="saddlepoint"){
-         phi.max <- sum( tweedie.dev(y=data, mu=mu, power=p) )/length( data )
+         
+         mu <- fitted( glm.fit( y=data, x=model.x, family=tweedie(p.max, link.power=link.power)))
+         phi.max <- sum( tweedie.dev(y=data, mu=mu, power=p.max) )/length( data )
+         
       } else {
 #        phi.max <- nlm(p=phi.est, f=dtweedie.nlogl, 
 #                    hessian=FALSE,
 #                    power=p, mu=mu, y=data, 
 #                    gradient=dtweedie.dldphi)$estimate
         
+        mu <- fitted( glm.fit( y=data, x=model.x, family=tweedie(p.max, link.power=link.power)))
         phi.max <- optimize( f=dtweedie.nlogl, interval=c(phi.lo, phi.hi ), 
             # set lower limit phi.lo???
                              power=p.max, mu=mu, y=data)$minimum
@@ -6208,22 +6325,23 @@ if ( do.smooth ){
       
       }
    }
-}
-else{
+} else {
    # Find maximum from computed data
    if (verbose>=2) cat(" Finding maximum likelihood estimates:  ")
-   
+  
    L.max <- max(L)
 
-   p.max <- p.vec[ L==L.max ]
-   phi.max <- phi.vec[ L==L.max ]
-   
+   p.max   <- p.vec  [ L == L.max ]
+   phi.max <- phi.vec[ L == L.max ]
+
    if (verbose>=2) cat(" Done\n")
 }
 
 # Now report
-cat("ML Estimates:  p=",p.max," with phi=",phi.max," giving L=",L.max,"\n")
-cat(" ---\n")
+if ( verbose >= 2 ) {
+   cat("ML Estimates:  p=",p.max," with phi=",phi.max," giving L=",L.max,"\n")
+   cat(" ---\n")
+}
 
 # Now find approximate, nominal 95% CI info
 ht <- L.max - ( qchisq(conf.level, 1) / 2 )
@@ -6300,6 +6418,102 @@ if ( fit.glm ) {
 
 }
 
+cat("\n")
+
 invisible( out )
 
+}
+
+
+
+#############################################################################
+dtweedie.stable <- function(y, power, mu, phi)
+{
+         # Error checks
+         if ( power<1) stop("power must be greater than 2.\n")
+         if ( any(phi<=0) ) stop("phi must be positive.")
+         if ( any(y<0) ) stop("y must be a non-negative vector.\n")
+         if ( any(mu<=0) ) stop("mu must be positive.\n")
+         if ( length(mu)>1) {
+            if ( length(mu)!=length(y) ) stop("mu must be scalar, or the same length as y.\n")
+         }
+         else {
+            mu <- array( dim=length(y), mu )
+            # A vector of all mu's
+         }
+         if ( length(phi)>1) {
+            if ( length(phi)!=length(y) ) stop("phi must be scalar, or the same length as y.\n")
+         }
+         else {
+            phi <- array( dim=length(y), phi )
+            # A vector of all phi's
+         }
+         
+        density <- y
+	alpha <- (2-power)/(1-power)
+	beta <- 1
+	k <- 1  # The parameterization used
+	delta <- 0
+	gamma <- phi * (power-1) * 
+                    ( 1/(phi*(power-2)) * cos( alpha * pi / 2 ) ) ^ (1/alpha)
+        
+        require("fBasics")
+        
+        ds <- dstable(y, alpha=alpha, beta=beta, gamma=gamma, delta=delta, pm=k)
+        density <- exp((y*mu^(1-power)/(1-power)-mu^(2-power)/(2-power))/phi)*ds
+
+        
+        density
+}
+
+
+#############################################################################
+tweedie.plot <- function(y, power, mu, phi, type="pdf", 
+                         add=FALSE, ...) {
+   if ( ( power < 0 ) | ( ( power > 0 ) & ( power < 1 ) ) ) {
+      stop("Plots cannot be produced for power =",power,"\n")
+   }   
+   
+   is.pg <- ( power > 1 ) & ( power < 2 )
+   
+   if ( type=="pdf") {
+      fy <- dtweedie( y=y, power=power, mu=mu, phi=phi)
+   } else {
+      fy <- ptweedie( q=y, power=power, mu=mu, phi=phi)
+   }
+   
+   if ( !add ) {
+      if ( is.pg ) {
+         plot( range(fy) ~ range( y ), 
+            xlab=expression(italic(y)), 
+            ylab=expression(italic(y)),
+            type="n", ...)
+         if ( any( y==0 ) ) { # The exact zero
+            points( fy[y==0] ~ y[y==0], pch=19, ... )
+         }
+         if ( any( y>0 ) ) { # The exact zero
+            lines( fy[y>0]   ~ y[y>0], pch=19, ... )
+         }
+      } else {  # Not a Poison-gamma dist
+         plot( range(fy) ~ range( y ), 
+            xlab=expression(italic(y)), 
+            ylab=expression(italic(y)),
+            type="n", ...)
+         lines( fy ~ y, pch=19, ... )
+      }
+   } else {# Add; no new plot
+      if ( is.pg ) {
+         if ( any( y==0 ) ) { # The exact zero
+            points( fy[y==0] ~ y[y==0], pch=19, ... )
+         }
+         if ( any( y>0 ) ) { # The exact zero
+            lines( fy[y>0]   ~ y[y>0], pch=19, ... )
+         }
+      } else {  # Not a Poison-gamma dist
+         lines( fy ~ y, pch=19, ... )
+      }
+   
+   }
+   return(invisible(list(y=fy, x=y) ))
+   
 }

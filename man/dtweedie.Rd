@@ -2,6 +2,7 @@
 \alias{dtweedie}
 \alias{dtweedie.series}
 \alias{dtweedie.inversion}
+\alias{dtweedie.stable}
 \alias{ptweedie}
 \alias{ptweedie.series}
 \alias{ptweedie.inversion}
@@ -14,6 +15,7 @@
 dtweedie(y, power, mu, phi)
 dtweedie.series(y, power, mu, phi)
 dtweedie.inversion(y, power, mu, phi, exact=TRUE, method)
+dtweedie.stable(y, power, mu, phi)
 ptweedie(q, power, mu, phi)
 ptweedie.series(q, power, mu, phi)
 qtweedie(p, power, mu, phi)
@@ -29,16 +31,18 @@ rtweedie(n, power, mu, phi)
 \item{phi}{the dispersion}
 \item{exact}{logical flag; 
 if \code{TRUE} (the default),
-the exact zero \eqn{W}{W}-algorithm of Sidi (1982) is used.
-If \code{FALSE},
-the (approximate zero) modified \eqn{W}{W}-algorithm of Sidi (1988) is used.
-The modified algorithm requires less computation but is often less accurate;
-the exact zero \eqn{W}{W}-algorithm can be slower but generally improves accuracy.}
+exact zeros are used with
+the \eqn{W}{W}-algorithm of Sidi (1982);
+if \code{FALSE},
+approximate (asymptotic) zeros are used in place of exact zeros.
+Using asymptotic zeros requires less computation but is often less accurate;
+using exact zeros can be slower but generally improves accuracy.}
 \item{method}{either \code{1}, \code{2} or \code{3},
 determining which of three methods to use to compute the density
 using the inversion method.
-If \code{method} is code{NULL} (the default),
-the optimal method (in terms of relative accuracy) is used.}
+If \code{method} is \code{NULL} (the default),
+the optimal method (in terms of relative accuracy) is used, element-by-element of \code{y}.
+See the Note in the Details section below}
 }
 \value{
 density (\code{dtweedie}),
@@ -99,6 +103,13 @@ and
     The function \code{ptweedie.series} does likewise for the 
     cumulative probabilities but only for \eqn{1<p<2}{1 < power < 2}. 
     
+    The function \code{dtweedie.stable} exploits the link between
+    the stable distribution (Nolan, 1997) and Tweedie distributions,
+    as discussed in Jorgensen, Chapter 4.
+    These are computed using Nolan's algorithm as implemented
+    in the  fBasics  package (which is therefore required to use
+    the dtweedie.stable function).
+    
     The function \code{dtweedie} uses a two-dimensional interpolation procedure to 
     compute the density for some parts of the parameter space from 
     previously computed values found from the series or the 
@@ -107,12 +118,16 @@ and
     
     \code{ptweedie} returns either the computed series 
     solution or inversion solution.
+    
+    Note: The \code{method}s changed from version 1.4 to 1.5
+    (methods 1 and 2 swapped)
 }
 \author{Peter Dunn (\email{dunn@usq.edu.au})}
 \references{
-Dunn, Peter K and Smyth, Gordon K (To appear).
+Dunn, Peter K and Smyth, Gordon K (2005).
 Series evaluation of Tweedie exponential dispersion model densities
-\emph{Statistics and Computing}.
+\emph{Statistics and Computing},
+\bold{15}(4). 267--280.
 
 Dunn, Peter K and Smyth, Gordon K (2001).
 Tweedie family densities: methods of evaluation.
@@ -127,6 +142,11 @@ Exponential dispersion models.
 Jorgensen, B. (1997).
 \emph{Theory of Dispersion Models}.
 Chapman and Hall, London.
+
+Nolan, John P (1997).
+Numerical calculation of stable densities and distribution functions.
+\emph{Communication in Statistics---Stochastic models},
+\bold{13}(4). 759--774.
 
 Sidi, Avram (1982).
 The numerical evaluation of very oscillatory infinite integrals by
@@ -166,8 +186,7 @@ legend("topright", col=c(1,2), lwd=c(2,1),
 hist( rtweedie( 1000, power=1.2, mu=1, phi=1) )
 
 ### An example of the multimodal feature of the Tweedie
-### family with power near 1 (from the first reference
-### listed above).
+### family with power near 1 (from Dunn and Smyth, 2005).
 y <- seq(0.001,2,len=1000)
 mu <- 1
 phi <- 0.1
@@ -177,6 +196,26 @@ plot(y, f1, type="l", xlab="y", ylab="Density")
 p <- 1.05
 f2<- dtweedie(y,mu=mu,phi=phi,power=p)
 lines(y,f2, col=2)
+
+### Compare series, inversion and saddlepoint methods
+y <- seq(0.001,2,len=1000)
+mu <- 1
+phi <- 0.1
+p <- 1.02
+f.series <- dtweedie.series( y,mu=mu,phi=phi,power=p )
+f.invers <- dtweedie.inversion( y,mu=mu,phi=phi,power=p )
+f.saddle <- dtweedie.saddle( y,mu=mu,phi=phi,power=p )
+
+f.all <- c( f.series, f.invers, f.saddle )
+plot( range(f.all) ~ range( y ), xlab="y", ylab="Density", 
+  type="n", main="The inversion method is the most accurate here")
+lines( f.series ~ y, lty=1, col=1)
+lines( f.invers ~ y, lty=2, col=2)
+lines( f.saddle ~ y, lty=3, col=3)
+
+legend("topright", lty=c(1,2,3), col=c(1,2,3),
+  legend=c("Series","Inversion","Saddlepoint") )
+
 } 
 \keyword{models}
 

@@ -34,7 +34,7 @@
 
       double precision  p, phi, y, funvalue, mu, savemu,
      &                  lambda, calclambda, pi, area,
-     &                  result, relerr, c, aimrerr
+     &                  result, relerr, aimrerr
       integer  ier, maxit, m, iteratn, exitstatus,
      &         its, exact, verbose
 
@@ -1924,7 +1924,7 @@
      &         lower, upper, tstep,     
      &         zarea0, z1lo, z1hi, zdelta, resultp
       integer  m, iteratn, ier, maxit, flag, numzr, tier,
-     &         exitstatus, its, i, go, exitflag, totalits,
+     &         exitstatus, its, i, go, totalits,
      &         verbose
 
       external  f, g, intim, dk, sfzro2, zerofn,
@@ -2417,7 +2417,7 @@
 ***
 
       double precision  x, p, phi, y, rl, im, mu, imkdash,
-     &                  imgdcgf, D
+     &                  imgdcgf
 
 
 ***
@@ -2499,12 +2499,11 @@
       maxit = 100
       ier = 0
 
-*      print *,'SFZERO2'
-*      print *,'x1,x2 = ',x1,x2
-
+*         call dblepr("x1:",-1, x1, 1)
+*         call dblepr("x2:",-1, x2, 1)
+         
       fl = fun(p, phi, y, x1, m)
       fh = fun(p, phi, y, x2, m)
-*      print *,'UIIW fl,fh=',fl,fh
 
       if ( ( fl .GT. 0.0d00 .AND. fh .GT. 0.0d00 ) 
      &          .OR.
@@ -2519,6 +2518,7 @@
       endif
 
       if ( fl .EQ. 0.0d00 ) then
+      
          sfzro2 = x1
 *      print *,'POI Return: sfzro2=',sfzro2
          return
@@ -2573,6 +2573,9 @@
             endif
 
          endif
+         
+*         call dblepr("sfzro2:",-1, sfzro2, 1)
+*         call intpr("Iteration:",-1, j, 1)
 
          if ( abs( dx ) .LT. 1.0d-11 ) then
             return
@@ -2778,6 +2781,7 @@
             fhi = intim( p, phi, y, zhi, m )
          else
             zhi = zero * 2.0d00  
+            fhi = intim( p, phi, y, zhi, m )
          endif
          flo = intim( p, phi, y, zlo, m )
          
@@ -2828,7 +2832,7 @@
          call gaussq( f, area0, zero1, zero2, 
      &                p, phi, y, mu )
          if ( verbose .EQ. 1 ) then
-            call dblepr("   Are is ",-1, area0, 1)
+            call dblepr("   Area is ",-1, area0, 1)
          endif
 
 *        NOTE:  We don't update the iteration count here, since

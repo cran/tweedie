@@ -47,9 +47,10 @@ uses an infinite series expansion.
 }
 \author{Peter Dunn (\email{dunn@usq.edu.au})}
 \references{
-Dunn, Peter K and Smyth, Gordon K (To appear).
+Dunn, Peter K and Smyth, Gordon K (2005).
 Series evaluation of Tweedie exponential dispersion model densities
-\emph{Statistics and Computing}.
+\emph{Statistics and Computing},
+\bold{15}(4). 267--280.
 
 Dunn, Peter K and Smyth, Gordon K (2001).
 Tweedie family densities: methods of evaluation.

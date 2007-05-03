@@ -65,6 +65,11 @@ Tweedie family densities: methods of evaluation.
 \emph{Proceedings of the 16th International Workshop on Statistical Modelling},
 Odense, Denmark, 2--6 July
 
+Dunn, Peter K and Smyth, Gordon K (2005).
+Series evaluation of Tweedie exponential dispersion model densities
+\emph{Statistics and Computing},
+\bold{15}(4). 267--280.
+
 Jorgensen, B. (1987).
 Exponential dispersion models.
 \emph{Journal of the Royal Statistical Society}, B,

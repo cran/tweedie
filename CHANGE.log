@@ -1,0 +1,20 @@
+1.5: 2007/May/02
+  - Made change to use of pmatch in function  tweedie
+  - Swapped the order of methods 1 and 2 in the call of 
+    tweedie.inversion  to make consistent with a change
+    in the associated paper Dunn and Smyth.
+  - Other minor changes (fixing spelling errors, updated
+    Dunn and Smyth reference; etc.)
+
+1.4:  2006/12/04
+  
+  - Some very minor changes (some cosmetic in the code)
+  - Made the code more robust, exiting gracefully when Inf and NA appear
+    in the computed log-likelihood
+  - Slightly changed the output plot in tweedie.profile, to reflect
+    that some value of  p.vec  may not have a corresponding likelihood
+    computed accurately (or, indeed, at all)
+  - Added new function   tweedie.plot  to make it easier to plot Tweedie
+    densities
+
+  
