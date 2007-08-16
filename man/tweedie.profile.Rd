@@ -224,8 +224,10 @@ library(statmod) # Needed to use  tweedie.profile
 test.data <- rgamma(n=200, scale=1, shape=1)
 # The gamma is a Tweedie distribution with power=2;
 # let's see if the profile plot shows this
-out <- tweedie.profile( test.data ~ 1, p.vec=seq(1.7, 2.3, length=6),
+\dontrun{
+	out <- tweedie.profile( test.data ~ 1, p.vec=seq(1.7, 2.3, length=6),
        do.plot=TRUE, method="interpolation", do.smooth=TRUE, do.ci=TRUE)
+}
 }
 
 \keyword{models}

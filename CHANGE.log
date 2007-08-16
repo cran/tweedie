@@ -1,14 +1,32 @@
-1.5: 2007/May/02
+CHANGE LOG (incomplete)
+
+* Version 1.5.2: 
+  Built for R version 2.5.1
+  - Removed the inversion computation from the example for  dtweedie;
+    it was very slow and hence caused problems
+
+* Version 1.5.1: 
+  Built for R version 2.5.0
+  - Fixed citation details
+  - Added note in dtweedie help page indicating where the methods
+    are defined (Dunn and Smyth, 2007).
+  - Added tweedie-package.Rd
+  - Fixed a small bug in  dtweedie.inversion (replaced  p  with   power)
+
+* Version 1.5: 2007/May/02
+  Built for R version 2.5
   - Made change to use of pmatch in function  tweedie
-  - Swapped the order of methods 1 and 2 in the call of 
+  - Swapped the order of methods 1 and 2 in the call of
     tweedie.inversion  to make consistent with a change
     in the associated paper Dunn and Smyth.
+  - Fixed an uninitialized variable error in the FORTRAN code
+    which sometimes caused the inversion procedure to fail.
   - Other minor changes (fixing spelling errors, updated
     Dunn and Smyth reference; etc.)
 
-1.4:  2006/12/04
+* Version 1.4:  2006/12/04
   
-  - Some very minor changes (some cosmetic in the code)
+  - Some very minor changes (some cosmetic) in the code
   - Made the code more robust, exiting gracefully when Inf and NA appear
     in the computed log-likelihood
   - Slightly changed the output plot in tweedie.profile, to reflect
@@ -18,3 +36,36 @@
     densities
 
   
+* Version 1.02: tweedie_1.02.tar.gz:  
+  Built for R version 2.0.0
+  
+  Major fix
+  - The mle estimate of phi was incorrect in tweedie.profile 
+    (thanks Sarah Lennox, QDPI&F) 
+  Minor changes:
+  - Some better warnings in  tweedie.profile
+  New features
+  - tweedie.profile now allows the actual computed points to
+    be added to the plot using the  do.points  option (default 
+	 is TRUE)
+  - The tweedie.profile function now smooth and computes 
+    confidence intervals even when the computed likelihood 
+	 values contain Infs or NAs.
+
+* Version 1,01: tweedie_1.01.tar.gz:  
+  Built for R version 1.9
+  
+  Minor fixes:
+  - fixed a bug in rtweedie: it failed for p=2 (thanks 
+    Sarah Lennox, QDPI&F)
+  - fixed a bug in qtweedie: it failed in some cases
+   (thanks Gordon Smyth, WEHI)
+  - added a proper  .First.lib  function (!) (thanks to
+    James Wettenhall and Gordon Smyth, WEHI)
+  - other minor bugs fixed
+  - the  tweedie  family function removed, and package
+    made dependent on the  statmod  package
+  - updated for R version 1.9
+
+* Version 1.0: tweedie_1.0.tar.gz:  
+  Built for R version 1.7

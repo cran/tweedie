@@ -5455,7 +5455,7 @@ for (i in (1:y.len)) {
    # Method 3: Rescale y to 1 and evaluate b.
    
    if ( y[i] == 0 ) {
-      density[i] <- exp( -mu[i] ^ (2-p) / ( phi[i] * (2-power) ) )
+      density[i] <- exp( -mu[i] ^ (2-power) / ( phi[i] * (2-power) ) )
    } else {
       # Here, y > 0
       m2 <- 1/mu[i]
@@ -6204,11 +6204,8 @@ if ( do.smooth ) {
          keep.these <- is.finite(L.smooth) & !is.na(L.smooth)
          L.smooth <- L.smooth[ keep.these ] 
          p.smooth <- p.smooth[ keep.these ] 
-# cat("PRE-phi.vec=",phi.vec,"\n")         
-#          phi.vec <- phi.vec[ keep.these ]
-# cat("POST-phi.vec=",phi.vec,"\n")         
-         if ( verbose>=1 & any( keep.these ) ) {
-            cat(" (Some values of L are infinite or NA, and hence ignored)\n")
+         if ( verbose>=1 & any( !keep.these ) ) {
+            cat(" (Some values of L are infinite or NA for the smooth; these are ignored)\n")
          }
         
          yrange <- range( L.smooth, na.rm=TRUE )

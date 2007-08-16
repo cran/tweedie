@@ -118,12 +118,19 @@ and
     
     \code{ptweedie} returns either the computed series 
     solution or inversion solution.
+}
     
-    Note: The \code{method}s changed from version 1.4 to 1.5
-    (methods 1 and 2 swapped)
+\section{Note}{The \code{method}s changed from version 1.4 to 1.5
+    (methods 1 and 2 swapped).
+    The methods are defined in Dunn and Smyth (2007).
 }
 \author{Peter Dunn (\email{dunn@usq.edu.au})}
 \references{
+Dunn, Peter K and Smyth, Gordon K (2007).
+Evaluation of Tweedie exponential dispersion model by Fourier inversion
+\emph{Statistics and Computing}.
+To appear.
+
 Dunn, Peter K and Smyth, Gordon K (2005).
 Series evaluation of Tweedie exponential dispersion model densities
 \emph{Statistics and Computing},
@@ -197,24 +204,22 @@ p <- 1.05
 f2<- dtweedie(y,mu=mu,phi=phi,power=p)
 lines(y,f2, col=2)
 
-### Compare series, inversion and saddlepoint methods
+### Compare series and saddlepoint methods
 y <- seq(0.001,2,len=1000)
 mu <- 1
 phi <- 0.1
 p <- 1.02
 f.series <- dtweedie.series( y,mu=mu,phi=phi,power=p )
-f.invers <- dtweedie.inversion( y,mu=mu,phi=phi,power=p )
 f.saddle <- dtweedie.saddle( y,mu=mu,phi=phi,power=p )
 
-f.all <- c( f.series, f.invers, f.saddle )
+f.all <- c( f.series, f.saddle )
 plot( range(f.all) ~ range( y ), xlab="y", ylab="Density", 
-  type="n", main="The inversion method is the most accurate here")
+  type="n")
 lines( f.series ~ y, lty=1, col=1)
-lines( f.invers ~ y, lty=2, col=2)
 lines( f.saddle ~ y, lty=3, col=3)
 
-legend("topright", lty=c(1,2,3), col=c(1,2,3),
-  legend=c("Series","Inversion","Saddlepoint") )
+legend("topright", lty=c(1,3), col=c(1,3),
+  legend=c("Series","Saddlepoint") )
 
 } 
 \keyword{models}
