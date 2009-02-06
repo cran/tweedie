@@ -1,4 +1,3 @@
-
 #############################################################################
 .First.lib <- function(lib, pkg)
 {
@@ -15,9 +14,9 @@ ptweedie.inversion <- function(q, mu, phi,  power, exact=FALSE ){
 y <- q
 # Error checks
 if ( power<1) stop("power must be greater than 1.")
-if ( any(phi)<= 0) stop("phi must be positive.")
+if ( any(phi<= 0) ) stop("phi must be positive.")
 if ( any(y<0) ) stop("y must be a non-negative vector.")
-if ( any(mu)<=0 ) stop("mu must be positive.")
+if ( any(mu<=0) ) stop("mu must be positive.")
 if ( length(mu)>1) {
    if ( length(mu)!=length(y) ) stop("mu must be scalar, or the same length as y.")
 }
@@ -32,13 +31,11 @@ else {
    phi <- array( dim=length(y), phi )
    # A vector of all phi's
 }
-   
+  
 
-y.len <- length(y)
-density <- y
 its <- y
 
-for (i in (1:y.len)) {
+for (i in (1:length(y))) {
 
    tmp <- .Fortran( name="cdf",
           as.double(power),
@@ -52,11 +49,11 @@ for (i in (1:y.len)) {
           as.integer(0), # its
           PACKAGE="tweedie")
 
-       density[i] <- tmp[[6]]
+       cdf[i] <- tmp[[6]]
 
 }
 
-density
+cdf
 
 }
       
@@ -818,58 +815,72 @@ ptweedie <- function(q, power, mu, phi) {
 # 01 May 2001
 
 y <- q
+
+y.negative <- (y<0)
+y.original <- y
+y <- y[ !y.negative ]
+
 # Error checks
 if ( power<1) stop("power must be greater than 1.\n")
 if ( any(phi<=0) ) stop("phi must be positive.")
-if ( any(y<0) ) stop("y must be a non-negative vector.\n")
+# if ( any(y<0) ) stop("y must be a non-negative vector.\n")
 if ( any(mu<=0) ) stop("mu must be positive.\n")
 if ( length(mu)>1) {
-   if ( length(mu)!=length(y) ) stop("mu must be scalar, or the same length as y.\n")
-}
-else {
-   mu <- array( dim=length(y), mu )
+   if ( length(mu)!=length(y.original) ) stop("mu must be scalar, or the same length as y.\n")
+}else {
+   mu <- array( dim=length(y.original), mu )
    # A vector of all mu's
 }
+mu.original <- mu
+mu <- mu[ !y.negative ]
+
 if ( length(phi)>1) {
-   if ( length(phi)!=length(y) ) stop("phi must be scalar, or the same length as y.\n")
-}
-else {
-   phi <- array( dim=length(y), phi )
+   if ( length(phi)!=length(y.original) ) stop("phi must be scalar, or the same length as y.\n")
+}else {
+   phi <- array( dim=length(y.original), phi )
    # A vector of all phi's
 }
+phi.original <- phi
+phi <- phi[ !y.negative ]
 
-density <- array( dim=length(y) )
+
+
+cdf.positives <- array( dim=length(y) )
+cdf <- y.original
 
 # Special Cases
 if ( power==2 ) {
-   density <- pgamma( rate=1/(phi*mu), shape=1/phi, q=y )
-   return(density)
+   f <- pgamma( rate=1/(phi*mu), shape=1/phi, q=y )
 }
 if ( power==0) {
-   density <- pnorm( mean=mu, sd=sqrt(phi), q=y )
-   return(density)
+   f <- pnorm( mean=mu, sd=sqrt(phi), q=y )
 }
 if ( power==1) {
-   density <- ppois(q=y, lambda=mu/phi )
-   return(density)
+   f <- ppois(q=y, lambda=mu/phi )
 }
 
 # Now, for p>2 the only option is the inversion
 if ( power> 2 ) {
    f <- ptweedie.inversion(power=power, mu=mu, q=y, phi=phi)
-   return(f)
 }
 
 # Now for 1<p<2, the two options are the series or inversion.
 # We avoid the series when p is near one, otherwise it is fine.
-if ( power <1.7 ) {
-   f <- ptweedie.series(power=power, q=y, mu=mu, phi=phi )
-}
-else{
-   f <- ptweedie.inversion( power=power, q=y, mu=mu, phi=phi)
+if ( (power>1) & (power<2) ) {
+	if ( power <1.7 ) {
+	   f <- ptweedie.series(power=power, q=y, mu=mu, phi=phi )
+	}
+	else{
+	   f <- ptweedie.inversion( power=power, q=y, mu=mu, phi=phi)
+	}
 }
 
-return(f)
+cdf[ !y.negative ] <- f
+cdf[  y.negative ] <- 0
+
+cdf[ is.infinite( cdf ) ] <- 1
+
+return(cdf)
 
 }
 
@@ -885,9 +896,9 @@ y <- q
 # Error checks
 if ( power<1) stop("power must be between 1 and 2.\n")
 if ( power>2) stop("power must be between 1 and 2.\n")
-if ( any(phi)<= 0) stop("phi must be positive.\n")
+if ( any(phi<= 0)) stop("phi must be positive.\n")
 if ( any(y<0) ) stop("y must be a non-negative vector.\n")
-if ( any(mu)<=0 ) stop("mu must be positive.\n")
+if ( any(mu<=0) ) stop("mu must be positive.\n")
 if ( length(mu)>1) {
    if ( length(mu)!=length(y) ) stop("mu must be scalar, or the same length as y.\n")
 }else {
@@ -5411,9 +5422,9 @@ dtweedie.inversion <- function(y, power, mu, phi, exact=TRUE, method=3){
 
 # Error checks
 if ( power<1) stop("power must be greater than 1.")
-if ( any(phi)<= 0) stop("phi must be positive.")
-if ( any(y<0) ) stop("y must be a non-negative vector.")
-if ( any(mu)<=0 ) stop("mu must be positive.")
+if ( any(phi <= 0)) stop("phi must be positive.")
+if ( any(y < 0) ) stop("y must be a non-negative vector.")
+if ( any(mu <= 0) ) stop("mu must be positive.")
 if ( length(mu)>1) {
    if ( length(mu)!=length(y) ) {
       stop("mu must be scalar, or the same length as y.")
@@ -6027,8 +6038,6 @@ for (i in (1:p.len)) {
 
    if ( verbose>0) {
       cat("p =",p.vec[i],"\n")
-   } else {
-      cat(".")
    }
 
    # We find the mle of phi.
@@ -6189,7 +6198,7 @@ if ( do.smooth ) {
 	 #else {
     
     if ( length( L.fix ) > 0 ) {
-	   if (verbose==0) cat(".")
+	   if (verbose>=1) cat(".")
       if (verbose>=1) cat(" --- \n")
       if (verbose>=1) cat("* Smoothing: ")
     # Smooth the points
@@ -6402,12 +6411,12 @@ if ( do.ci ) {
 }
 
 if ( fit.glm ) {
-   out <- glm( formula,
+   out.glm <- glm( formula,
          family=tweedie(var.power=p.max, link.power=link.power) )
 
    out <- list( y=y, x=x, ht=ht, L=L, p=p.vec, p.max=p.max, L.max=L.max, 
            phi=phi.vec, phi.max=phi.max, ci=ci, method=method, phi.method=phi.method,
-           glm.obj = out)
+           glm.obj = out.glm)
 
 } else {
    out <- list( y=y, x=x, ht=ht, L=L, p=p.vec, p.max=p.max, L.max=L.max, 
@@ -6454,8 +6463,7 @@ dtweedie.stable <- function(y, power, mu, phi)
 	gamma <- phi * (power-1) * 
                     ( 1/(phi*(power-2)) * cos( alpha * pi / 2 ) ) ^ (1/alpha)
         
-        require("fBasics")
-        
+        require("fBasics") # Needed for  dstable
         ds <- dstable(y, alpha=alpha, beta=beta, gamma=gamma, delta=delta, pm=k)
         density <- exp((y*mu^(1-power)/(1-power)-mu^(2-power)/(2-power))/phi)*ds
 
@@ -6482,8 +6490,6 @@ tweedie.plot <- function(y, power, mu, phi, type="pdf",
    if ( !add ) {
       if ( is.pg ) {
          plot( range(fy) ~ range( y ), 
-            xlab=expression(italic(y)), 
-            ylab=expression(italic(y)),
             type="n", ...)
          if ( any( y==0 ) ) { # The exact zero
             points( fy[y==0] ~ y[y==0], pch=19, ... )
@@ -6493,8 +6499,6 @@ tweedie.plot <- function(y, power, mu, phi, type="pdf",
          }
       } else {  # Not a Poison-gamma dist
          plot( range(fy) ~ range( y ), 
-            xlab=expression(italic(y)), 
-            ylab=expression(italic(y)),
             type="n", ...)
          lines( fy ~ y, pch=19, ... )
       }

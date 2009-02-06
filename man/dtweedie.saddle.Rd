@@ -4,20 +4,20 @@
 \description{Saddlepoint density for the Tweedie distributions}
 \usage{dtweedie.saddle(y, power, mu, phi, eps=1/6)}
 \arguments{
-\item{y}{the vector of responses}
-\item{power}{the value of \eqn{p}{power} such that the variance is \eqn{\mbox{var}[Y]=\phi\mu^p}{var(Y) = phi * mu^power}}
-\item{mu}{the mean}
-\item{phi}{the dispersion}
-\item{eps}{the offset in computing the variance function.
-The default is \code{eps=1/6}
-(as suggested by Nelder and Pregibon, 1987).}
-}
-\value{saddlepoint (approximate) density
-for the given Tweedie distribution with parameters 
-\code{mu},
-\code{phi}
-and
-\code{power}.
+	\item{y}{the vector of responses}
+	\item{power}{the value of \eqn{p}{power} such that the variance is \eqn{\mbox{var}[Y]=\phi\mu^p}{var(Y) = phi * mu^power}}
+	\item{mu}{the mean}
+	\item{phi}{the dispersion}
+	\item{eps}{the offset in computing the variance function.
+	The default is \code{eps=1/6}
+	(as suggested by Nelder and Pregibon, 1987).}
+	}
+	\value{saddlepoint (approximate) density
+	for the given Tweedie distribution with parameters 
+	\code{mu},
+	\code{phi}
+	and
+	\code{power}.
 }
 \details{
     The Tweedie family of distributions belong to the class
@@ -48,47 +48,52 @@ and
     This function approximates the density using the
     saddlepoint approximation defined by Nelder and Pregibon (1987).
 }
-\author{Peter Dunn (\email{dunn@usq.edu.au})}
+\author{Peter Dunn (\email{pdunn2@usc.edu.au})}
 \references{
-Daniels, H. E. (1954).
-Saddlepoint approximations in statistics.
-\emph{Annals of Mathematical Statistics},
-\bold{25}(4), 631--650.
-
-Daniels, H. E. (1980).
-Exact saddlepoint approximations.
-\emph{Biometrika},
-\bold{67}, 59--63.
-
-Dunn, Peter K and Smyth, Gordon K (2001).
-Tweedie family densities: methods of evaluation.
-\emph{Proceedings of the 16th International Workshop on Statistical Modelling},
-Odense, Denmark, 2--6 July
-
-Dunn, Peter K and Smyth, Gordon K (2005).
-Series evaluation of Tweedie exponential dispersion model densities
-\emph{Statistics and Computing},
-\bold{15}(4). 267--280.
-
-Jorgensen, B. (1987).
-Exponential dispersion models.
-\emph{Journal of the Royal Statistical Society}, B,
-\bold{49}, 127-162.
-
-Jorgensen, B. (1997).
-\emph{Theory of Dispersion Models},
-Chapman and Hall, London.
-
-Nelder, J. A. and Pregibon, D. (1987).
-An extended quasi-likelihood function.
-\emph{Biometrika},
-\bold{74}(2), 221--232.
-
-Tweedie, M. C. K. (1984). 
-An index which distinguishes between some important exponential families.
-\emph{Statistics: Applications and New Directions.
-Proceedings of the Indian Statistical Institute Golden Jubilee International Conference}
-(Eds. J. K. Ghosh and J. Roy), pp. 579-604. Calcutta: Indian Statistical Institute.
+	Daniels, H. E. (1954).
+	Saddlepoint approximations in statistics.
+	\emph{Annals of Mathematical Statistics},
+	\bold{25}(4), 631--650.
+	
+	Daniels, H. E. (1980).
+	Exact saddlepoint approximations.
+	\emph{Biometrika},
+	\bold{67}, 59--63.
+	
+   Dunn, P. K. \& Smyth, G. K. (2008).
+   Evaluation of Tweedie exponential dispersion model densities by Fourier inversion.
+   \emph{Statistics and Computing}, 
+   \bold{18}, 73--86.
+	
+	Dunn, Peter K and Smyth, Gordon K (2001).
+	Tweedie family densities: methods of evaluation.
+	\emph{Proceedings of the 16th International Workshop on Statistical Modelling},
+	Odense, Denmark, 2--6 July
+	
+	Dunn, Peter K and Smyth, Gordon K (2005).
+	Series evaluation of Tweedie exponential dispersion model densities
+	\emph{Statistics and Computing},
+	\bold{15}(4). 267--280.
+	
+	Jorgensen, B. (1987).
+	Exponential dispersion models.
+	\emph{Journal of the Royal Statistical Society}, B,
+	\bold{49}, 127-162.
+	
+	Jorgensen, B. (1997).
+	\emph{Theory of Dispersion Models},
+	Chapman and Hall, London.
+	
+	Nelder, J. A. and Pregibon, D. (1987).
+	An extended quasi-likelihood function.
+	\emph{Biometrika},
+	\bold{74}(2), 221--232.
+	
+	Tweedie, M. C. K. (1984). 
+	An index which distinguishes between some important exponential families.
+	\emph{Statistics: Applications and New Directions.
+	Proceedings of the Indian Statistical Institute Golden Jubilee International Conference}
+	(Eds. J. K. Ghosh and J. Roy), pp. 579-604. Calcutta: Indian Statistical Institute.
 }
 \seealso{\code{\link{dtweedie}} }
 

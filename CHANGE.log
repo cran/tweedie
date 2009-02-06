@@ -1,5 +1,19 @@
 CHANGE LOG (incomplete)
 
+* Version 1.6.1
+  - Fixed error i tweedie.f  (twice) where a float was used in a do-loop
+
+
+* Version 1.6
+  - Fixed a bug in ptweedie: It now returns 0 when y<0 (rather than reporting an error)
+  - Fixed a bug in ptweedie.inversion: y.len was undefined
+  - Fixed a bug in dwteedie.inversion: if( any(phi<0) ) written as if (any(phi) <0 )
+
+
+Built for R version 2.6.0
+* Version 1.5.3:
+  - Changed the tweedie.plot to produce no default x and y labels
+  
 * Version 1.5.2: 
   Built for R version 2.5.1
   - Removed the inversion computation from the example for  dtweedie;

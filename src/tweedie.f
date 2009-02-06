@@ -4311,7 +4311,7 @@
             hibnd = dt
 
 *           Now, work at each m
-            do m = workvec1, workvec2, mdirn
+            do m = int(workvec1), int(workvec2), mdirn
 
 *              Find the zeros
                zold = z1

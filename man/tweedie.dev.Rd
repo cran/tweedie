@@ -45,44 +45,49 @@ and
     model has deviance zero.''
 
 }
-\author{Peter Dunn (\email{dunn@usq.edu.au})}
+\author{Peter Dunn (\email{pdunn2@usc.edu.au})}
 \references{
-Dunn, Peter K and Smyth, Gordon K (2005).
-Series evaluation of Tweedie exponential dispersion model densities
-\emph{Statistics and Computing},
-\bold{15}(4). 267--280.
-
-Dunn, Peter K and Smyth, Gordon K (2001).
-Tweedie family densities: methods of evaluation.
-\emph{Proceedings of the 16th International Workshop on Statistical Modelling},
-Odense, Denmark, 2--6 July
-
-Jorgensen, B. (1987).
-Exponential dispersion models.
-\emph{Journal of the Royal Statistical Society}, B,
-\bold{49}, 127--162.
-
-Jorgensen, B. (1997).
-\emph{Theory of Dispersion Models}.
-Chapman and Hall, London.
-
-Sidi, Avram (1982).
-The numerical evaluation of very oscillatory infinite integrals by
-extrapolation.
-\emph{Mathematics of Computation}
-\bold{38}(158), 517--529.
-
-Sidi, Avram (1988).  
-A user-friendly extrapolation method for
-oscillatory infinite integrals.
-\emph{Mathematics of Computation}
-\bold{51}(183), 249--266.
-
-Tweedie, M. C. K. (1984).
-An index which distinguishes between some important exponential families.
-\emph{Statistics: Applications and New Directions.
-Proceedings of the Indian Statistical Institute Golden Jubilee International Conference}
-(Eds. J. K. Ghosh and J. Roy), pp. 579-604. Calcutta: Indian Statistical Institute.
+   Dunn, P. K. \& Smyth, G. K. (2008).
+   Evaluation of Tweedie exponential dispersion model densities by Fourier inversion.
+   \emph{Statistics and Computing}, 
+   \bold{18}, 73--86.
+	
+	Dunn, Peter K and Smyth, Gordon K (2005).
+	Series evaluation of Tweedie exponential dispersion model densities
+	\emph{Statistics and Computing},
+	\bold{15}(4). 267--280.
+	
+	Dunn, Peter K and Smyth, Gordon K (2001).
+	Tweedie family densities: methods of evaluation.
+	\emph{Proceedings of the 16th International Workshop on Statistical Modelling},
+	Odense, Denmark, 2--6 July
+	
+	Jorgensen, B. (1987).
+	Exponential dispersion models.
+	\emph{Journal of the Royal Statistical Society}, B,
+	\bold{49}, 127--162.
+	
+	Jorgensen, B. (1997).
+	\emph{Theory of Dispersion Models}.
+	Chapman and Hall, London.
+	
+	Sidi, Avram (1982).
+	The numerical evaluation of very oscillatory infinite integrals by
+	extrapolation.
+	\emph{Mathematics of Computation}
+	\bold{38}(158), 517--529.
+	
+	Sidi, Avram (1988).  
+	A user-friendly extrapolation method for
+	oscillatory infinite integrals.
+	\emph{Mathematics of Computation}
+	\bold{51}(183), 249--266.
+	
+	Tweedie, M. C. K. (1984).
+	An index which distinguishes between some important exponential families.
+	\emph{Statistics: Applications and New Directions.
+	Proceedings of the Indian Statistical Institute Golden Jubilee International Conference}
+	(Eds. J. K. Ghosh and J. Roy), pp. 579-604. Calcutta: Indian Statistical Institute.
 }
 \seealso{
 \code{\link{dtweedie}} 
@@ -136,6 +141,5 @@ legend("top", col=c(1,2,3), lwd=c(2,2,2), lty=c(1,2,3),
 
 } 
 
-} 
 \keyword{models}
 

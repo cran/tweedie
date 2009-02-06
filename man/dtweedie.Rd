@@ -12,48 +12,48 @@
 \description{Density, distribution function, quantile function and random
      generation for the Tweedie family of distributions}
 \usage{
-dtweedie(y, power, mu, phi)
-dtweedie.series(y, power, mu, phi)
-dtweedie.inversion(y, power, mu, phi, exact=TRUE, method)
-dtweedie.stable(y, power, mu, phi)
-ptweedie(q, power, mu, phi)
-ptweedie.series(q, power, mu, phi)
-qtweedie(p, power, mu, phi)
-rtweedie(n, power, mu, phi)
+	dtweedie(y, power, mu, phi)
+	dtweedie.series(y, power, mu, phi)
+	dtweedie.inversion(y, power, mu, phi, exact=TRUE, method)
+	dtweedie.stable(y, power, mu, phi)
+	ptweedie(q, power, mu, phi)
+	ptweedie.series(q, power, mu, phi)
+	qtweedie(p, power, mu, phi)
+	rtweedie(n, power, mu, phi)
 }
 \arguments{
-\item{y, q}{vector of quantiles}
-\item{p}{vector of probabilities}
-\item{n}{the number of observations}
-\item{power}{the value of \eqn{p}{power} such that the variance is 
-\eqn{\mbox{var}[Y]=\phi\mu^p}{var(Y) = phi * mu^power}}
-\item{mu}{the mean}
-\item{phi}{the dispersion}
-\item{exact}{logical flag; 
-if \code{TRUE} (the default),
-exact zeros are used with
-the \eqn{W}{W}-algorithm of Sidi (1982);
-if \code{FALSE},
-approximate (asymptotic) zeros are used in place of exact zeros.
-Using asymptotic zeros requires less computation but is often less accurate;
-using exact zeros can be slower but generally improves accuracy.}
-\item{method}{either \code{1}, \code{2} or \code{3},
-determining which of three methods to use to compute the density
-using the inversion method.
-If \code{method} is \code{NULL} (the default),
-the optimal method (in terms of relative accuracy) is used, element-by-element of \code{y}.
-See the Note in the Details section below}
+	\item{y, q}{vector of quantiles}
+	\item{p}{vector of probabilities}
+	\item{n}{the number of observations}
+	\item{power}{the value of \eqn{p}{power} such that the variance is 
+	\eqn{\mbox{var}[Y]=\phi\mu^p}{var(Y) = phi * mu^power}}
+	\item{mu}{the mean}
+	\item{phi}{the dispersion}
+	\item{exact}{logical flag; 
+	if \code{TRUE} (the default),
+	exact zeros are used with
+	the \eqn{W}{W}-algorithm of Sidi (1982);
+	if \code{FALSE},
+	approximate (asymptotic) zeros are used in place of exact zeros.
+	Using asymptotic zeros requires less computation but is often less accurate;
+	using exact zeros can be slower but generally improves accuracy.}
+	\item{method}{either \code{1}, \code{2} or \code{3},
+	determining which of three methods to use to compute the density
+	using the inversion method.
+	If \code{method} is \code{NULL} (the default),
+	the optimal method (in terms of relative accuracy) is used, element-by-element of \code{y}.
+	See the Note in the Details section below}
 }
 \value{
-density (\code{dtweedie}),
-probability (\code{ptweedie}),
-quantile (\code{qtweedie})
-or random sample (\code{rtweedie})
-for the given Tweedie distribution with parameters 
-\code{mu}, 
-\code{phi}
-and 
-\code{power}.
+	density (\code{dtweedie}),
+	probability (\code{ptweedie}),
+	quantile (\code{qtweedie})
+	or random sample (\code{rtweedie})
+	for the given Tweedie distribution with parameters 
+	\code{mu}, 
+	\code{phi}
+	and 
+	\code{power}.
 }
 \details{
     The Tweedie family of distributions belong to the class
@@ -124,54 +124,54 @@ and
     (methods 1 and 2 swapped).
     The methods are defined in Dunn and Smyth (2007).
 }
-\author{Peter Dunn (\email{dunn@usq.edu.au})}
+\author{Peter Dunn (\email{pdunn2@usc.edu.au})}
 \references{
-Dunn, Peter K and Smyth, Gordon K (2007).
-Evaluation of Tweedie exponential dispersion model by Fourier inversion
-\emph{Statistics and Computing}.
-To appear.
-
-Dunn, Peter K and Smyth, Gordon K (2005).
-Series evaluation of Tweedie exponential dispersion model densities
-\emph{Statistics and Computing},
-\bold{15}(4). 267--280.
-
-Dunn, Peter K and Smyth, Gordon K (2001).
-Tweedie family densities: methods of evaluation.
-\emph{Proceedings of the 16th International Workshop on Statistical Modelling},
-Odense, Denmark, 2--6 July
-
-Jorgensen, B. (1987).
-Exponential dispersion models.
-\emph{Journal of the Royal Statistical Society}, B,
-\bold{49}, 127--162.
-
-Jorgensen, B. (1997).
-\emph{Theory of Dispersion Models}.
-Chapman and Hall, London.
-
-Nolan, John P (1997).
-Numerical calculation of stable densities and distribution functions.
-\emph{Communication in Statistics---Stochastic models},
-\bold{13}(4). 759--774.
-
-Sidi, Avram (1982).
-The numerical evaluation of very oscillatory infinite integrals by
-extrapolation.
-\emph{Mathematics of Computation}
-\bold{38}(158), 517--529.
-
-Sidi, Avram (1988).  
-A user-friendly extrapolation method for
-oscillatory infinite integrals.
-\emph{Mathematics of Computation}
-\bold{51}(183), 249--266.
-
-Tweedie, M. C. K. (1984).
-An index which distinguishes between some important exponential families.
-\emph{Statistics: Applications and New Directions.
-Proceedings of the Indian Statistical Institute Golden Jubilee International Conference}
-(Eds. J. K. Ghosh and J. Roy), pp. 579-604. Calcutta: Indian Statistical Institute.
+   Dunn, P. K. \& Smyth, G. K. (2008).
+   Evaluation of Tweedie exponential dispersion model densities by Fourier inversion.
+   \emph{Statistics and Computing}, 
+   \bold{18}, 73--86.
+	
+	Dunn, Peter K and Smyth, Gordon K (2005).
+	Series evaluation of Tweedie exponential dispersion model densities
+	\emph{Statistics and Computing},
+	\bold{15}(4). 267--280.
+	
+	Dunn, Peter K and Smyth, Gordon K (2001).
+	Tweedie family densities: methods of evaluation.
+	\emph{Proceedings of the 16th International Workshop on Statistical Modelling},
+	Odense, Denmark, 2--6 July
+	
+	Jorgensen, B. (1987).
+	Exponential dispersion models.
+	\emph{Journal of the Royal Statistical Society}, B,
+	\bold{49}, 127--162.
+	
+	Jorgensen, B. (1997).
+	\emph{Theory of Dispersion Models}.
+	Chapman and Hall, London.
+	
+	Nolan, John P (1997).
+	Numerical calculation of stable densities and distribution functions.
+	\emph{Communication in Statistics---Stochastic models},
+	\bold{13}(4). 759--774.
+	
+	Sidi, Avram (1982).
+	The numerical evaluation of very oscillatory infinite integrals by
+	extrapolation.
+	\emph{Mathematics of Computation}
+	\bold{38}(158), 517--529.
+	
+	Sidi, Avram (1988).  
+	A user-friendly extrapolation method for
+	oscillatory infinite integrals.
+	\emph{Mathematics of Computation}
+	\bold{51}(183), 249--266.
+	
+	Tweedie, M. C. K. (1984).
+	An index which distinguishes between some important exponential families.
+	\emph{Statistics: Applications and New Directions.
+	Proceedings of the Indian Statistical Institute Golden Jubilee International Conference}
+	(Eds. J. K. Ghosh and J. Roy), pp. 579-604. Calcutta: Indian Statistical Institute.
 }
 \seealso{\code{\link{dtweedie.saddle}} }
 

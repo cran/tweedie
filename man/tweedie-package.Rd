@@ -12,46 +12,46 @@ Functions for computing and fitting the Tweedie family of distributions
 \tabular{ll}{
 Package: \tab tweedie\cr
 Type: \tab Package\cr
-Version: \tab 1.5.1\cr
-Date: \tab 2007-07-13\cr
-License: \tab PL version 2 or newer\cr
+Version: \tab 1.6.1\cr
+Date: \tab 2009-02-06\cr
+License: \tab GPL version 2 or newer\cr
 }
 }
 \author{
 Peter K Dunn
 
-Maintainer: Peter K Dunn <dunn@usq.edu.au>
+Maintainer: Peter K Dunn <pdunn2@usc.edu.au>
 }
 \references{
-Dunn, Peter K and Smyth, Gordon K (2007).
-Evaluation of Tweedie exponential dispersion model by Fourier inversion
-\emph{Statistics and Computing}.
-To appear.
-
-Dunn, Peter K and Smyth, Gordon K (2005).
-Series evaluation of Tweedie exponential dispersion model densities
-\emph{Statistics and Computing},
-\bold{15}(4). 267--280.
-
-Dunn, Peter K and Smyth, Gordon K (2001).
-Tweedie family densities: methods of evaluation.
-\emph{Proceedings of the 16th International Workshop on Statistical Modelling},
-Odense, Denmark, 2--6 July
-
-Jorgensen, B. (1987).
-Exponential dispersion models.
-\emph{Journal of the Royal Statistical Society}, B,
-\bold{49}, 127--162.
-
-Jorgensen, B. (1997).
-\emph{Theory of Dispersion Models}.
-Chapman and Hall, London.
-
-Tweedie, M. C. K. (1984).
-An index which distinguishes between some important exponential families.
-\emph{Statistics: Applications and New Directions.
-Proceedings of the Indian Statistical Institute Golden Jubilee International Conference}
-(Eds. J. K. Ghosh and J. Roy), pp. 579-604. Calcutta: Indian Statistical Institute.
+   Dunn, P. K. \& Smyth, G. K. (2008).
+   Evaluation of Tweedie exponential dispersion model densities by Fourier inversion.
+   \emph{Statistics and Computing}, 
+   \bold{18}, 73--86.
+	
+	Dunn, Peter K and Smyth, Gordon K (2005).
+	Series evaluation of Tweedie exponential dispersion model densities
+	\emph{Statistics and Computing},
+	\bold{15}(4). 267--280.
+	
+	Dunn, Peter K and Smyth, Gordon K (2001).
+	Tweedie family densities: methods of evaluation.
+	\emph{Proceedings of the 16th International Workshop on Statistical Modelling},
+	Odense, Denmark, 2--6 July
+	
+	Jorgensen, B. (1987).
+	Exponential dispersion models.
+	\emph{Journal of the Royal Statistical Society}, B,
+	\bold{49}, 127--162.
+	
+	Jorgensen, B. (1997).
+	\emph{Theory of Dispersion Models}.
+	Chapman and Hall, London.
+	
+	Tweedie, M. C. K. (1984).
+	An index which distinguishes between some important exponential families.
+	\emph{Statistics: Applications and New Directions.
+	Proceedings of the Indian Statistical Institute Golden Jubilee International Conference}
+	(Eds. J. K. Ghosh and J. Roy), pp. 579-604. Calcutta: Indian Statistical Institute.
 }
 \keyword{ models }
 \examples{

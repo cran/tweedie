@@ -183,9 +183,14 @@ phi.method=ifelse(method == "saddlepoint", "saddlepoint", "mle"), verbose=TRUE)}
    the distribution within the class of Tweedie distribution is identified.
 }
 \author{
-   Peter Dunn (\email{dunn@usq.edu.au})
+   Peter Dunn (\email{pdunn2@usc.edu.au})
 }
 \references{
+   Dunn, P. K. \& Smyth, G. K. (2008).
+   Evaluation of Tweedie exponential dispersion model densities by Fourier inversion.
+   \emph{Statistics and Computing}, 
+   \bold{18}, 73--86.
+   
    Dunn, Peter K and Smyth, Gordon K (2001).
    Tweedie family densities: methods of evaluation.
    \emph{Proceedings of the 16th International Workshop on Statistical Modelling},
