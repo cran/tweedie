@@ -1,7 +1,11 @@
 CHANGE LOG (incomplete)
 
+* Version 1.6.2
+  - Fixed a bug in  ptweedie.inversion  where variable  cdf  was undefined
+  - Fixed a bug in  qtweedie  where any(power)<1  should have been  any(power<1)
+
 * Version 1.6.1
-  - Fixed error i tweedie.f  (twice) where a float was used in a do-loop
+  - Fixed error in tweedie.f  (twice) where a float was used in a do-loop
 
 
 * Version 1.6

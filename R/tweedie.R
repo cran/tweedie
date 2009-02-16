@@ -12,6 +12,7 @@ ptweedie.inversion <- function(q, mu, phi,  power, exact=FALSE ){
 # 08 Feb 2000--2005
 
 y <- q
+cdf <- array( dim=length(y) )
 # Error checks
 if ( power<1) stop("power must be greater than 1.")
 if ( any(phi<= 0) ) stop("phi must be positive.")
@@ -5767,7 +5768,7 @@ list(lo=lo.k, hi=hi.k, kv=kv, k.max=k.max )
 qtweedie <- function(p, power, mu, phi){
 
 # Error checks
-if ( any(power)<1) stop("power must be greater than 1.\n")
+if ( any(power<1) ) stop("power must be greater than 1.\n")
 if ( any(phi <= 0) ) stop("phi must be positive.")
 if ( any(p<0) ) stop("p must be between zero and one.\n")
 if ( any(p>1) ) stop("p must be between zero and one.\n")
