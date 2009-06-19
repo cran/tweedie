@@ -375,6 +375,10 @@ else {
 density <- y
 
 # Special Cases
+if ( power==3 ){
+	density <- dinvgauss(x=y, mu=mu, lambda=1/phi)
+	return(density)
+}
 if ( power==2 ) {
    density <- dgamma( rate=1/(phi*mu), shape=1/phi, x=y )
    return(density)
@@ -5800,7 +5804,7 @@ if ( length(power) == 1 ) {
 
 len <- length(p) 
 
-# Some monkeying around to explicitly accont for the cases p=1 and p=0
+# Some monkeying around to explicitly account for the cases p=1 and p=0
 ans <- ans2 <- rep( NA, length=len )
 if ( any(p==1) ) ans2[p==1] <- Inf
 if ( any(p==0) ) ans2[p==0] <- 0
@@ -5944,7 +5948,8 @@ else {
 
 
 #############################################################################
-tweedie.profile <- function(formula, p.vec, link.power = 0, fit.glm=FALSE,
+tweedie.profile <- function(formula, p.vec, link.power = 0, 
+		data, weights, offset, fit.glm=FALSE, 
       do.smooth=FALSE, do.plot=FALSE, 
       do.ci=do.smooth, eps=1/6,
       do.points=do.plot, method="series", conf.level=0.95, 
@@ -5979,6 +5984,66 @@ if (verbose >= 1 ) {
 	cat(" Try a different input for  p.vec\n---\n")
 }
 
+if ( do.smooth & (length(p.vec) < 5) ) {
+   warning("Smoothing needs at least five values of p.")
+   do.smooth <- FALSE
+   do.ci <- FALSE
+}
+if ( (conf.level >= 1) | (conf.level <=0)  ){
+   stop("Confidence level must be between 0 and 1.")
+}
+
+if ( !do.smooth & do.ci ) {
+   do.ci <- FALSE
+	warning("Confidence intervals only computed if  do.smooth=TRUE\n")
+}
+
+
+cl <- match.call()
+mf <- match.call()
+m <- match(c("formula", "data", "weights","offset"), names(mf), 0L)
+mf <- mf[c(1, m)]
+mf$drop.unused.levels <- TRUE
+mf[[1]] <- as.name("model.frame")
+mf <- eval(mf, parent.frame())
+mt <- attr(mf, "terms")
+Y <- model.response(mf, "numeric")
+X <- if (!is.empty.model(mt))
+	model.matrix(mt, mf, contrasts)
+else matrix(, NROW(Y), 0)
+weights <- as.vector(model.weights(mf))
+if (!is.null(weights) && !is.numeric(weights))
+	stop("'weights' must be a numeric vector")
+offset <- as.vector(model.offset(mf))
+if (!is.null(weights) && any(weights < 0))
+	stop("negative weights not allowed")
+if (!is.null(offset)) {
+	if (length(offset) == 1)
+		offset <- rep(offset, NROW(Y))
+	else if (length(offset) != NROW(Y))
+		stop(gettextf("number of offsets is %d should equal %d (number of observations)",
+				length(offset), NROW(Y)), domain = NA)
+}
+
+
+
+
+
+
+# Fit the dummy model to get x
+#dummy.model <- glm.fit( x, y,family=gaussian(), x=TRUE, y=TRUE )
+#model.x <- model.matrix( dummy.model )
+ydata <- Y
+model.x <- X
+
+# Warnings
+if ( any( ydata == 0 ) & any( p.vec >= 2 ) ) {
+    stop("The response variable contains exact zeros; ensure all values in  p.vec  are between 1 and 2")
+}
+
+
+# Now, fit models!  Need the Tweedie class
+
 # First define the function to *minimize*;
 # since we want a *maximum* likeihood estimator,
 # define the negative.
@@ -5993,34 +6058,6 @@ dtweedie.nlogl <- function(phi, y, mu, power) {
     ans
 }
 
-if ( do.smooth & (length(p.vec) < 5) ) {
-   warning("Smoothing needs at least five values of p.")
-   do.smooth <- FALSE
-   do.ci <- FALSE
-}
-if ( (conf.level >= 1) | (conf.level <=0)  ){
-   stop("Confidence level must be between 0 and 1.")
-}
-
-if ( !do.smooth & do.ci ) {
-   do.ci <- FALSE
-	warning("Confidence intervals only computed if  do.smooth=TRUE\n")
-}
-   
-
-# Fit the dummy model to get x
-dummy.model <- glm( formula,
-                    family=gaussian, x=TRUE, y=TRUE )
-model.x <- model.matrix( dummy.model )
-data <- dummy.model$y
-
-# Warnings
-if ( any( data == 0 ) & any( p.vec > 2 ) ) {
-    stop("The response variable contains exact zeros; ensure all values in  p.vec  are between 1 and 2")
-}
-
-
-# Now, fit models!  Need the Tweedie class
 
 # Set up some parameters
 p.len <- length(p.vec)
@@ -6033,7 +6070,7 @@ phi.vec <- L
 b.vec <- L
 c.vec <- L
 mu.vec <- L
-b.mat <- array( dim=c(p.len, length(data) ) )
+b.mat <- array( dim=c(p.len, length(ydata) ) )
 
 for (i in (1:p.len)) {
 
@@ -6056,7 +6093,7 @@ for (i in (1:p.len)) {
 
    # Fit the model with given p
    catch.possible.error <- try(
-      fit.model <- glm.fit( x=model.x, y=data,
+      fit.model <- glm.fit( x=model.x, y=ydata, weights=weights, offset=offset,
                             family=tweedie(var.power=p, link.power=link.power),
                             control=glm.control(epsilon=1e-9) ),
       silent = TRUE
@@ -6075,7 +6112,7 @@ for (i in (1:p.len)) {
       # NOTE:  We need epsilon to be very small to make a
       #        smooth likelihood plot
       cat("*")
-      mu <- rep(NA, length(data) )
+      mu <- rep(NA, length(ydata) )
       
     } else {
       mu <- fitted( fit.model )
@@ -6094,7 +6131,7 @@ for (i in (1:p.len)) {
          if (verbose>=1) cat(" (using optimize): ")
       
             # Saddlepoint approx of phi:
-            phi.saddle <- sum( tweedie.dev(y=data, mu=mu, power=p) )/length( data )
+            phi.saddle <- sum( tweedie.dev(y=ydata, mu=mu, power=p) )/length( ydata )
       
             if ( is.nan(phi) ) {
       
@@ -6113,7 +6150,7 @@ for (i in (1:p.len)) {
       #                hessian=FALSE,
       #                power=p, mu=mu, y=data)
          ans <- optimize(f=dtweedie.nlogl, maximum=FALSE, interval=c(low.limit, 10*phi.est),
-                        power=p, mu=mu, y=data )
+                        power=p, mu=mu, y=ydata )
       #       phi <- phi.vec[i] <- ans$estimate
          phi <- phi.vec[i] <- ans$minimum
          if (verbose>=1) cat(" Done (phi =",phi.vec[i],")\n")
@@ -6121,7 +6158,7 @@ for (i in (1:p.len)) {
       } else{ # phi.method=="saddlepoint")
    
          if (verbose>=1) cat(" (using mean deviance/saddlepoint): ")
-         phi <- phi.est <- phi.vec[i] <- sum( tweedie.dev(y=data, mu=mu, power=p) )/length( data )
+         phi <- phi.est <- phi.vec[i] <- sum( tweedie.dev(y=ydata, mu=mu, power=p) )/length( ydata )
          if (verbose>=1) cat(" Done (phi =",phi,")\n")
       }
     }
@@ -6141,10 +6178,10 @@ for (i in (1:p.len)) {
       L[i] <- NA
     } else {   
       if ( method=="saddlepoint") {
-         L[i] <- dtweedie.logl.saddle(y=data, mu=mu, power=p, phi=phi, eps=eps)
+         L[i] <- dtweedie.logl.saddle(y=ydata, mu=mu, power=p, phi=phi, eps=eps)
       } else{
       if (p==2) {
-            L[i] <- sum( log( dgamma( rate=1/(phi*mu), shape=1/phi, x=data ) ) )
+            L[i] <- sum( log( dgamma( rate=1/(phi*mu), shape=1/phi, x=ydata ) ) )
          }
          else{
             if ( p == 1 ) {
@@ -6154,9 +6191,9 @@ for (i in (1:p.len)) {
                L[i] <- switch(
                   pmatch(method, c("interpolation","series", "inversion"), 
                                  nomatch=2),
-                  "1" = dtweedie.logl( mu=mu, power=p, phi=phi, y=data),
-                  "2" = sum( log( dtweedie.series( y=data, mu=mu, power=p, phi=phi) ) ),
-                  "3" = sum( log( dtweedie.inversion( y=data, mu=mu, power=p, phi=phi) ) ) )
+                  "1" = dtweedie.logl( mu=mu, power=p, phi=phi, y=ydata),
+                  "2" = sum( log( dtweedie.series( y=ydata, mu=mu, power=p, phi=phi) ) ),
+                  "3" = sum( log( dtweedie.inversion( y=ydata, mu=mu, power=p, phi=phi) ) ) )
          }
          }
       }
@@ -6313,8 +6350,9 @@ if ( do.smooth ){
 
       if ( phi.method=="saddlepoint"){
          
-         mu <- fitted( glm.fit( y=data, x=model.x, family=tweedie(p.max, link.power=link.power)))
-         phi.max <- sum( tweedie.dev(y=data, mu=mu, power=p.max) )/length( data )
+         mu <- fitted( glm.fit( y=ydata, x=model.x, weights=weights, offset=offset,
+                                family=tweedie(p.max, link.power=link.power)))
+         phi.max <- sum( tweedie.dev(y=ydata, mu=mu, power=p.max) )/length( ydata )
          
       } else {
 #        phi.max <- nlm(p=phi.est, f=dtweedie.nlogl, 
@@ -6322,10 +6360,11 @@ if ( do.smooth ){
 #                    power=p, mu=mu, y=data, 
 #                    gradient=dtweedie.dldphi)$estimate
         
-        mu <- fitted( glm.fit( y=data, x=model.x, family=tweedie(p.max, link.power=link.power)))
+        mu <- fitted( glm.fit( y=ydata, x=model.x, weights=weights, offset=offset,
+                               family=tweedie(p.max, link.power=link.power)))
         phi.max <- optimize( f=dtweedie.nlogl, interval=c(phi.lo, phi.hi ), 
             # set lower limit phi.lo???
-                             power=p.max, mu=mu, y=data)$minimum
+                             power=p.max, mu=mu, y=ydata)$minimum
        
 #       Note that using the Hessian often produces computational problems
 #       for little (no?) advantage.
@@ -6412,7 +6451,7 @@ if ( do.ci ) {
 }
 
 if ( fit.glm ) {
-   out.glm <- glm( formula,
+   out.glm <- glm.fit( x=model.x, y=ydata, weights=weights, offset=offset,
          family=tweedie(var.power=p.max, link.power=link.power) )
 
    out <- list( y=y, x=x, ht=ht, L=L, p=p.vec, p.max=p.max, L.max=L.max, 

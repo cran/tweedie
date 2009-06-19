@@ -2,8 +2,8 @@
 \alias{tweedie.profile}
 \title{Tweedie Distributions: mle estimation of p}
 \description{Maximum likelihood estimation of the Tweedie index parameter \eqn{p}{power}.}
-\usage{tweedie.profile(formula, p.vec, link.power=0, fit.glm=FALSE, do.smooth=FALSE,
-do.plot=FALSE, do.ci=do.smooth,
+\usage{tweedie.profile(formula, p.vec, link.power=0, data, weights, offset, fit.glm=FALSE,
+do.smooth=FALSE, do.plot=FALSE, do.ci=do.smooth,
 eps=1/6, do.points=do.plot, method="series", conf.level=0.95, 
 phi.method=ifelse(method == "saddlepoint", "saddlepoint", "mle"), verbose=TRUE)}
 \arguments{
@@ -24,6 +24,22 @@ phi.method=ifelse(method == "saddlepoint", "saddlepoint", "mle"), verbose=TRUE)}
    refers to the logarithm link function.
    See the documentation for 
    \code{\link[statmod]{tweedie}} also.}
+   \item{data}{an optional data frame, list or environment 
+  	(or object coercible by \code{as.data.frame} to a data frame) 
+  	containing the variables in the model.  
+  	If not found in \code{data}, 
+  	the variables are taken from \code{environment(formula)}, 
+  	typically the environment from which \code{glm} is called.}
+  	\item{weights}{an optional vector of weights to be used in the fitting
+  	process.  Should be \code{NULL} or a numeric vector.}
+  	\item{offset}{this can be used to specify an \emph{a priori}
+  	 known component to be included in the linear predictor during fitting.  
+  	 This should be \code{NULL} or a numeric vector of length either one or
+  	 equal to the number of cases. 
+  	 One or more \code{offset} terms can
+  	 be included in the formula instead or as well, 
+  	 and if both are specified their sum is used.  
+  	 See \code{\link{model.offset}}.}
    \item{fit.glm}{logical flag.
    If \code{TRUE},
    the Tweedie generalized linear model is fitted using the value of \eqn{p}{p}

@@ -1,6 +1,6 @@
 \name{tweedie-package}
 \alias{tweedie-package}
-\alias{tweedie}
+\alias{Tweedie}
 \docType{package}
 \title{
 Tweedie Distributions
@@ -10,11 +10,11 @@ Functions for computing and fitting the Tweedie family of distributions
 }
 \details{
 \tabular{ll}{
-Package: \tab tweedie\cr
-Type: \tab Package\cr
-Version: \tab 1.6.2\cr
-Date: \tab 2009-02-16\cr
-License: \tab GPL version 2 or newer\cr
+	Package: \tab tweedie\cr
+	Type: \tab Package\cr
+	Version: \tab 1.6.6\cr
+	Date: \tab 2009-06-19\cr
+	License: \tab GPL version 2 or newer\cr
 }
 }
 \author{
