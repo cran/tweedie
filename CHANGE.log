@@ -1,5 +1,9 @@
 CHANGE LOG (incomplete)
 
+* Version 1.6.7
+  - Correct error in rtweedie when power=1 and phi\ne 1 
+    (Thanks to Frederic Gosselin <frederic.gosselin@cemagref.fr>)
+  
 * Version 1.6.6
   - Corrected specification of GPL; no changes to functionality, code or documentation
   

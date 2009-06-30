@@ -4186,11 +4186,11 @@
      &         alpha, a2, oldt, front, top, bot, rek, imk,
      &         cumddk, rl, workvec1, workvec2, lobnd,
      &         hibnd
-      integer  m, ier, n, go, its, ceil, floor,
+      integer  m, ier, n, go, its, ceil, myfloor,
      &         tpt, mdirn, boost, flag, its1, verbose
 
       external  cumf2, cumdk, cumsfzro2, cumintim, 
-     &          imgddcgf, cumsfzro, ceil, floor, cumddk, 
+     &          imgddcgf, cumsfzro, ceil, myfloor, cumddk, 
      &          cumf, fndst
 
 ***
@@ -4300,9 +4300,9 @@
 *           Determine the m's
             if ( mdirn .GT. 0 ) then
                workvec1 = dble( ceil(workvec1) )
-               workvec2 = dble( floor(workvec2) )
+               workvec2 = dble( myfloor(workvec2) )
             else
-               workvec1 = dble( floor(workvec1) )
+               workvec1 = dble( myfloor(workvec1) )
                workvec2 = dble( ceil(workvec2) )
             endif
 
@@ -5186,7 +5186,7 @@
 *****************************************************************
 *****************************************************************
 
-      integer function floor( x )
+      integer function myfloor( x )
 
 ***
 * This function rounds  x  towards -infinity
@@ -5197,9 +5197,9 @@
 ***
 
       if ( x .GT. 0 ) then
-         floor = int( x )
+         myfloor = int( x )
       else
-         floor = int( x ) - 1
+         myfloor = int( x ) - 1
       endif
 
       return

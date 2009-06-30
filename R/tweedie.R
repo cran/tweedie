@@ -5916,7 +5916,7 @@ else {
    # A vector of all phi's
 }
     if (power==1) {
-        rt <- rpois(n, lambda=mu^(2-power) / ( phi * (2-power) ) )
+        rt <- phi * rpois(n, lambda=mu / ( phi  ) )
     }
     
     if (power==2) {
