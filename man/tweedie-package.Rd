@@ -12,8 +12,8 @@ Functions for computing and fitting the Tweedie family of distributions
 \tabular{ll}{
 	Package: \tab tweedie\cr
 	Type: \tab Package\cr
-	Version: \tab 1.6.7\cr
-	Date: \tab 2009-06-30\cr
+	Version: \tab 1.6.8\cr
+	Date: \tab 2009-07-07\cr
 	License: \tab GPL (>=2)
 }
 }

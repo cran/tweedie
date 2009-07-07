@@ -1,5 +1,9 @@
 CHANGE LOG (incomplete)
 
+* Version 1.6.8
+  - Correct error in dtweedie.saddle y=0 for 1<p,2 
+    (Thanks to Glenn Meyers <GMeyers@iso.com>)
+  
 * Version 1.6.7
   - Correct error in rtweedie when power=1 and phi\ne 1 
     (Thanks to Frederic Gosselin <frederic.gosselin@cemagref.fr>)

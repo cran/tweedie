@@ -65,10 +65,10 @@
       its = 0
       
 *     SPECIAL CASES {
-	   if ( p .EQ. 1.0d00 ) then
-		   funvalue = -10.d00
-   		return
-	   endif
+      if ( p .EQ. 1.0d00 ) then
+         funvalue = -10.d00
+         return
+      endif
 
       if ( ( p .LT. 2.0d00 ) .AND. 
      &     ( p .GT. 1.0d00 ) ) then
@@ -127,7 +127,7 @@
 *     evaluate  f( y/\mu, 1, (\mu)^{2-p}\phi)
 *     and the actual density should be c times this.
         
-	  
+     
 *     DETERMINE a(y,phi) (except in normal and gamma cases, where
 *     the distribution is determined from the closed form result).
 
@@ -171,7 +171,7 @@
 ******************************************************************
 
       subroutine cdf(p, phi, y, mu, exact,
-     &			     funvalue, exitstatus, relerr, its )
+     &              funvalue, exitstatus, relerr, its )
 
 ***
 *
@@ -268,83 +268,83 @@
       result0 = 0.5d00
 
       if ( exact .EQ. 0 ) then
-*			Then use approx zero acceleration algorithm
+*         Then use approx zero acceleration algorithm
 
-      	call evlintc( p, phi, y, mu, aimrerr, result,
+         call evlintc( p, phi, y, mu, aimrerr, result,
      &                 maxit, ier, exitstatus, relerr, 
      &                 its )
 
 
-      	if ( (p.GT. 1.0d00 ) .AND. 
+         if ( (p.GT. 1.0d00 ) .AND. 
      &        (p .LT. 2.0d00) ) then
 
-         	lambda = calclambda(p, phi, mu)
+            lambda = calclambda(p, phi, mu)
 
-*		   	Now convert from conditional density to ordinary density
-      	   funvalue = ( ( result + result0 )
-     &      			* ( 1.0d00 - exp( -lambda ) ) )
-     &      	  	   + exp( -lambda )
+*            Now convert from conditional density to ordinary density
+            funvalue = ( ( result + result0 )
+     &               * ( 1.0d00 - exp( -lambda ) ) )
+     &                 + exp( -lambda )
 
 
-			elseif ( p .GT. 2.0d00 ) then
+         elseif ( p .GT. 2.0d00 ) then
 
-         	funvalue = result + result0
+            funvalue = result + result0
 
-		 	endif
+          endif
 
-		else
-*			Then use exact zeros acceleration algorithm
+      else
+*         Then use exact zeros acceleration algorithm
 
-			if ( (p .GT. 1.0d00).AND.(p .LT. 2.0d00) ) then
+         if ( (p .GT. 1.0d00).AND.(p .LT. 2.0d00) ) then
 
-*        	Poisson-gamma case
-         	call cumsmallp( p, phi, y, mu, aimrerr, 
-     &    	   resulta, ier, relerr, its, verbose )
+*           Poisson-gamma case
+            call cumsmallp( p, phi, y, mu, aimrerr, 
+     &      resulta, ier, relerr, its, verbose )
 
-         	result0 = 0.5d00
+            result0 = 0.5d00
 
-         	lambda = calclambda(p, phi, mu)
+            lambda = calclambda(p, phi, mu)
 
-*	        Now convert from conditional density to ordinary density
-   	      funvalue = ( ( resulta + result0 )
+*           Now convert from conditional density to ordinary density
+            funvalue = ( ( resulta + result0 )
      &              * ( 1.0d00 - exp( -lambda ) ) )
      &            + exp( -lambda )
 
-   	   elseif ( p .GT. 2.0d00) then
+         elseif ( p .GT. 2.0d00) then
 
-      	    call cumbigp( p, phi, y, mu, aimrerr, 
+             call cumbigp( p, phi, y, mu, aimrerr, 
      &               resulta, maxit, ier, exitstatus, 
      &               relerr, its, verbose )
-         	 result0 = 0.5d00
+             result0 = 0.5d00
 
-          	funvalue = resulta + result0
+             funvalue = resulta + result0
 
-      	endif
+         endif
 
-*	     Some tidy-ups
-   	   if ( funvalue .GT. 1.0d00 ) funvalue = 1.0d00
+*        Some tidy-ups
+         if ( funvalue .GT. 1.0d00 ) funvalue = 1.0d00
 
-      	if ( p .GT. 2.0d00 ) then
+         if ( p .GT. 2.0d00 ) then
 
-         	if ( funvalue .LT. 0.0d00 ) then
-         	   funvalue = 0.0d00
-         	endif
+            if ( funvalue .LT. 0.0d00 ) then
+               funvalue = 0.0d00
+            endif
 
-	      else
+         else
 
-   	      if ( funvalue .LT. exp(-lambda) ) then
+            if ( funvalue .LT. exp(-lambda) ) then
 
-      	      funvalue = exp(-lambda)
+               funvalue = exp(-lambda)
 
-	         endif
+            endif
 
-   	   endif
+         endif
 
 
-		endif
+      endif
 
-		return
-		end
+      return
+      end
 
 ******************************************************************
 ****************************************************************
@@ -523,13 +523,13 @@
 ****************************************************************
 ****************************************************************
 
-      double precision function f(p, phi, y, mu, x)
+      double precision function f(p, phi, y, x)
 
 ***
 *     A function to be numerically integrated
 ***
 
-      double precision  x, p, phi, y, rl, im, mu
+      double precision  x, p, phi, y, rl, im
 
 ***
 *
@@ -939,7 +939,7 @@
 *        NOTE:   inner  will always be positive when p>2
 
          z1 = front * ( inner ) ** ( p - 1.0d00 )
-		
+      
          dz1 = imgdcgf(p, phi, z1) - y
 
 *     Now choose the starting point that is the larger, but is still
@@ -981,14 +981,14 @@
                z = z2
                dz = dz2
          
-			   endif
-				   
+            endif
+               
          endif
       else
 *        The case 1 < p < 2
-		   z = z2
-			dz = dz2
-			   
+         z = z2
+         dz = dz2
+            
       endif
 
 *     Now solve for kmax
@@ -2259,7 +2259,7 @@
 *      pi = atan( 1.0d00 ) * 4.0d00
 *      pi = 3.14159 26535 89793 23846 26433d00
 
-		
+      
 ***SURELY can improve when y is small, when t gets large.  This
 *  routine takes a long time to find the zero.
 
@@ -2358,7 +2358,7 @@
 *     When calculating the density, we always have mu=1
       mu = 1.0d00
       call calccgf(p, phi, y, x, rl, im)
-		
+      
       lambda = calclambda( p, phi, mu )
 
        zerofn = exp( rl ) * cos( im )  -
@@ -2408,7 +2408,7 @@
 *****************************************************************
 ****************************************************************
 
-      double precision function g(p, phi, y, mu, x)
+      double precision function g(p, phi, y, x)
 
 ***
 *     A function to be numerically integrated
@@ -2416,7 +2416,7 @@
 *     method, y>1.
 ***
 
-      double precision  x, p, phi, y, rl, im, mu, imkdash,
+      double precision  x, p, phi, y, rl, im, imkdash,
      &                  imgdcgf
 
 

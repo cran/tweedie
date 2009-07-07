@@ -604,8 +604,6 @@ dtweedie.saddle <- function(y, power, mu, phi, eps=1/6) {
       mu <- array( dim=length(y), mu )
    if ( length(phi)==1 )
       phi <- array( dim=length(y), phi )
-
-   
 #
 # END error checks
 #
@@ -616,7 +614,6 @@ dtweedie.saddle <- function(y, power, mu, phi, eps=1/6) {
    # Nelder and Pregibon's idea for problems at y=0
 
    y0 <- (y == 0)
-   yp <- (y != 0)
 	density <- y
 #	if(any(y == 0)) {
 #		if(power >= 2) {
@@ -630,12 +627,15 @@ dtweedie.saddle <- function(y, power, mu, phi, eps=1/6) {
 
 #      }
 #   }
-         
-#		if((power >= 1) && (power < 2)) {
-#			lambda <- mu[y0]^(2 - power)/(phi[y0] * (2 - power))
-#			density[y0] <- exp( -lambda)
-#		}
-#	}
+   if ( any(y==0) ){
+		if((power >= 1) && (power < 2)) {
+			lambda <- mu[y0]^(2 - power)/(phi[y0] * (2 - power))
+			density[y0] <- exp( -lambda)
+		} else {cat("HERE\n")
+			density[y0] <- 0
+		}
+	}
+	
 #	if(any(y != 0)) {
 #     dev <- tweedie.dev(y=y[yp], mu=mu[yp], power=power)
 #      density[yp] <- (2*pi*phi[yp]*y[yp]^power)^(-1/2) * exp( -dev/(2*phi[yp]) )

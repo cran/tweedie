@@ -122,7 +122,7 @@
     
 \section{Note}{The \code{method}s changed from version 1.4 to 1.5
     (methods 1 and 2 swapped).
-    The methods are defined in Dunn and Smyth (2007).
+    The methods are defined in Dunn and Smyth (2008).
 }
 \author{Peter Dunn (\email{pdunn2@usc.edu.au})}
 \references{
