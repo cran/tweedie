@@ -1,5 +1,17 @@
 CHANGE LOG (incomplete)
 
+* Version 2.0.0
+  - Made  m,ethod="inversion" the default (was "series")
+  - Slightly changed default output (added sep="" to some paste commands)
+
+* Version 1.6.9 
+  - An error introduced earlier (unsure when exactly; prob v 1.6.1)
+  - In trying to identify and fix the error, tidied some of the FORTRAN code
+  - Made  do.smooth=TRUE  the default (was FALSE)
+  - If  p.vec  is not supplied,  tweedie.profile  makes a sensible guess
+  - Made  verbose=FALSE the default  (was TRUE)
+  - Made minor changes to output when  verbose=FALSE
+
 * Version 1.6.8
   - Correct error in dtweedie.saddle y=0 for 1<p,2 
     (Thanks to Glenn Meyers <GMeyers@iso.com>)

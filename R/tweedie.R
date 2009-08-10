@@ -631,7 +631,7 @@ dtweedie.saddle <- function(y, power, mu, phi, eps=1/6) {
 		if((power >= 1) && (power < 2)) {
 			lambda <- mu[y0]^(2 - power)/(phi[y0] * (2 - power))
 			density[y0] <- exp( -lambda)
-		} else {cat("HERE\n")
+		} else {
 			density[y0] <- 0
 		}
 	}
@@ -5948,12 +5948,12 @@ else {
 
 
 #############################################################################
-tweedie.profile <- function(formula, p.vec, link.power = 0, 
+tweedie.profile <- function(formula, p.vec=NULL, link.power = 0, 
 		data, weights, offset, fit.glm=FALSE, 
-      do.smooth=FALSE, do.plot=FALSE, 
+      do.smooth=TRUE, do.plot=FALSE, 
       do.ci=do.smooth, eps=1/6,
-      do.points=do.plot, method="series", conf.level=0.95, 
-      phi.method=ifelse(method=="saddlepoint","saddlepoint","mle"), verbose=TRUE) {
+      do.points=do.plot, method="inversion", conf.level=0.95, 
+      phi.method=ifelse(method=="saddlepoint","saddlepoint","mle"), verbose=FALSE) {
 # verbose gives feedback on screen:
 #    0 : minimal (FALSE)
 #    1 : small amount (TRUE)
@@ -5978,24 +5978,10 @@ if ( is.logical( verbose ) ) {
 
 if (verbose >= 1 ) {
 	cat("---\n This function may take some time to complete;\n")
-	cat(" Please be patient.  If it fails, try using  method=\"inversion\"\n")
-	cat(" rather than the default  method=\"series\"\n")
+	cat(" Please be patient.  If it fails, try using  method=\"series\"\n")
+	cat(" rather than the default  method=\"inversion\"\n")
 	cat(" Another possible reason for failure is the range of p:\n")
 	cat(" Try a different input for  p.vec\n---\n")
-}
-
-if ( do.smooth & (length(p.vec) < 5) ) {
-   warning("Smoothing needs at least five values of p.")
-   do.smooth <- FALSE
-   do.ci <- FALSE
-}
-if ( (conf.level >= 1) | (conf.level <=0)  ){
-   stop("Confidence level must be between 0 and 1.")
-}
-
-if ( !do.smooth & do.ci ) {
-   do.ci <- FALSE
-	warning("Confidence intervals only computed if  do.smooth=TRUE\n")
 }
 
 
@@ -6025,6 +6011,28 @@ if (!is.null(offset)) {
 				length(offset), NROW(Y)), domain = NA)
 }
 
+
+if ( is.null( p.vec ) ) {
+	if ( any(Y==0) ){
+		p.vec <- seq(1.2, 1.8, by=0.1)
+	} else {
+		p.vec <- seq(1.5, 5, by=0.25)
+	}
+}
+
+if ( do.smooth & (length(p.vec) < 5) ) {
+   warning("Smoothing needs at least five values of p.")
+   do.smooth <- FALSE
+   do.ci <- FALSE
+}
+if ( (conf.level >= 1) | (conf.level <=0)  ){
+   stop("Confidence level must be between 0 and 1.")
+}
+
+if ( !do.smooth & do.ci ) {
+   do.ci <- FALSE
+	warning("Confidence intervals only computed if  do.smooth=TRUE\n")
+}
 
 
 
@@ -6072,11 +6080,15 @@ c.vec <- L
 mu.vec <- L
 b.mat <- array( dim=c(p.len, length(ydata) ) )
 
+if ( verbose == 0 ) cat("Computing for p =")
 for (i in (1:p.len)) {
 
    if ( verbose>0) {
-      cat("p =",p.vec[i],"\n")
-   }
+      cat("p =",p.vec[i],"\n", sep="")
+   } else {
+		cat(p.vec[i],", ", sep="")
+	}
+
 
    # We find the mle of phi.
    # We try to bound it as well as we can, 
@@ -6111,7 +6123,6 @@ for (i in (1:p.len)) {
    
       # NOTE:  We need epsilon to be very small to make a
       #        smooth likelihood plot
-      cat("*")
       mu <- rep(NA, length(ydata) )
       
     } else {
@@ -6203,7 +6214,7 @@ for (i in (1:p.len)) {
        cat(" Done: L =",L[i],"\n")
     } 
 }
-
+if ( verbose == 0 ) cat("Done.\n")
 ### Smoothing
    # If there are infs etc in the log-likelihood,
 	# the smooth can't happen.  Perhaps this can be worked around.
@@ -6464,7 +6475,7 @@ if ( fit.glm ) {
 
 }
 
-cat("\n")
+if ( verbose ) cat("\n")
 
 invisible( out )
 

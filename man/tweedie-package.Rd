@@ -12,7 +12,7 @@ Functions for computing and fitting the Tweedie family of distributions
 \tabular{ll}{
 	Package: \tab tweedie\cr
 	Type: \tab Package\cr
-	Version: \tab 1.6.8\cr
+	Version: \tab 2.0.0\cr
 	Date: \tab 2009-07-07\cr
 	License: \tab GPL (>=2)
 }
@@ -65,8 +65,7 @@ x <- rnorm( length(y), 0, 1)  # Unrelated predictor
 # With exact zeros, index  p  must be between 1 and 2
 
 # Fit the tweedie distribution; expect p about 1.5
-out <- tweedie.profile( y~1, p.vec=seq(1.1, 1.9, length=9), 
-	method="interpolation", do.ci=TRUE, do.smooth=TRUE, do.plot=TRUE)
+out <- tweedie.profile( y~1, p.vec=seq(1.1, 1.9, length=9), do.plot=TRUE)
 
 out$p.max
 

@@ -2,10 +2,10 @@
 \alias{tweedie.profile}
 \title{Tweedie Distributions: mle estimation of p}
 \description{Maximum likelihood estimation of the Tweedie index parameter \eqn{p}{power}.}
-\usage{tweedie.profile(formula, p.vec, link.power=0, data, weights, offset, fit.glm=FALSE,
-do.smooth=FALSE, do.plot=FALSE, do.ci=do.smooth,
-eps=1/6, do.points=do.plot, method="series", conf.level=0.95, 
-phi.method=ifelse(method == "saddlepoint", "saddlepoint", "mle"), verbose=TRUE)}
+\usage{tweedie.profile(formula, p.vec=NULL, link.power=0, data, weights, offset, fit.glm=FALSE,
+do.smooth=TRUE, do.plot=FALSE, do.ci=do.smooth,
+eps=1/6, do.points=do.plot, method="inversion", conf.level=0.95, 
+phi.method=ifelse(method == "saddlepoint", "saddlepoint", "mle"), verbose=FALSE)}
 \arguments{
    \item{formula}{a formula expression as for other regression models and generalized linear models, 
    of the form \code{response ~ predictors}. 
@@ -16,6 +16,13 @@ phi.method=ifelse(method == "saddlepoint", "saddlepoint", "mle"), verbose=TRUE)}
    The values must all be larger than one
    (if the response variable has exact zeros,
    the values must all be between one and two).
+   If \code{NULL} (the default),
+   \code{p.vec} is set to 
+   \code{seq(1.2, 1.8, by=0.1)} if the 
+   response contains any zeros,
+   or
+   \code{seq(1.5, 5, by=0.25)} if the 
+   response contains no zeros.
    See the DETAILS section below for further details.}
    \item{link.power}{the power link function to use.
    These link functions \eqn{g(\cdot)}{g()} are of the form 
@@ -47,9 +54,9 @@ phi.method=ifelse(method == "saddlepoint", "saddlepoint", "mle"), verbose=TRUE)}
    If \code{FALSE} (the default),
    no model is fitted.}
    \item{do.smooth}{logical flag.
-   If \code{TRUE},
+   If \code{TRUE} (the default),
    a spline is fitted to the data to smooth the profile likelihood plot.
-   If \code{FALSE} (the default),
+   If \code{FALSE},
    no smoothing is used 
    (and the function is quicker).
    \bold{Note} that \code{p.vec} must contain \emph{at least five points}
@@ -84,8 +91,8 @@ phi.method=ifelse(method == "saddlepoint", "saddlepoint", "mle"), verbose=TRUE)}
    defaults to the same value as \code{do.plot}}
    \item{method}{the method for computing the (log-) likelihood.
    One of
-   \code{"series"} (the default),
-   \code{"inversion"},
+   \code{"series"},
+   \code{"inversion"} (the default),
    \code{"interpolation"}
    or
    \code{"saddlepoint"}.
@@ -111,8 +118,8 @@ phi.method=ifelse(method == "saddlepoint", "saddlepoint", "mle"), verbose=TRUE)}
    is equivalent to using the mean deviance estimator of \code{phi}.
    }
    \item{verbose}{the amount of feedback requested:
-   \code{0} or \code{FALSE} means minimal feedback, 
-   \code{1} or \code{TRUE} means some feedback (the default),
+   \code{0} or \code{FALSE} means minimal feedback (the default), 
+   \code{1} or \code{TRUE} means some feedback,
    or \code{2} means to show all feedback.
    Since the function can be slow and sometimes problematic,
    feedback can be good;
@@ -167,8 +174,8 @@ phi.method=ifelse(method == "saddlepoint", "saddlepoint", "mle"), verbose=TRUE)}
    The function is sometimes unstable and may fail.
    It may also be very slow.
    One solution is to change the method.
-   The default is \code{method="series"} (the default);
-   then try \code{method="inversion"},
+   The default is \code{method="inversion"} (the default);
+   then try \code{method="series"},
    \code{method="interpolation"}
    and
    \code{method="saddlepoint"}
@@ -187,8 +194,9 @@ phi.method=ifelse(method == "saddlepoint", "saddlepoint", "mle"), verbose=TRUE)}
    \code{do.ci=FALSE}.
    If this is successful,
    a larger vector \code{p.vec}
-   and smoothing can be used.}
-   \details{
+   and smoothing can be used.
+}
+\details{
    For each value in \code{p.vec},
    the function computes an estimate of \code{phi}
    and then computes the value of the log-likelihood for these parameters.
@@ -244,10 +252,12 @@ library(statmod) # Needed to use  tweedie.profile
 # Generate some fictitious data
 test.data <- rgamma(n=200, scale=1, shape=1)
 # The gamma is a Tweedie distribution with power=2;
-# let's see if the profile plot shows this
+# let's see if p=2 is suggested by  tweedie.profile:
 \dontrun{
-	out <- tweedie.profile( test.data ~ 1, p.vec=seq(1.7, 2.3, length=6),
-       do.plot=TRUE, method="interpolation", do.smooth=TRUE, do.ci=TRUE)
+	out <- tweedie.profile( test.data ~ 1, 
+		p.vec=seq(1.5, 2.5, by=0.2) )
+	out$p.max
+	out$ci
 }
 }
 
