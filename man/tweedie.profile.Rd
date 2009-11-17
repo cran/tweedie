@@ -18,7 +18,7 @@ phi.method=ifelse(method == "saddlepoint", "saddlepoint", "mle"), verbose=FALSE)
    the values must all be between one and two).
    If \code{NULL} (the default),
    \code{p.vec} is set to 
-   \code{seq(1.2, 1.8, by=0.1)} if the 
+   \code{seq(1.2, 1.8, by=0.05)} if the 
    response contains any zeros,
    or
    \code{seq(1.5, 5, by=0.25)} if the 

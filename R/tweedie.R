@@ -6014,7 +6014,7 @@ if (!is.null(offset)) {
 
 if ( is.null( p.vec ) ) {
 	if ( any(Y==0) ){
-		p.vec <- seq(1.2, 1.8, by=0.1)
+		p.vec <- seq(1.2, 1.8, by=0.05)
 	} else {
 		p.vec <- seq(1.5, 5, by=0.25)
 	}
@@ -6569,3 +6569,26 @@ tweedie.plot <- function(y, power, mu, phi, type="pdf",
    return(invisible(list(y=fy, x=y) ))
    
 }
+#############################################################################
+AICtweedie <- function( glm.obj, k=2){
+	
+	wt <- glm.obj$prior.weights
+	n <- length(glm.obj$residuals)
+	edf <- n - glm.obj$df.residual
+
+	dev <- deviance(glm.obj)
+	disp <- dev/n
+
+	mu <- fitted( glm.obj )
+	y  <- glm.obj$y
+	p <- get("p", envir = environment(glm.obj$family$variance))
+
+	den <- dtweedie( y=y, mu=mu, phi=disp, power=p)
+	AIC <- -2*sum( log(den) * wt) 
+
+	return( AIC + k*(edf+1) )
+
+}
+
+
+

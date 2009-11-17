@@ -1,6 +1,6 @@
 Package: tweedie
-Version: 2.0.0
-Date: 2009-08-10
+Version: 2.0.2
+Date: 2009-17-11
 Title: Tweedie exponential family models
 Author: Peter K Dunn <pdunn2@usc.edu.au>
 Maintainer: Peter K Dunn <pdunn2@usc.edu.au>
@@ -9,6 +9,6 @@ Suggests: fBasics
 Description: Maximum likelihood computations for Tweedie families.
 License: GPL (>= 2)
 URL: http://www.r-project.org/package=tweedie
-Packaged: 2009-08-10 00:04:11 UTC; pdunn2
+Packaged: 2009-11-17 07:49:23 UTC; hornik
 Repository: CRAN
-Date/Publication: 2009-08-10 06:34:17
+Date/Publication: 2009-11-17 07:53:14
