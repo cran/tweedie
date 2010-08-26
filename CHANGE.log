@@ -1,5 +1,18 @@
 CHANGE LOG (incomplete)
-
+* Verson 2.0.5 (uploaded 26 August 2010)
+   - Change to dtweedie.inversion to ensure density=0 is returned
+     when y<0 (1<p<2) or p<-0 (when p>2)
+   - Change to tweedie.profile to fix a problem that p=1 returned an error
+   - Changed so that tweedie.profile works withg p/xi = 0 when add0=TRUE (default if FALSE)
+   - Fixed some minor outputting messages (when verbose==2)  
+   - Location of CITATION file moved to correct location
+    
+* Verson 2.0.4 (uploaded 12 July 2010)
+   - Minor edits
+   
+* Verson 2.0.3 (uploaded 18 Dec 2009)
+	- Changed default p.vec: There were too many values
+	- Added the facility to refer to  p  as  xi  in line with GLMs text
 
 * Version 2.0.1 (uploaded 17 Nov 2009)
   - Changed the default p.vec when 1<p<2 to seq(1.2, 1.8, by=0.05)

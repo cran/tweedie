@@ -5428,7 +5428,8 @@ dtweedie.inversion <- function(y, power, mu, phi, exact=TRUE, method=3){
 # Error checks
 if ( power<1) stop("power must be greater than 1.")
 if ( any(phi <= 0)) stop("phi must be positive.")
-if ( any(y < 0) ) stop("y must be a non-negative vector.")
+#if ( power>2) if ( any(y <= 0) ) stop("y must be a positive vector.")
+#if ( (power>1 & (power<2) ) if ( any(y < 0) ) stop("y must be a non-negative vector.")
 if ( any(mu <= 0) ) stop("mu must be positive.")
 if ( length(mu)>1) {
    if ( length(mu)!=length(y) ) {
@@ -5458,6 +5459,11 @@ y.len <- length(y)
 density <- y
 its <- y
 
+if ( is.null(method)){
+   method <- array( dim=length(y))
+} else {
+   method <- array( method, dim=length(y))
+}
 
 for (i in (1:y.len)) {
 
@@ -5470,8 +5476,16 @@ for (i in (1:y.len)) {
    # Method 2: Rescale the mean to 1
    # Method 3: Rescale y to 1 and evaluate b.
    
-   if ( y[i] == 0 ) {
-      density[i] <- exp( -mu[i] ^ (2-power) / ( phi[i] * (2-power) ) )
+   if ( y[i] <= 0 ) {
+   	if ( (power>1) & (power<2) ) {
+			if ( y[i]==0 ) {
+		      density[i] <- exp( -mu[i] ^ (2-power) / ( phi[i] * (2-power) ) )
+   		} else {
+				density[i] <- 0
+   		}
+	   } else {
+   		density[i] <- 0
+   	}
    } else {
       # Here, y > 0
       m2 <- 1/mu[i]
@@ -5490,7 +5504,7 @@ for (i in (1:y.len)) {
       min.method <- min( m1, m2, m3 )
    
       # Now if no method requested, find the notional "optimal"
-      if ( is.null(method) ) {
+      if ( is.null(method[i]) ) {
          if ( min.method==m1 ){
             use.method <- 1
          } else {
@@ -5501,7 +5515,7 @@ for (i in (1:y.len)) {
             }
          }
       } else {
-         use.method <- method
+         use.method <- method[i]
       }
    
       # Now use the method
@@ -5948,12 +5962,12 @@ else {
 
 
 #############################################################################
-tweedie.profile <- function(formula, p.vec=NULL, link.power = 0, 
+tweedie.profile <- function(formula, p.vec=NULL, xi.vec=NULL, link.power = 0, 
 		data, weights, offset, fit.glm=FALSE, 
       do.smooth=TRUE, do.plot=FALSE, 
       do.ci=do.smooth, eps=1/6,
       do.points=do.plot, method="inversion", conf.level=0.95, 
-      phi.method=ifelse(method=="saddlepoint","saddlepoint","mle"), verbose=FALSE) {
+      phi.method=ifelse(method=="saddlepoint","saddlepoint","mle"), verbose=FALSE, add0=FALSE) {
 # verbose gives feedback on screen:
 #    0 : minimal (FALSE)
 #    1 : small amount (TRUE)
@@ -6011,17 +6025,40 @@ if (!is.null(offset)) {
 				length(offset), NROW(Y)), domain = NA)
 }
 
+xi.notation <- TRUE
+if ( is.null(xi.vec) & !is.null(p.vec) ){
+	xi.vec <- p.vec
+	xi.notation <- FALSE
+}
 
-if ( is.null( p.vec ) ) {
+if ( is.null(p.vec) & !is.null(xi.vec) ){
+	p.vec <- xi.vec
+	xi.notation <- TRUE
+}
+
+if ( is.null( p.vec ) & is.null(xi.vec)) { # Neither xi.vec or p.vec are given
 	if ( any(Y==0) ){
-		p.vec <- seq(1.2, 1.8, by=0.05)
+		xi.vec <- p.vec <- ifelse(add0, c(0, seq(1.2, 1.8, by=0.1)), seq(1.2, 1.8, by=0.1) )
 	} else {
-		p.vec <- seq(1.5, 5, by=0.25)
+		xi.vec <- p.vec <- ifelse(add0, c(0, seq(1.5, 5, by=0.5)), seq(1.5, 5, by=0.5) )
+	}
+	xi.notation <- TRUE
+} else {
+	if ( add0 ) {
+		if (xi.notation) {
+			xi.vec <- c(0, xi.vec)
+		} else {
+			p.vec <- c(0, p.vec)
+		}
 	}
 }
 
-if ( do.smooth & (length(p.vec) < 5) ) {
-   warning("Smoothing needs at least five values of p.")
+# Determine notation to use
+index.par <- ifelse( xi.notation, "xi","p")
+
+
+if ( do.smooth & (length(xi.vec) < 5) ) {
+   warning(paste("Smoothing needs at least five values of",index.par,".") )
    do.smooth <- FALSE
    do.ci <- FALSE
 }
@@ -6038,15 +6075,13 @@ if ( !do.smooth & do.ci ) {
 
 
 
-# Fit the dummy model to get x
-#dummy.model <- glm.fit( x, y,family=gaussian(), x=TRUE, y=TRUE )
-#model.x <- model.matrix( dummy.model )
+# Some renaming
 ydata <- Y
 model.x <- X
 
 # Warnings
-if ( any( ydata == 0 ) & any( p.vec >= 2 ) ) {
-    stop("The response variable contains exact zeros; ensure all values in  p.vec  are between 1 and 2")
+if ( any( ydata == 0 ) & any( xi.vec >= 2 ) ) {
+    stop(paste("The response variable contains exact zeros; ensure all values in  ",index.par,".vec  are between 1 and 2",sep=""))
 }
 
 
@@ -6068,25 +6103,24 @@ dtweedie.nlogl <- function(phi, y, mu, power) {
 
 
 # Set up some parameters
-p.len <- length(p.vec)
+xi.len <- length(xi.vec)
 phi <- NaN
 
-L <- array( dim = p.len )
+L <- array( dim = xi.len )
 phi.vec <- L
 
 # Now most of these are for debugging:
 b.vec <- L
 c.vec <- L
 mu.vec <- L
-b.mat <- array( dim=c(p.len, length(ydata) ) )
+b.mat <- array( dim=c(xi.len, length(ydata) ) )
 
-if ( verbose == 0 ) cat("Computing for p =")
-for (i in (1:p.len)) {
+for (i in (1:xi.len)) {
 
    if ( verbose>0) {
-      cat("p =",p.vec[i],"\n", sep="")
+      cat( paste(index.par," = ",xi.vec[i],"\n", sep="") )
    } else {
-		cat(p.vec[i],", ", sep="")
+		cat(".")
 	}
 
 
@@ -6095,7 +6129,7 @@ for (i in (1:p.len)) {
    # then use  uniroot to solve for it.
 
    # Set things up
-   p <- p.vec[i]
+   p <- xi.vec[i]
 
    phi.pos <- 1.0e2
    bnd.neg <- -Inf
@@ -6110,14 +6144,15 @@ for (i in (1:p.len)) {
                             control=glm.control(epsilon=1e-9) ),
       silent = TRUE
    )
-   
-   skip.obs <- FALSE
+
+
+	skip.obs <- FALSE
    if ( class( catch.possible.error )=="try-error" ) {
       skip.obs <- TRUE 
    }
    
    if( skip.obs ) {
-      warning(paste("  Problem near p = ",p,"; this error reported:\n     ",
+      warning(paste("  Problem near ",index.par," = ",p,"; this error reported:\n     ",
                      catch.possible.error,
                     " Examine the data and function inputs carefully.") )
    
@@ -6160,11 +6195,14 @@ for (i in (1:p.len)) {
       #    ans <- nlm(p=phi.est, f=dtweedie.nlogl, 
       #                hessian=FALSE,
       #                power=p, mu=mu, y=data)
-         ans <- optimize(f=dtweedie.nlogl, maximum=FALSE, interval=c(low.limit, 10*phi.est),
-                        power=p, mu=mu, y=ydata )
-      #       phi <- phi.vec[i] <- ans$estimate
-         phi <- phi.vec[i] <- ans$minimum
-         if (verbose>=1) cat(" Done (phi =",phi.vec[i],")\n")
+			if ( p!= 0 ) {
+				ans <- optimize(f=dtweedie.nlogl, maximum=FALSE, interval=c(low.limit, 10*phi.est),
+							power=p, mu=mu, y=ydata )
+				phi <- phi.vec[i] <- ans$minimum
+			} else {
+				phi <- phi.vec[i] <- sum( (ydata-mu)^2 ) / length(ydata)
+			}
+		if (verbose>=1) cat(" Done (phi =",phi.vec[i],")\n")
    
       } else{ # phi.method=="saddlepoint")
    
@@ -6190,22 +6228,24 @@ for (i in (1:p.len)) {
     } else {   
       if ( method=="saddlepoint") {
          L[i] <- dtweedie.logl.saddle(y=ydata, mu=mu, power=p, phi=phi, eps=eps)
-      } else{
+      } else {
       if (p==2) {
             L[i] <- sum( log( dgamma( rate=1/(phi*mu), shape=1/phi, x=ydata ) ) )
-         }
-         else{
+         } else {
             if ( p == 1 ) {
-               L[i] <- sum( log( dpois(x=y/phi, lambda=mu/phi ) ) )
-         }
-         else{
-               L[i] <- switch(
-                  pmatch(method, c("interpolation","series", "inversion"), 
+               L[i] <- sum( log( dpois(x=ydata/phi, lambda=mu/phi ) ) )
+            } else {
+				if ( p == 0 ) {
+					L[i] <- sum( dnorm(x=ydata, mean=mu, sd=sqrt(phi), log=TRUE) )
+				} else {
+					L[i] <- switch(
+					pmatch(method, c("interpolation","series", "inversion"), 
                                  nomatch=2),
-                  "1" = dtweedie.logl( mu=mu, power=p, phi=phi, y=ydata),
-                  "2" = sum( log( dtweedie.series( y=ydata, mu=mu, power=p, phi=phi) ) ),
-                  "3" = sum( log( dtweedie.inversion( y=ydata, mu=mu, power=p, phi=phi) ) ) )
-         }
+					"1" = dtweedie.logl( mu=mu, power=p, phi=phi, y=ydata),
+					"2" = sum( log( dtweedie.series( y=ydata, mu=mu, power=p, phi=phi) ) ),
+					"3" = sum( log( dtweedie.inversion( y=ydata, mu=mu, power=p, phi=phi) ) ) )
+				}
+            }
          }
       }
    }
@@ -6227,14 +6267,13 @@ if ( verbose == 0 ) cat("Done.\n")
 y <- NA
 x <- NA
 
-
 if ( do.smooth ) {
     L.fix <- L
-    p.vec.fix <- p.vec
+    xi.vec.fix <- xi.vec
 	 phi.vec.fix <- phi.vec
 	 if ( any( is.nan(L) ) | any( is.infinite(L) ) | any( is.na(L) ) ) {
        retain.these <- !( ( is.nan(L) ) | ( is.infinite(L) ) | ( is.na(L) ) )
-	    p.vec.fix <- p.vec.fix[ retain.these ]
+	    xi.vec.fix <- xi.vec.fix[ retain.these ]
 		 phi.vec.fix <- phi.vec.fix[ retain.these ]
 	    L.fix <- L.fix[ retain.these ]
 		 
@@ -6252,35 +6291,36 @@ if ( do.smooth ) {
       if (verbose>=1) cat("* Smoothing: ")
     # Smooth the points
        # - get smoothing spline
-    ss <- splinefun( p.vec.fix, L.fix )
+    ss <- splinefun( xi.vec.fix, L.fix )
 
       # Plot smoothed data
-      p.smooth <- seq(min(p.vec.fix), max(p.vec.fix), length=50 )
-      L.smooth <- ss(p.smooth )
+      xi.smooth <- seq(min(xi.vec.fix), max(xi.vec.fix), length=50 )
+      L.smooth <- ss(xi.smooth )
       
       if ( do.plot) {
          keep.these <- is.finite(L.smooth) & !is.na(L.smooth)
          L.smooth <- L.smooth[ keep.these ] 
-         p.smooth <- p.smooth[ keep.these ] 
+         xi.smooth <- xi.smooth[ keep.these ] 
          if ( verbose>=1 & any( !keep.these ) ) {
             cat(" (Some values of L are infinite or NA for the smooth; these are ignored)\n")
          }
         
          yrange <- range( L.smooth, na.rm=TRUE )
          
-         plot( yrange ~ range(p.vec),
+         plot( yrange ~ range(xi.vec),
             type="n",
 				las=1,
-            xlab=expression(paste( italic(p)," index")),
+            xlab=ifelse(xi.notation, expression(paste( xi," index")), expression(paste( italic(p)," index")) ),
             ylab=expression(italic(L)))
-         lines( p.smooth, L.smooth,
+         lines( xi.smooth, L.smooth,
             lwd=2)
-         rug( p.vec )
+         rug( xi.vec )
 			if (do.points) {
-			   points( L ~ p.vec, pch=19)
+			   points( L ~ xi.vec, pch=19)
 			}
+		 if (add0) lines(xi.smooth[xi.smooth<1], L.smooth[xi.smooth<1], col="gray", lwd=2)
       }
-      x <- p.smooth
+      x <- xi.smooth
       y <- L.smooth
       
    } else {
@@ -6292,7 +6332,7 @@ else {
    if ( do.plot) {
          
       keep.these <- is.finite(L) & !is.na(L)
-      p.vec <- p.vec[ keep.these ] 
+      xi.vec <- xi.vec[ keep.these ] 
       L <- L[ keep.these ] 
       phi.vec <- phi.vec[ keep.these ]
       if ( verbose>=1 & any( keep.these ) ) {
@@ -6301,19 +6341,20 @@ else {
 
       yrange <- range( L, na.rm=TRUE )
       # Plot the data we have
-      plot( yrange ~ range(p.vec),
+      plot( yrange ~ range(xi.vec),
          type="n",     
          las=1,
-         xlab=expression(paste(italic(p)," index")),
+         xlab=ifelse( xi.notation, expression(paste(xi," index")), expression(paste(italic(p)," index")) ),
          ylab=expression(italic(L)))
-      lines( L ~ p.vec, lwd=2)
-      rug( p.vec )
+      lines( L ~ xi.vec, lwd=2)
+	
+      rug( xi.vec )
 		if (do.points) {
-		   points( L ~ p.vec, pch=19)
+		   points( L ~ xi.vec, pch=19)
 		}
 
    }
-   x <- p.vec
+   x <- xi.vec
    y <- L
 }
 if (verbose>=2) cat(" Done\n")
@@ -6330,7 +6371,7 @@ if ( do.smooth ){
    # Find maximum from profile
 
    L.max <- max(y, na.rm=TRUE)
-   p.max <- x[ y==L.max ]
+   xi.max <- x[ y==L.max ]
    
    # Now need to find mle of  phi  at this very value of  p
    # - Find bounds
@@ -6350,7 +6391,7 @@ if ( do.smooth ){
 	
    # Now, if the maximum happens to be at an endpoint,
    # we have to do things differently:
-   if ( (p.max==p.vec[1]) | (p.max==p.vec[length(p.vec)]) ) {
+	if ( (xi.max==xi.vec[1]) | (xi.max==xi.vec[length(xi.vec)]) ) {
    
       phi.max <- phi.lo # and is same as phi.max
       warning("True maximum possibly not detected.")
@@ -6362,8 +6403,8 @@ if ( do.smooth ){
       if ( phi.method=="saddlepoint"){
          
          mu <- fitted( glm.fit( y=ydata, x=model.x, weights=weights, offset=offset,
-                                family=tweedie(p.max, link.power=link.power)))
-         phi.max <- sum( tweedie.dev(y=ydata, mu=mu, power=p.max) )/length( ydata )
+                                family=tweedie(xi.max, link.power=link.power)))
+         phi.max <- sum( tweedie.dev(y=ydata, mu=mu, power=xi.max) )/length( ydata )
          
       } else {
 #        phi.max <- nlm(p=phi.est, f=dtweedie.nlogl, 
@@ -6372,10 +6413,10 @@ if ( do.smooth ){
 #                    gradient=dtweedie.dldphi)$estimate
         
         mu <- fitted( glm.fit( y=ydata, x=model.x, weights=weights, offset=offset,
-                               family=tweedie(p.max, link.power=link.power)))
+                               family=tweedie(xi.max, link.power=link.power)))
         phi.max <- optimize( f=dtweedie.nlogl, interval=c(phi.lo, phi.hi ), 
             # set lower limit phi.lo???
-                             power=p.max, mu=mu, y=ydata)$minimum
+                             power=xi.max, mu=mu, y=ydata)$minimum
        
 #       Note that using the Hessian often produces computational problems
 #       for little (no?) advantage.
@@ -6388,7 +6429,7 @@ if ( do.smooth ){
   
    L.max <- max(L)
 
-   p.max   <- p.vec  [ L == L.max ]
+   xi.max   <- xi.vec  [ L == L.max ]
    phi.max <- phi.vec[ L == L.max ]
 
    if (verbose>=2) cat(" Done\n")
@@ -6396,7 +6437,7 @@ if ( do.smooth ){
 
 # Now report
 if ( verbose >= 2 ) {
-   cat("ML Estimates:  p=",p.max," with phi=",phi.max," giving L=",L.max,"\n")
+   cat( "ML Estimates:  ",index.par,"=",xi.max," with phi=",phi.max," giving L=",L.max,"\n")
    cat(" ---\n")
 }
 
@@ -6410,7 +6451,7 @@ if ( do.ci ) {
    if ( !do.smooth ) {
       warning("Confidence interval may be very inaccurate without smoothing.\n")
 		y <- L
-		x <- p.vec
+		x <- xi.vec
    }
 
    if ( do.plot ) {
@@ -6423,7 +6464,7 @@ if ( do.ci ) {
    #   so we can ensure that the limits on  p  are found OK
 
    # --- Left side ---
-   cond.left <- (y < ht ) & (x < p.max )
+   cond.left <- (y < ht ) & (x < xi.max )
    if ( all(cond.left==FALSE) ) {
       warning("Confidence interval cannot be found: insufficient data to find left CI.\n")
    }else{
@@ -6442,7 +6483,7 @@ if ( do.ci ) {
    }
 
    # --- Right side ---
-   cond.right <- (y < ht ) & (x > p.max )
+   cond.right <- (y < ht ) & (x > xi.max )
    if ( all( cond.right==FALSE ) ) {
       warning("Confidence interval cannot be found: insufficient data to find right CI.\n")
    }else{
@@ -6463,15 +6504,26 @@ if ( do.ci ) {
 
 if ( fit.glm ) {
    out.glm <- glm.fit( x=model.x, y=ydata, weights=weights, offset=offset,
-         family=tweedie(var.power=p.max, link.power=link.power) )
+         family=tweedie(var.power=xi.max, link.power=link.power) )
 
-   out <- list( y=y, x=x, ht=ht, L=L, p=p.vec, p.max=p.max, L.max=L.max, 
+	if ( xi.notation){
+		out <- list( y=y, x=x, ht=ht, L=L, xi=xi.vec, xi.max=xi.max, L.max=L.max, 
            phi=phi.vec, phi.max=phi.max, ci=ci, method=method, phi.method=phi.method,
            glm.obj = out.glm)
-
+	} else {
+		out <- list( y=y, x=x, ht=ht, L=L, p=p.vec, p.max=xi.max, L.max=L.max, 
+					phi=phi.vec, phi.max=phi.max, ci=ci, method=method, phi.method=phi.method,
+					glm.obj = out.glm)
+	}
 } else {
-   out <- list( y=y, x=x, ht=ht, L=L, p=p.vec, p.max=p.max, L.max=L.max, 
-           phi=phi.vec, phi.max=phi.max, ci=ci, method=method, phi.method=phi.method)
+	if (xi.notation ){
+		out <- list( y=y, x=x, ht=ht, L=L, xi=xi.vec, xi.max=xi.max, L.max=L.max, 
+					phi=phi.vec, phi.max=phi.max, ci=ci, method=method, phi.method=phi.method)
+	
+	} else {
+		out <- list( y=y, x=x, ht=ht, L=L, p=p.vec, p.max=xi.max, L.max=L.max, 
+					phi=phi.vec, phi.max=phi.max, ci=ci, method=method, phi.method=phi.method)
+	}
 
 }
 

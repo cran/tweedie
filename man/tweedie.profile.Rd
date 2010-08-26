@@ -2,10 +2,10 @@
 \alias{tweedie.profile}
 \title{Tweedie Distributions: mle estimation of p}
 \description{Maximum likelihood estimation of the Tweedie index parameter \eqn{p}{power}.}
-\usage{tweedie.profile(formula, p.vec=NULL, link.power=0, data, weights, offset, fit.glm=FALSE,
+\usage{tweedie.profile(formula, p.vec=NULL, xi.vec=NULL, link.power=0, data, weights, offset, fit.glm=FALSE,
 do.smooth=TRUE, do.plot=FALSE, do.ci=do.smooth,
 eps=1/6, do.points=do.plot, method="inversion", conf.level=0.95, 
-phi.method=ifelse(method == "saddlepoint", "saddlepoint", "mle"), verbose=FALSE)}
+phi.method=ifelse(method == "saddlepoint", "saddlepoint", "mle"), verbose=FALSE, add0=FALSE)}
 \arguments{
    \item{formula}{a formula expression as for other regression models and generalized linear models, 
    of the form \code{response ~ predictors}. 
@@ -18,12 +18,16 @@ phi.method=ifelse(method == "saddlepoint", "saddlepoint", "mle"), verbose=FALSE)
    the values must all be between one and two).
    If \code{NULL} (the default),
    \code{p.vec} is set to 
-   \code{seq(1.2, 1.8, by=0.05)} if the 
+   \code{seq(1.2, 1.8, by=0.1)} if the 
    response contains any zeros,
    or
-   \code{seq(1.5, 5, by=0.25)} if the 
+   \code{seq(1.5, 5, by=0.5)} if the 
    response contains no zeros.
    See the DETAILS section below for further details.}
+   \item{xi.vec}{the same as \code{p.vec};
+   some authors use the \eqn{p} notation for the index parameter,
+   and some use \eqn{\xi}{xi};
+   this function detects which is used and then uses that notation throughout}
    \item{link.power}{the power link function to use.
    These link functions \eqn{g(\cdot)}{g()} are of the form 
    \eqn{g(\eta)=\eta^{\rm link.power}}{g(eta) = eta^link.power},
@@ -124,6 +128,9 @@ phi.method=ifelse(method == "saddlepoint", "saddlepoint", "mle"), verbose=FALSE)
    Since the function can be slow and sometimes problematic,
    feedback can be good;
    but it can also be unnecessary when one knows all is well.}
+   \item{add0}{if TRUE, the value \code{p=0} is used in forming the profile lohg-likelihood
+   (corresponding to the normal distribution);
+   the default value is \code{add0=FALSE}}
 }
 \value{
    The main purpose of the function is to estimate the value
