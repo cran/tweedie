@@ -387,8 +387,9 @@ if ( power==0) {
    density <- dnorm( mean=mu, sd=sqrt(phi), x=y )
    return(density)
 }
-if ( power==1) {
-   density <- dpois(x=y/phi, lambda=mu/phi )
+if ( (power==1) & (all(phi==1))) {
+	# Poisson case
+	density <- dpois(x=y/phi, lambda=mu/phi )
    return(density)
 }
 
@@ -409,6 +410,7 @@ if (any(id.type0)) {
    }
 }
 
+
 xi <- array( dim=length(y) )
 xi[id.type0] <- 0
 xi[!id.type0] <- phi[!id.type0] * y[!id.type0]^(power-2)
@@ -416,13 +418,17 @@ xix <- xi / ( 1 + xi )
 
 if ( (power>1) && (power<=1.1) ) {
    id.series <- (!id.type0)
-   if (any(id.series)){
+	if (any(id.series)){
       density[id.series] <- dtweedie.series(y=y[id.series],
                      mu=mu[id.series], phi=phi[id.series], power=power)
    }
    return(density=density)
 }
 
+if ( power==1 ) { # AND phi not equal to one here
+	id.series <- rep(TRUE, length(id.series))
+	id.interp <- rep(FALSE, length(id.series))
+}
 if ( (power>1.1) && (power<=1.2) ) {
    id.interp <- ( (xix>0) & (xix<0.1) )
    id.series <- (!(id.interp|id.type0))
@@ -491,7 +497,6 @@ if ( (power>1.5) && (power<2) ) {
 }
 
 ### Cases p>2   ###
-
 if ( (power>2) && (power<3) ) {
    id.interp <- ( (xix>0) & (xix<0.9) )
    id.series <- (!(id.interp|id.type0))
@@ -723,13 +728,13 @@ else {
 
 y0 <- (y == 0 )
 yp <- ( y!=0 )
-density <- y
+density <- array( dim=length(y))
 
 if ( (power == 2) | (power==1) ) { # Special cases
    if ( power == 2 ){
       density <- dgamma( y, shape=1/phi, rate=1/(phi * mu ) )
    }
-   if ( power == 1 ){
+   if ( (power == 1) & (all(phi==1)) ){
       density <- dpois( y, lambda=mu )
    }
 }
@@ -780,7 +785,8 @@ dtweedie.series.smallp <- function(power, y, mu, phi){
 if ( power<1) stop("power must be between 1 and 2.")
 if ( power>2) stop("power must be between 1 and 2.")
 if ( any(phi<=0) ) stop("phi must be positive.")
-if ( any(y<=0) ) stop("y must be a strictly positive vector.")
+if ( any(y<=0) & (power>=2) ) stop("y must be a strictly positive vector.")
+if ( any(y<0) & (power>1) & (power < 2) ) stop("y must be a non-negative vector.")
 if ( any(mu<=0) ) stop("mu must be positive.")
 if ( length(mu)>1) {
    if ( length(mu)!=length(y) ) stop("mu must be scalar, or the same length as y.")
@@ -6026,32 +6032,31 @@ if (!is.null(offset)) {
 }
 
 xi.notation <- TRUE
-if ( is.null(xi.vec) & !is.null(p.vec) ){
+if ( is.null(xi.vec) & !is.null(p.vec) ){ # If p.vec given, but not xi.vec
+	if (add0) p.vec <- c(0, p.vec)
 	xi.vec <- p.vec
 	xi.notation <- FALSE
 }
 
-if ( is.null(p.vec) & !is.null(xi.vec) ){
+if ( is.null(p.vec) & !is.null(xi.vec) ){ # If xi.vec given, but not p.vec
+	if (add0) xi.vec <- c(0, xi.vec)
 	p.vec <- xi.vec
 	xi.notation <- TRUE
 }
 
 if ( is.null( p.vec ) & is.null(xi.vec)) { # Neither xi.vec or p.vec are given
 	if ( any(Y==0) ){
-		xi.vec <- p.vec <- ifelse(add0, c(0, seq(1.2, 1.8, by=0.1)), seq(1.2, 1.8, by=0.1) )
+		p.vec <- seq(1.2, 1.8, by=0.1)
+		if (add0 ) p.vec <- c(0, p.vec )
 	} else {
-		xi.vec <- p.vec <- ifelse(add0, c(0, seq(1.5, 5, by=0.5)), seq(1.5, 5, by=0.5) )
+		p.vec <- seq(1.5, 5, by=0.5)
+		if (add0 ) p.vec <- c(0, p.vec )
 	}
+	xi.vec <- p.vec
 	xi.notation <- TRUE
-} else {
-	if ( add0 ) {
-		if (xi.notation) {
-			xi.vec <- c(0, xi.vec)
-		} else {
-			p.vec <- c(0, p.vec)
-		}
-	}
 }
+
+
 
 # Determine notation to use
 index.par <- ifelse( xi.notation, "xi","p")
@@ -6069,6 +6074,9 @@ if ( (conf.level >= 1) | (conf.level <=0)  ){
 if ( !do.smooth & do.ci ) {
    do.ci <- FALSE
 	warning("Confidence intervals only computed if  do.smooth=TRUE\n")
+}
+if ( any(xi.vec<=1) ) {
+   stop(paste("All values of",index.par,"must exceed one.\n"))
 }
 
 
@@ -6233,7 +6241,22 @@ for (i in (1:xi.len)) {
             L[i] <- sum( log( dgamma( rate=1/(phi*mu), shape=1/phi, x=ydata ) ) )
          } else {
             if ( p == 1 ) {
-               L[i] <- sum( log( dpois(x=ydata/phi, lambda=mu/phi ) ) )
+            	if ( phi==1 ){
+						# The phi==1 part added 30 Sep 2010.
+	               L[i] <- sum( log( dpois(x=ydata/phi, lambda=mu/phi ) ) )
+	            } else { # p=1, but phi is not equal to zero
+						# As best as we can, we determine if the values
+						# of  ydata  are multiples of  phi
+						y.on.phi <- ydata/phi
+						close.enough <- array( dim=length(y.on.phi))
+						for (i in (1:length(y.on.phi))){
+							if (isTRUE(all.equal(y.on.phi, as.integer(y.on.phi)))){
+		          	     L[i] <- sum( log( dpois(x=round(y/phi), lambda=mu/phi ) ) )
+							} else {
+								L[i] <- 0
+							}
+						}
+	            }
             } else {
 				if ( p == 0 ) {
 					L[i] <- sum( dnorm(x=ydata, mean=mu, sd=sqrt(phi), log=TRUE) )
@@ -6254,6 +6277,7 @@ for (i in (1:xi.len)) {
        cat(" Done: L =",L[i],"\n")
     } 
 }
+
 if ( verbose == 0 ) cat("Done.\n")
 ### Smoothing
    # If there are infs etc in the log-likelihood,
@@ -6376,8 +6400,8 @@ if ( do.smooth ){
    # Now need to find mle of  phi  at this very value of  p
    # - Find bounds
    
-   phi.1 <- 2 * max( phi.vec.fix, na.rm=TRUE )
-   phi.2 <-0.5* min( phi.vec.fix, na.rm=TRUE )
+   phi.1 <-   2 * max( phi.vec.fix, na.rm=TRUE )
+   phi.2 <- 0.5 * min( phi.vec.fix, na.rm=TRUE )
    
 	if ( phi.1 > phi.2 ) {
 	   phi.hi <- phi.1
@@ -6393,7 +6417,9 @@ if ( do.smooth ){
    # we have to do things differently:
 	if ( (xi.max==xi.vec[1]) | (xi.max==xi.vec[length(xi.vec)]) ) {
    
-      phi.max <- phi.lo # and is same as phi.max
+   	if ( xi.max==xi.vec[1]) phi.max <- phi.vec[1]
+   	if ( xi.max==xi.vec[length(xi.vec)]) phi.max <- phi.vec[length(xi.vec)]
+#      phi.max <- phi.lo # and is same as phi.max
       warning("True maximum possibly not detected.")
 
    } else {
@@ -6414,7 +6440,7 @@ if ( do.smooth ){
         
         mu <- fitted( glm.fit( y=ydata, x=model.x, weights=weights, offset=offset,
                                family=tweedie(xi.max, link.power=link.power)))
-        phi.max <- optimize( f=dtweedie.nlogl, interval=c(phi.lo, phi.hi ), 
+        phi.max <- optimize( f=dtweedie.nlogl, maximum=FALSE, interval=c(phi.lo, phi.hi ), 
             # set lower limit phi.lo???
                              power=xi.max, mu=mu, y=ydata)$minimum
        

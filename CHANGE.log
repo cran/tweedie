@@ -1,4 +1,15 @@
 CHANGE LOG (incomplete)
+
+* Version 2.0.7 (uploaded 30 September 2010)
+   - Ensured tweeide.profile does not use power=1.  This case 
+    (power=1 and phi not equal to 1) is too hard for me to deal with at present.
+   
+* Version 2.0.6 (uploaded 30 September 2010): Never released
+   - Fixed an error introduced in version 2.0.5, where the value of xi/vec/p.vec
+     was set to 1.2 (y>=0) or 1.5 (y>0) when not explictly specified
+   - Fixed an error that reported the wrong mle of phi when the mle 
+     occured at an endpoint of the given  xi  values.
+
 * Verson 2.0.5 (uploaded 26 August 2010)
    - Change to dtweedie.inversion to ensure density=0 is returned
      when y<0 (1<p<2) or p<-0 (when p>2)
