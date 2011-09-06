@@ -23,7 +23,7 @@
 }
 \author{Peter Dunn (\email{pdunn2@usc.edu.au})}
 \references{
-   Dunn, P. K. \& Smyth, G. K. (2008).
+   Dunn, P. K. and Smyth, G. K. (2008).
    Evaluation of Tweedie exponential dispersion model densities by Fourier inversion.
    \emph{Statistics and Computing}, 
    \bold{18}, 73--86.

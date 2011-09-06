@@ -363,7 +363,7 @@
      &                  relerr, result, zero1, zero2,
      &                  mmatrix(2, 200), nmatrix(2, 200),
      &                  xvec(200), w, wold(3), area0, 
-     &                  mu, f, tmax, kmax, sumarea
+     &                  mu, f, f2, tmax, kmax, sumarea
       integer  its, ier, maxit, flag, exitstatus, itsidi, 
      &         mmax, verbose
 
@@ -1936,7 +1936,7 @@
 
       double precision  p, phi, y,  pi, area, aimrerr,
      &         relerr, result, zero1, zero2,
-     &         f, g, intim, flo, fhi, t0, dk,
+     &         f, f2, g, intim, flo, fhi, t0, dk,
      &         mmatrix(2, 200), nmatrix(2, 200),
      &         xvec(500), w, wold(3), area0, 
      &         sumarea, sfzro2, mu, area1, 
@@ -3583,7 +3583,7 @@
 
       double precision  p, phi, y,  pi, area, aimrerr,
      &          relerr, result, zero1, zero2, cumf,
-     &          cumintim, imgddcgf, cumsfzro,
+     &          cumintim, imgddcgf, cumsfzro, cumf2,
      &          mmatrix(2, 200), nmatrix(2, 200),
      &          xvec(200), w, wold(3), area0, sumarea,
      &          cumdk, cumsfzro2, mu,

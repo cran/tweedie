@@ -2,10 +2,12 @@
 \alias{tweedie.profile}
 \title{Tweedie Distributions: mle estimation of p}
 \description{Maximum likelihood estimation of the Tweedie index parameter \eqn{p}{power}.}
-\usage{tweedie.profile(formula, p.vec=NULL, xi.vec=NULL, link.power=0, data, weights, offset, fit.glm=FALSE,
-do.smooth=TRUE, do.plot=FALSE, do.ci=do.smooth,
-eps=1/6, do.points=do.plot, method="inversion", conf.level=0.95, 
-phi.method=ifelse(method == "saddlepoint", "saddlepoint", "mle"), verbose=FALSE, add0=FALSE)}
+\usage{tweedie.profile(formula, p.vec=NULL, xi.vec=NULL, link.power=0, 
+      data, weights, offset, fit.glm=FALSE,
+      do.smooth=TRUE, do.plot=FALSE, do.ci=do.smooth,
+      eps=1/6, do.points=do.plot, method="inversion", conf.level=0.95, 
+      phi.method=ifelse(method == "saddlepoint", "saddlepoint", "mle"), 
+      verbose=FALSE, add0=FALSE)}
 \arguments{
    \item{formula}{a formula expression as for other regression models and generalized linear models, 
    of the form \code{response ~ predictors}. 
@@ -128,7 +130,7 @@ phi.method=ifelse(method == "saddlepoint", "saddlepoint", "mle"), verbose=FALSE,
    Since the function can be slow and sometimes problematic,
    feedback can be good;
    but it can also be unnecessary when one knows all is well.}
-   \item{add0}{if TRUE, the value \code{p=0} is used in forming the profile lohg-likelihood
+   \item{add0}{if \code{TRUE}, the value \code{p=0} is used in forming the profile lohg-likelihood
    (corresponding to the normal distribution);
    the default value is \code{add0=FALSE}}
 }
@@ -217,7 +219,7 @@ phi.method=ifelse(method == "saddlepoint", "saddlepoint", "mle"), verbose=FALSE,
    Peter Dunn (\email{pdunn2@usc.edu.au})
 }
 \references{
-   Dunn, P. K. \& Smyth, G. K. (2008).
+   Dunn, P. K. and Smyth, G. K. (2008).
    Evaluation of Tweedie exponential dispersion model densities by Fourier inversion.
    \emph{Statistics and Computing}, 
    \bold{18}, 73--86.
@@ -249,8 +251,8 @@ phi.method=ifelse(method == "saddlepoint", "saddlepoint", "mle"), verbose=FALSE,
    (Eds. J. K. Ghosh and J. Roy), pp. 579-604. Calcutta: Indian Statistical Institute.
 }
 \seealso{
-   \code{\link{dtweedie}}
-   \code{\link{dtweedie.saddle}}
+   \code{\link{dtweedie}},
+   \code{\link{dtweedie.saddle}},
    \code{\link[statmod]{tweedie}}
 }
 

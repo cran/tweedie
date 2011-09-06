@@ -47,7 +47,7 @@ and
 }
 \author{Peter Dunn (\email{pdunn2@usc.edu.au})}
 \references{
-   Dunn, P. K. \& Smyth, G. K. (2008).
+   Dunn, P. K. and Smyth, G. K. (2008).
    Evaluation of Tweedie exponential dispersion model densities by Fourier inversion.
    \emph{Statistics and Computing}, 
    \bold{18}, 73--86.
@@ -90,7 +90,7 @@ and
 	(Eds. J. K. Ghosh and J. Roy), pp. 579-604. Calcutta: Indian Statistical Institute.
 }
 \seealso{
-\code{\link{dtweedie}} 
+\code{\link{dtweedie}},
 \code{\link{dtweedie.saddle}},
 \code{\link[statmod]{tweedie}},
 \code{\link{deviance}},

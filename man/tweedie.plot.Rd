@@ -3,12 +3,13 @@
 \title{Tweedie Distributions: plotting}
 \description{Plotting Tweedie density and distribution functions}
 \usage{
-   tweedie.plot(y, power, mu, phi, type="pdf", add=FALSE, ...)
+   tweedie.plot(y, xi, mu, phi, type="pdf", power=NULL, add=FALSE, ...)
 }
 \arguments{
    \item{y}{vector of values at which to evaluate and plot}
-   \item{power}{the value of \eqn{p}{power} such that the variance is 
-      \eqn{\mbox{var}[Y]=\phi\mu^p}{var(Y) = phi * mu^power}}
+	\item{xi}{the value of \eqn{\xi}{xi} such that the variance is 
+	\eqn{\mbox{var}[Y]=\phi\mu^{\xi}}{var(Y) = phi * mu^xi}}
+   \item{power}{a synonym for \eqn{\xi}{xi}}
    \item{mu}{the mean}
    \item{phi}{the dispersion}
    \item{type}{what to plot: \code{pdf} (the default) means the probability function,
@@ -32,7 +33,7 @@
 }
 \author{Peter Dunn (\email{pdunn2@usc.edu.au})}
 \references{
-   Dunn, P. K. \& Smyth, G. K. (2008).
+   Dunn, P. K. and Smyth, G. K. (2008).
    Evaluation of Tweedie exponential dispersion model densities by Fourier inversion.
    \emph{Statistics and Computing}, 
    \bold{18}, 73--86.
@@ -90,8 +91,10 @@ legend("topright",lwd=c(2,2), col=c("black","red"), pch=c(19,19),
    legend=c("p=1.7","p=1.2") )
 
 ### Plot distribution functions
-tweedie.plot( power=1.05, mu=1, phi=1, y=yy, lwd=2, type="cdf", ylim=c(0,1))
-tweedie.plot( power=2, mu=1, phi=1, y=yy, add=TRUE, lwd=2, type="cdf",col="red")
+tweedie.plot( power=1.05, mu=1, phi=1, y=yy,
+   lwd=2, type="cdf", ylim=c(0,1))
+tweedie.plot( power=2, mu=1, phi=1, y=yy, 
+   add=TRUE, lwd=2, type="cdf",col="red")
 legend("bottomright",lwd=c(2,2), col=c("black","red"),
    legend=c("p=1.05","p=2") )
 

@@ -2,10 +2,12 @@
 \alias{dtweedie.saddle}
 \title{Tweedie Distributions (saddlepoint approximation)}
 \description{Saddlepoint density for the Tweedie distributions}
-\usage{dtweedie.saddle(y, power, mu, phi, eps=1/6)}
+\usage{dtweedie.saddle(y, xi=power, mu, phi, eps=1/6, power=NULL)}
 \arguments{
 	\item{y}{the vector of responses}
-	\item{power}{the value of \eqn{p}{power} such that the variance is \eqn{\mbox{var}[Y]=\phi\mu^p}{var(Y) = phi * mu^power}}
+	\item{xi}{the value of \eqn{\xi}{xi} such that the variance is 
+	\eqn{\mbox{var}[Y]=\phi\mu^{\xi}}{var(Y) = phi * mu^xi}}
+   \item{power}{a synonym for \eqn{\xi}{xi}}
 	\item{mu}{the mean}
 	\item{phi}{the dispersion}
 	\item{eps}{the offset in computing the variance function.
@@ -60,7 +62,7 @@
 	\emph{Biometrika},
 	\bold{67}, 59--63.
 	
-   Dunn, P. K. \& Smyth, G. K. (2008).
+   Dunn, P. K. and Smyth, G. K. (2008).
    Evaluation of Tweedie exponential dispersion model densities by Fourier inversion.
    \emph{Statistics and Computing}, 
    \bold{18}, 73--86.

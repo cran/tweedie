@@ -313,7 +313,7 @@ list(lo=lo.j, hi=hi.j, logw=logw, j.max=j.max )
 
 
 #############################################################################
-dtweedie <- function(y, power, mu, phi)
+dtweedie <- function(y, xi=power, mu, phi, power=NULL)
 {
 #
 # This is a function for determining Tweedie densities.
@@ -321,10 +321,6 @@ dtweedie <- function(y, power, mu, phi)
 # and series evaluation (type=2 if 1<p<2; type=3 if p>2)).
 # This function uses bivariate interpolation to accurately
 # approximate the inversion in conjunction with the series.
-#
-#
-# Peter Dunn; June 19, 2000
-# Last change:  04 Feb 2002
 #
 #
 # FIRST, establish whether the series or the cgf
@@ -351,6 +347,21 @@ dtweedie <- function(y, power, mu, phi)
 #  p > 4                       |  Use series B if xix > 0.03
 #                              | Saddlepoint approximation if xix<= 0.03 (NEEDS FIXING)
 #
+
+   # Sort out the xi/power notation
+   if ( is.null(power) & is.null(xi) ) stop("Either xi or power must be given\n")
+   xi.notation <- TRUE
+   if ( is.null(power) ) power <- xi
+   if ( is.null(xi) ) {
+      xi <- power
+      xi.notation <- FALSE
+   }
+   if ( xi != power ) {
+      cat("Different values for xi and power given; the value of xi used.\n")
+      power <- xi
+   }
+   index.par <- ifelse( xi.notation, "xi","p")
+
 
 # Error checks
 if ( power<1) stop("power must be greater than 1.\n")
@@ -591,12 +602,27 @@ density
 
 
 #############################################################################
-dtweedie.saddle <- function(y, power, mu, phi, eps=1/6) {
+dtweedie.saddle <- function(y, xi=power, mu, phi, eps=1/6, power=NULL) {
 #
 # Peter K Dunn
 # 09 Jan 2002
 #
 #
+
+   # Sort out the xi/power notation
+   if ( is.null(power) & is.null(xi) ) stop("Either xi or power must be given\n")
+   xi.notation <- TRUE
+   if ( is.null(power) ) power <- xi
+   if ( is.null(xi) ) {
+      xi <- power
+      xi.notation <- FALSE
+   }
+   if ( xi != power ) {
+      cat("Different values for xi and power given; the value of xi used.\n")
+      power <- xi
+   }
+   index.par <- ifelse( xi.notation, "xi","p")
+
 # Error traps
 #
 	if( any(phi <= 0) )
@@ -818,12 +844,25 @@ list(density=f, logw=logw, hi=result$hi, lo=result$lo)
 
 
 #############################################################################
-ptweedie <- function(q, power, mu, phi) {
+ptweedie <- function(q, xi=power, mu, phi, power=NULL) {
 # Evaluates the cdf for
 # Tweedie distributions.
 
 # Peter Dunn
 # 01 May 2001
+
+   if ( is.null(power) & is.null(xi) ) stop("Either xi or power must be given\n")
+   xi.notation <- TRUE
+   if ( is.null(power) ) power <- xi
+   if ( is.null(xi) ) {
+      xi <- power
+      xi.notation <- FALSE
+   }
+   if ( xi != power ) {
+      cat("Different values for xi and power given; the value of xi used.\n")
+      power <- xi
+   }
+   index.par <- ifelse( xi.notation, "xi","p")
 
 y <- q
 
@@ -5789,7 +5828,20 @@ list(lo=lo.k, hi=hi.k, kv=kv, k.max=k.max )
 
 
 #############################################################################
-qtweedie <- function(p, power, mu, phi){
+qtweedie <- function(p, xi=power, mu, phi, power=NULL){
+
+   if ( is.null(power) & is.null(xi) ) stop("Either xi or power must be given\n")
+   xi.notation <- TRUE
+   if ( is.null(power) ) power <- xi
+   if ( is.null(xi) ) {
+      xi <- power
+      xi.notation <- FALSE
+   }
+   if ( xi != power ) {
+      cat("Different values for xi and power given; the value of xi used.\n")
+      power <- xi
+   }
+   index.par <- ifelse( xi.notation, "xi","p")
 
 # Error checks
 if ( any(power<1) ) stop("power must be greater than 1.\n")
@@ -5914,7 +5966,20 @@ ans2
 
 
 #############################################################################
-rtweedie <- function(n, power, mu, phi){
+rtweedie <- function(n, xi=power, mu, phi, power=NULL){
+
+   if ( is.null(power) & is.null(xi) ) stop("Either xi or power must be given\n")
+   xi.notation <- TRUE
+   if ( is.null(power) ) power <- xi
+   if ( is.null(xi) ) {
+      xi <- power
+      xi.notation <- FALSE
+   }
+   if ( xi != power ) {
+      cat("Different values for xi and power given; the value of xi used.\n")
+      power <- xi
+   }
+   index.par <- ifelse( xi.notation, "xi","p")
 
 # Error checks
 if ( power<1) stop("power must be greater than 1.\n")
@@ -6033,13 +6098,11 @@ if (!is.null(offset)) {
 
 xi.notation <- TRUE
 if ( is.null(xi.vec) & !is.null(p.vec) ){ # If p.vec given, but not xi.vec
-	if (add0) p.vec <- c(0, p.vec)
 	xi.vec <- p.vec
 	xi.notation <- FALSE
 }
 
 if ( is.null(p.vec) & !is.null(xi.vec) ){ # If xi.vec given, but not p.vec
-	if (add0) xi.vec <- c(0, xi.vec)
 	p.vec <- xi.vec
 	xi.notation <- TRUE
 }
@@ -6047,20 +6110,47 @@ if ( is.null(p.vec) & !is.null(xi.vec) ){ # If xi.vec given, but not p.vec
 if ( is.null( p.vec ) & is.null(xi.vec)) { # Neither xi.vec or p.vec are given
 	if ( any(Y==0) ){
 		p.vec <- seq(1.2, 1.8, by=0.1)
-		if (add0 ) p.vec <- c(0, p.vec )
 	} else {
 		p.vec <- seq(1.5, 5, by=0.5)
-		if (add0 ) p.vec <- c(0, p.vec )
 	}
 	xi.vec <- p.vec
 	xi.notation <- TRUE
 }
 
+### AT THIS POINT, we have both xi.vec and p.vec declared, and both are the same
+### but we stick with using xi.vec hereafter
 
 
-# Determine notation to use
+# Determine notation to use in output (consistent with what was supplied by the user)
 index.par <- ifelse( xi.notation, "xi","p")
 
+# Find if values of p/xi have been specified that are not appropriate
+xi.fix <- any( xi.vec<=1 & xi.vec!=0, na.rm=TRUE)
+
+if ( xi.fix ) {
+	xi.fix.these <- (xi.vec<=1 & xi.vec!=0)
+	xi.vec[ xi.fix.these ] <- NA 
+	if ( length(xi.vec) == 0 ) {
+		  stop(paste("No values of",index.par,"between 0 and 1, or below 0, are possible.\n"))
+	} else {
+		cat("Values of",index.par,"between 0 and 1 and less than zero have been removed: such values are not possible.\n")
+	}
+}
+
+# Warnings
+if ( any( Y == 0 ) & any( (xi.vec >= 2) | (xi.vec <=0) ) ) {
+	xi.fix.these <- (xi.vec>=2 | xi.vec<=0)
+	xi.vec[ xi.fix.these ] <- NA 
+	if ( length(xi.vec) == 0 ) {
+		  stop(paste("When the response variale contains exact zeros, all values of",index.par,"must be between 1 and 2.\n"))
+	} else {
+		cat("When the response variale contains exact zeros, all values of",index.par,"must be between 1 and 2; other values have been removed.\n")
+	}
+}
+
+
+# Remove any NAs in the p/xi values
+xi.vec <- xi.vec[ !is.na(xi.vec) ] 
 
 if ( do.smooth & (length(xi.vec) < 5) ) {
    warning(paste("Smoothing needs at least five values of",index.par,".") )
@@ -6075,10 +6165,14 @@ if ( !do.smooth & do.ci ) {
    do.ci <- FALSE
 	warning("Confidence intervals only computed if  do.smooth=TRUE\n")
 }
-if ( any(xi.vec<=1) ) {
-   stop(paste("All values of",index.par,"must exceed one.\n"))
+
+if ( add0 ) {
+	p.vec  <- c( 0, p.vec )
+	xi.vec <- c( 0, xi.vec )
 }
 
+
+cat(xi.vec,"\n")
 
 
 
@@ -6087,10 +6181,6 @@ if ( any(xi.vec<=1) ) {
 ydata <- Y
 model.x <- X
 
-# Warnings
-if ( any( ydata == 0 ) & any( xi.vec >= 2 ) ) {
-    stop(paste("The response variable contains exact zeros; ensure all values in  ",index.par,".vec  are between 1 and 2",sep=""))
-}
 
 
 # Now, fit models!  Need the Tweedie class
@@ -6397,6 +6487,18 @@ if ( do.smooth ){
    L.max <- max(y, na.rm=TRUE)
    xi.max <- x[ y==L.max ]
    
+	# In some unusual cases, when add0=TRUE, the maximum of p/xi
+	# may be between 0 and 1.
+	# In this situation, we... set the mle to either 0 or 1,
+	# whichever gives the larger values of the log-likelihood
+	if ( (xi.max > 0)  & ( xi.max < 1 ) ) {
+		L.max <- max( c( y[xi.vec==0], y[xi.vec==1]) )
+		xi.max <- xi.vec[ L.max == y ]
+		cat("MLE of",index.par,"is between 0 and 1, which is impossible.",
+		    "Instead, the MLE of",index.par,"has been set to",xi.max,
+		    ".  Please check your data and the call to tweedie.profile().")
+	}
+
    # Now need to find mle of  phi  at this very value of  p
    # - Find bounds
    
@@ -6437,7 +6539,6 @@ if ( do.smooth ){
 #                    hessian=FALSE,
 #                    power=p, mu=mu, y=data, 
 #                    gradient=dtweedie.dldphi)$estimate
-        
         mu <- fitted( glm.fit( y=ydata, x=model.x, weights=weights, offset=offset,
                                family=tweedie(xi.max, link.power=link.power)))
         phi.max <- optimize( f=dtweedie.nlogl, maximum=FALSE, interval=c(phi.lo, phi.hi ), 
@@ -6602,8 +6703,22 @@ dtweedie.stable <- function(y, power, mu, phi)
 
 
 #############################################################################
-tweedie.plot <- function(y, power, mu, phi, type="pdf", 
+tweedie.plot <- function(y, xi=power, mu, phi, type="pdf", power=NULL, 
                          add=FALSE, ...) {
+
+   if ( is.null(power) & is.null(xi) ) stop("Either xi or power must be given\n")
+   xi.notation <- TRUE
+   if ( is.null(power) ) power <- xi
+   if ( is.null(xi) ) {
+      xi <- power
+      xi.notation <- FALSE
+   }
+   if ( xi != power ) {
+      cat("Different values for xi and power given; the value of xi used.\n")
+      power <- xi
+   }
+   index.par <- ifelse( xi.notation, "xi","p")
+
    if ( ( power < 0 ) | ( ( power > 0 ) & ( power < 1 ) ) ) {
       stop("Plots cannot be produced for power =",power,"\n")
    }   

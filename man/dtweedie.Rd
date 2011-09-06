@@ -12,21 +12,22 @@
 \description{Density, distribution function, quantile function and random
      generation for the Tweedie family of distributions}
 \usage{
-	dtweedie(y, power, mu, phi)
+	dtweedie(y, xi=power, mu, phi, power=NULL)
 	dtweedie.series(y, power, mu, phi)
 	dtweedie.inversion(y, power, mu, phi, exact=TRUE, method)
 	dtweedie.stable(y, power, mu, phi)
-	ptweedie(q, power, mu, phi)
+	ptweedie(q, xi=power, mu, phi, power=NULL)
 	ptweedie.series(q, power, mu, phi)
-	qtweedie(p, power, mu, phi)
-	rtweedie(n, power, mu, phi)
+	qtweedie(p, xi=power, mu, phi, power=NULL)
+	rtweedie(n, xi=power, mu, phi, power=NULL)
 }
 \arguments{
 	\item{y, q}{vector of quantiles}
 	\item{p}{vector of probabilities}
 	\item{n}{the number of observations}
-	\item{power}{the value of \eqn{p}{power} such that the variance is 
-	\eqn{\mbox{var}[Y]=\phi\mu^p}{var(Y) = phi * mu^power}}
+	\item{xi}{the value of \eqn{\xi}{xi} such that the variance is 
+	\eqn{\mbox{var}[Y]=\phi\mu^{\xi}}{var(Y) = phi * mu^xi}}
+   \item{power}{a synonym for \eqn{\xi}{xi}}
 	\item{mu}{the mean}
 	\item{phi}{the dispersion}
 	\item{exact}{logical flag; 
@@ -126,7 +127,7 @@
 }
 \author{Peter Dunn (\email{pdunn2@usc.edu.au})}
 \references{
-   Dunn, P. K. \& Smyth, G. K. (2008).
+   Dunn, P. K. and Smyth, G. K. (2008).
    Evaluation of Tweedie exponential dispersion model densities by Fourier inversion.
    \emph{Statistics and Computing}, 
    \bold{18}, 73--86.

@@ -1,7 +1,27 @@
 CHANGE LOG (incomplete)
 
+* Version 2.1.0 (uploaded 09 June 2011)
+	- Changed tweedie,profile to ignore values of p/xi outside (1,2)
+	  rather than report an error.
+	- In some unusual cases, when p/xi=0 was used (with add0=TRUE), the
+	  mle of p was between 0 and 1 (which is impossible).  We report a
+	  warning message to check the data and the call to tweedie.profile(),
+	  but then set the mle to the value of p/xi giving the larger value
+	  of the likelihood
+	- Made the functions usually called by users able to accept xi or power
+	- A few minor edits to FORTRAN code; some variables not declared
+
+* Version 2.0.8 (uploaded 08 June 2011)
+	- Minor fixes to documentation
+ 	- Fixed the  add0  input
+ 	- Some minor changes to the code to tidy up adding the zero
+	- If values of xi/p are given between 0 and 1, or less than 0, 
+     they are now omitted (with a message) rather than creating an error.  
+     If there are no values left after omitting the problem value,
+     an error message is given.
+ 	
 * Version 2.0.7 (uploaded 30 September 2010)
-   - Ensured tweeide.profile does not use power=1.  This case 
+   - Ensured tweedie.profile does not use power=1.  This case 
     (power=1 and phi not equal to 1) is too hard for me to deal with at present.
    
 * Version 2.0.6 (uploaded 30 September 2010): Never released
@@ -14,7 +34,7 @@ CHANGE LOG (incomplete)
    - Change to dtweedie.inversion to ensure density=0 is returned
      when y<0 (1<p<2) or p<-0 (when p>2)
    - Change to tweedie.profile to fix a problem that p=1 returned an error
-   - Changed so that tweedie.profile works withg p/xi = 0 when add0=TRUE (default if FALSE)
+   - Changed so that tweedie.profile works withg p/xi = 0 when add0=TRUE (default is FALSE)
    - Fixed some minor outputting messages (when verbose==2)  
    - Location of CITATION file moved to correct location
     

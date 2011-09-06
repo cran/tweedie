@@ -12,8 +12,8 @@ Functions for computing and fitting the Tweedie family of distributions
 \tabular{ll}{
 	Package: \tab tweedie\cr
 	Type: \tab Package\cr
-	Version: \tab 2.0.7\cr
-	Date: \tab 2010-30-09\cr
+	Version: \tab 2.1.0\cr
+	Date: \tab 2011-08-06\cr
 	License: \tab GPL (>=2)
 }
 }
@@ -23,7 +23,7 @@ Peter K Dunn
 Maintainer: Peter K Dunn <pdunn2@usc.edu.au>
 }
 \references{
-   Dunn, P. K. \& Smyth, G. K. (2008).
+   Dunn, P. K. and Smyth, G. K. (2008).
    Evaluation of Tweedie exponential dispersion model densities by Fourier inversion.
    \emph{Statistics and Computing}, 
    \bold{18}, 73--86.
@@ -66,11 +66,11 @@ x <- rnorm( length(y), 0, 1)  # Unrelated predictor
 
 # Fit the tweedie distribution; expect p about 1.5
 out <- tweedie.profile( y~1, p.vec=seq(1.1, 1.9, length=9), do.plot=TRUE)
-
 out$p.max
 
 # Plot this distribution
-tweedie.plot( seq(0, max(y), length=1000), mu=mean(y), p=out$p.max, phi=out$phi.max)
+tweedie.plot( seq(0, max(y), length=1000), mu=mean(y), 
+              p=out$p.max, phi=out$phi.max)
 
 # Fit the glm
 require(statmod) # Provides  tweedie  family functions
