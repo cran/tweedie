@@ -1,5 +1,8 @@
 CHANGE LOG (incomplete)
 
+* Version 2.1.1 
+   - Added NAMESPACE
+   
 * Version 2.1.0 (uploaded 09 June 2011)
 	- Changed tweedie,profile to ignore values of p/xi outside (1,2)
 	  rather than report an error.

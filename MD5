@@ -1,0 +1,15 @@
+c65a1b3048ce6fd47537cda1ae956891 *CHANGE.log
+3f4ca63e25f30f0e940eca356f9f5e3a *DESCRIPTION
+d1e82db8b4fa81b923ec702315651a99 *NAMESPACE
+13d75d4d18c143f64d6d0bfafda79cc4 *R/tweedie.R
+bc19822f85864f1a5bfb2c6e217956c0 *inst/CITATION
+afd3d15e3be4fe4cd6314048198a851d *man/AICtweedie.Rd
+891444016abad1505d88e7d35f2058c4 *man/dtweedie.Rd
+cd05d7ffb01713edcc1e002c60f98687 *man/dtweedie.dldphi.Rd
+3465db3fb6383806f758eeece6edb9b8 *man/dtweedie.saddle.Rd
+81cead976c7451b7c8f68ab85d6500d3 *man/tweedie-internal.Rd
+ff26686a94d60dc810a37dc658fa0025 *man/tweedie-package.Rd
+42b1a814c834d2ed86e9e019fcc80e0a *man/tweedie.dev.Rd
+f88861288761c56436c46c64def4e25e *man/tweedie.plot.Rd
+167a22564fd84e62e2cf7e06781ec1f4 *man/tweedie.profile.Rd
+a363314eb4c885e344f4736718231d9f *src/tweedie.f
