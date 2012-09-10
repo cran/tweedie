@@ -1,5 +1,8 @@
 CHANGE LOG (incomplete)
 
+* Version 2.1.2 
+   - Edits to conform with new first argument of .Fortran (i.e. .NAME rather than name)
+
 * Version 2.1.1 
    - Added NAMESPACE
    

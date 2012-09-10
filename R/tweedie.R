@@ -38,7 +38,7 @@ its <- y
 
 for (i in (1:length(y))) {
 
-   tmp <- .Fortran( name="cdf",
+   tmp <- .Fortran( "cdf",
           as.double(power),
           as.double(phi[i]),
           as.double(y[i]),
@@ -5568,7 +5568,7 @@ for (i in (1:y.len)) {
       verbose <- FALSE
       
       if ( use.method==2 ) {
-         tmp <- .Fortran( name="pdf",
+         tmp <- .Fortran( "pdf",
             as.double(power),
             as.double(phi[i] / (mu[i]^(2-power)) ), # phi
             as.double(y[i]/mu[i]), # y
@@ -5586,7 +5586,7 @@ for (i in (1:y.len)) {
    
       } else {
          if ( use.method==1 ) {
-            tmp <- .Fortran( name="pdf",
+            tmp <- .Fortran( "pdf",
                as.double(power),
                as.double(phi[i]), # phi
                as.double(y[i]), # y
@@ -5603,7 +5603,7 @@ for (i in (1:y.len)) {
             density[i] <- den * m1
    
          } else { # use.method==3
-            tmp <- .Fortran( name="pdf",
+            tmp <- .Fortran( "pdf",
                as.double(power),
                as.double(phi[i]/(y[i]^(2-power))), # phi
                as.double(1), # y
