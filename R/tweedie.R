@@ -5982,7 +5982,7 @@ rtweedie <- function(n, xi=power, mu, phi, power=NULL){
    index.par <- ifelse( xi.notation, "xi","p")
 
 # Error checks
-if ( power<1) stop("power must be greater than 1.\n")
+if ( power<1) stop("power must be greater than or equal to 1.\n")
 if ( any(phi<=0) ) stop("phi must be positive.")
 if ( n<1 ) stop("n must be a positive integer.\n")
 if ( any(mu<=0) ) stop("mu must be positive.\n")
@@ -6693,7 +6693,7 @@ dtweedie.stable <- function(y, power, mu, phi)
 	gamma <- phi * (power-1) * 
                     ( 1/(phi*(power-2)) * cos( alpha * pi / 2 ) ) ^ (1/alpha)
         
-        require("fBasics") # Needed for  dstable
+        require(stabledist) # Needed for  dstable
         ds <- dstable(y, alpha=alpha, beta=beta, gamma=gamma, delta=delta, pm=k)
         density <- exp((y*mu^(1-power)/(1-power)-mu^(2-power)/(2-power))/phi)*ds
 

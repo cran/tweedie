@@ -1,5 +1,9 @@
 CHANGE LOG (incomplete)
-
+* Version 2.1.3
+	- [dqpr]stable now in package  stabledist  rather then fBasics; fixed
+	- Fixed some typos in the help for tweedie-package (thanks to Peng Yu)
+	- rtweedie  reported an error if power=1; fixed (thanks for Peng Yu)
+	 
 * Version 2.1.2 
    - Edits to conform with new first argument of .Fortran (i.e. .NAME rather than name)
 

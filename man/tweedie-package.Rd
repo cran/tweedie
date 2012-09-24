@@ -12,8 +12,8 @@ Functions for computing and fitting the Tweedie family of distributions
 \tabular{ll}{
 	Package: \tab tweedie\cr
 	Type: \tab Package\cr
-	Version: \tab 2.1.2\cr
-	Date: \tab 2012-09-10\cr
+	Version: \tab 2.1.3\cr
+	Date: \tab 2012-09-24\cr
 	License: \tab GPL (>=2)
 }
 }
@@ -57,22 +57,22 @@ Maintainer: Peter K Dunn <pdunn2@usc.edu.au>
 \examples{
 # Generate random numbers
 set.seed(314)
-y <- rtweedie( 500, p=1.5, mu=1, phi=1)
-	# With index  p  between 1 and 2, this produces continuous
+y <- rtweedie( 500, xi=1.5, mu=1, phi=1)
+	# With Tweedie index  xi   between 1 and 2, this produces continuous
 	# data with exact zeros
 x <- rnorm( length(y), 0, 1)  # Unrelated predictor
 
-# With exact zeros, index  p  must be between 1 and 2
+# With exact zeros, Tweedie index  xi  must be between 1 and 2
 
-# Fit the tweedie distribution; expect p about 1.5
-out <- tweedie.profile( y~1, p.vec=seq(1.1, 1.9, length=9), do.plot=TRUE)
-out$p.max
+# Fit the tweedie distribution; expect  xi  about 1.5
+out <- tweedie.profile( y~1, xi.vec=seq(1.1, 1.9, length=9), do.plot=TRUE)
+out$xi.max
 
 # Plot this distribution
 tweedie.plot( seq(0, max(y), length=1000), mu=mean(y), 
-              p=out$p.max, phi=out$phi.max)
+              xi=out$xi.max, phi=out$phi.max)
 
 # Fit the glm
 require(statmod) # Provides  tweedie  family functions
-summary(glm( y ~ x, family=tweedie(var.power=out$p.max, link.power=0) ))
+summary(glm( y ~ x, family=tweedie(var.power=out$xi.max, link.power=0) ))
 }
