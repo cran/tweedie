@@ -760,9 +760,17 @@ if ( (power == 2) | (power==1) ) { # Special cases
    if ( power == 2 ){
       density <- dgamma( y, shape=1/phi, rate=1/(phi * mu ) )
    }
-   if ( (power == 1) & (all(phi==1)) ){
-      density <- dpois( y, lambda=mu )
+
+   if ( (power == 1) ){
+		density <- dpois(x=y/phi, lambda=mu/phi ) / phi  # Using identity: f(y; mu, phi) = c f(cy; c mu, c phi) for p=1.  Now set c = 1/phi
+		if ( !all(phi==1)){
+			warnings("The density computations when phi=1 may be subject to errors using floating-point arithmetic\n")
+		}
    }
+# CHANGED: 31 October, thanks to Dina Farkas' email 18 October 2012.  WAS:
+#   if ( (power == 1) & (all(phi==1)) ){
+#	density <- dpois(x=y/phi, lambda=mu/phi )
+#   }
 }
 else{
 

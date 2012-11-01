@@ -12,8 +12,8 @@ Functions for computing and fitting the Tweedie family of distributions
 \tabular{ll}{
 	Package: \tab tweedie\cr
 	Type: \tab Package\cr
-	Version: \tab 2.1.3\cr
-	Date: \tab 2012-09-24\cr
+	Version: \tab 2.1.5\cr
+	Date: \tab 2012-11-01\cr
 	License: \tab GPL (>=2)
 }
 }
@@ -56,8 +56,8 @@ Maintainer: Peter K Dunn <pdunn2@usc.edu.au>
 \keyword{ models }
 \examples{
 # Generate random numbers
-set.seed(314)
-y <- rtweedie( 500, xi=1.5, mu=1, phi=1)
+set.seed(987654)
+y <- rtweedie( 25, xi=1.5, mu=1, phi=1)
 	# With Tweedie index  xi   between 1 and 2, this produces continuous
 	# data with exact zeros
 x <- rnorm( length(y), 0, 1)  # Unrelated predictor
