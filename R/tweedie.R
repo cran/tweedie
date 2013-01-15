@@ -1,12 +1,4 @@
 #############################################################################
-.First.lib <- function(lib, pkg)
-{
-    library.dynam( "tweedie", pkg, lib )
-}
-
-
-
-#############################################################################
 ptweedie.inversion <- function(q, mu, phi,  power, exact=FALSE ){ 
 # Peter K Dunn 
 # 08 Feb 2000--2005
@@ -6045,6 +6037,7 @@ tweedie.profile <- function(formula, p.vec=NULL, xi.vec=NULL, link.power = 0,
 		data, weights, offset, fit.glm=FALSE, 
       do.smooth=TRUE, do.plot=FALSE, 
       do.ci=do.smooth, eps=1/6,
+      control=list( epsilon=1e-09, maxit=glm.control()$maxit, trace=glm.control()$trace ),
       do.points=do.plot, method="inversion", conf.level=0.95, 
       phi.method=ifelse(method=="saddlepoint","saddlepoint","mle"), verbose=FALSE, add0=FALSE) {
 # verbose gives feedback on screen:
@@ -6064,6 +6057,7 @@ tweedie.profile <- function(formula, p.vec=NULL, xi.vec=NULL, link.power = 0,
 
 # Peter Dunn
 # 07 Dec 2004
+
 
 if ( is.logical( verbose ) ) {
    verbose <- as.numeric(verbose)
@@ -6104,6 +6098,9 @@ if (!is.null(offset)) {
 				length(offset), NROW(Y)), domain = NA)
 }
 
+
+
+### NOW some notation stuff
 xi.notation <- TRUE
 if ( is.null(xi.vec) & !is.null(p.vec) ){ # If p.vec given, but not xi.vec
 	xi.vec <- p.vec
@@ -6246,8 +6243,8 @@ for (i in (1:xi.len)) {
    # Fit the model with given p
    catch.possible.error <- try(
       fit.model <- glm.fit( x=model.x, y=ydata, weights=weights, offset=offset,
-                            family=tweedie(var.power=p, link.power=link.power),
-                            control=glm.control(epsilon=1e-9) ),
+      							 control=control,
+                            family=tweedie(var.power=p, link.power=link.power)),
       silent = TRUE
    )
 

@@ -15,7 +15,7 @@
 }
 \details{
 	See \code{\link{AIC}} for more details on the \acronym{AIC};
-	see \code{link{dtweedie}} for ore details on computing the Tweedie densities
+	see \code{\link{dtweedie}} for more details on computing the Tweedie densities
 }
     
 \section{Note}{

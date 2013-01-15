@@ -12,8 +12,8 @@ Functions for computing and fitting the Tweedie family of distributions
 \tabular{ll}{
 	Package: \tab tweedie\cr
 	Type: \tab Package\cr
-	Version: \tab 2.1.5\cr
-	Date: \tab 2012-11-01\cr
+	Version: \tab 2.1.7\cr
+	Date: \tab 2013-01-15\cr
 	License: \tab GPL (>=2)
 }
 }
@@ -51,7 +51,7 @@ Maintainer: Peter K Dunn <pdunn2@usc.edu.au>
 	An index which distinguishes between some important exponential families.
 	\emph{Statistics: Applications and New Directions.
 	Proceedings of the Indian Statistical Institute Golden Jubilee International Conference}
-	(Eds. J. K. Ghosh and J. Roy), pp. 579-604. Calcutta: Indian Statistical Institute.
+	(Eds. J. K. Ghosh and J. Roy), pp. 579--604. Calcutta: Indian Statistical Institute.
 }
 \keyword{ models }
 \examples{

@@ -5,7 +5,9 @@
 \usage{tweedie.profile(formula, p.vec=NULL, xi.vec=NULL, link.power=0, 
       data, weights, offset, fit.glm=FALSE,
       do.smooth=TRUE, do.plot=FALSE, do.ci=do.smooth,
-      eps=1/6, do.points=do.plot, method="inversion", conf.level=0.95, 
+      eps=1/6, 
+      control=list( epsilon=1e-09, maxit=glm.control()$maxit, trace=glm.control()$trace ),
+      do.points=do.plot, method="inversion", conf.level=0.95, 
       phi.method=ifelse(method == "saddlepoint", "saddlepoint", "mle"), 
       verbose=FALSE, add0=FALSE)}
 \arguments{
@@ -92,6 +94,11 @@
    Note \code{eps} is ignored unless the 
    \code{method="saddlepoint"}
    as it makes no sense otherwise.}
+   \item{control}{a list of parameters for controlling the fitting process;
+   see \code{\link{glm.control}} and \code{\link{glm}}.
+   The default is to use the maximum number of iterations \code{maxit} and the
+   \code{trace} setting as given in \code{\link{glm.control}},
+   but to set \code{epsilon} to \code{1e-09} to ensure a smoother plot}   
    \item{do.points}{plot the points on the plot where the
    (log-) likelihood is computed for the given values of \code{p};
    defaults to the same value as \code{do.plot}}

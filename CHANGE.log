@@ -1,11 +1,20 @@
 CHANGE LOG (incomplete)
 
+* Version 2.1.7 (15 January 2013)
+	- Admin release (e.g. .First.lib()  removed)
+	- Some minor edits to manual
+	
+* Version 2.1.6 (15 January 2013)
+	- Added the  control  input to  tweedie.profile() 
+	  (thanks to Giri Khageswor, DPI Victoria)
+	- Minor fixes in the manual
+	
 * Version 2.1.5 (01 November 2012)
 	- Changed the example in  tweedie-package  to execute faster (CRAN requirement)
 
 * Version 2.1.4 (31 October 2012)
-	- Fixed an error in dtweedie() that reported NA in the case when power=1 and phi!=1 (
-	  thanks to Dina Farkas)
+	- Fixed an error in dtweedie() that reported NA in the case when power=1 and phi!=1 
+	  (thanks to Dina Farkas)
 		
 * Version 2.1.3
 	- [dqpr]stable now in package  stabledist  rather then fBasics; fixed

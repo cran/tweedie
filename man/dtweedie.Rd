@@ -108,8 +108,8 @@
     the stable distribution (Nolan, 1997) and Tweedie distributions,
     as discussed in Jorgensen, Chapter 4.
     These are computed using Nolan's algorithm as implemented
-    in the  fBasics  package (which is therefore required to use
-    the dtweedie.stable function).
+    in the  \code{stabledist}  package (which is therefore required to use
+    the \code{dtweedie.stable} function).
     
     The function \code{dtweedie} uses a two-dimensional interpolation procedure to 
     compute the density for some parts of the parameter space from 
