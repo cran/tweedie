@@ -1,5 +1,12 @@
 CHANGE LOG (incomplete)
 
+* Version 2.1.9 (June 2014)
+  - Some administrative fixes for CRAN
+
+* Version 2.1.8 (10 July 2013)
+	- Fixed an issue where ptweedie() would fail for very small y; set this to 0 when y<1.0e-300
+		(based on a report by Johann Cuenin)
+		
 * Version 2.1.7 (15 January 2013)
 	- Admin release (e.g. .First.lib()  removed)
 	- Some minor edits to manual

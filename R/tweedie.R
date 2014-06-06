@@ -27,23 +27,37 @@ else {
   
 
 its <- y
-
 for (i in (1:length(y))) {
 
-   tmp <- .Fortran( "cdf",
-          as.double(power),
-          as.double(phi[i]),
-          as.double(y[i]),
-          as.double(mu[i]),
-          as.integer( exact ),
-          as.double(0), # funvalue
-          as.integer(0), # exitstatus
-          as.double(0), # relerr
-          as.integer(0), # its
-          PACKAGE="tweedie")
+   # This has been added to avoid an issue with *very* small values of y
+   # causing the FORTRAN to die when p>2; 
+   # reported by Johann Cuenin 09 July 2013 (earlier, but that was the easiest email I could find about it :->)
+   if ( ( power > 2 ) & (y[i] < 1.0e-300) ) {
+   	### THE  e-300  IS ARBITRARY!!!!  ###
+   	# Keep an eye on it; perhaps it needs changing
+   
+      # That is, y is very small: Use the limit as y->0 as the answer as FORTRAN has difficulty converging
+      # I have kept the call to the FORTRAN (and for p>2, of course, the limiting value is 0).
+      #  I could have done this differently
+      # by redefining very small y as y=0.... but this is better methinks
+      cdf[i] <- 0
+   } 
+   else
+   {
+		tmp <- .Fortran( "cdf",
+				 as.double(power),
+				 as.double(phi[i]),
+				 as.double(y[i]),
+				 as.double(mu[i]),
+				 as.integer( exact ),
+				 as.double(0), # funvalue
+				 as.integer(0), # exitstatus
+				 as.double(0), # relerr
+				 as.integer(0), # its
+				 PACKAGE="tweedie")
 
-       cdf[i] <- tmp[[6]]
-
+			 cdf[i] <- tmp[[6]]
+	}
 }
 
 cdf
@@ -379,7 +393,7 @@ density <- y
 
 # Special Cases
 if ( power==3 ){
-	density <- dinvgauss(x=y, mu=mu, lambda=1/phi)
+	density <- dinvgauss(x=y, mean=mu, dispersion=phi)
 	return(density)
 }
 if ( power==2 ) {
@@ -851,18 +865,18 @@ ptweedie <- function(q, xi=power, mu, phi, power=NULL) {
 # Peter Dunn
 # 01 May 2001
 
-   if ( is.null(power) & is.null(xi) ) stop("Either xi or power must be given\n")
-   xi.notation <- TRUE
-   if ( is.null(power) ) power <- xi
-   if ( is.null(xi) ) {
-      xi <- power
-      xi.notation <- FALSE
-   }
-   if ( xi != power ) {
-      cat("Different values for xi and power given; the value of xi used.\n")
-      power <- xi
-   }
-   index.par <- ifelse( xi.notation, "xi","p")
+if ( is.null(power) & is.null(xi) ) stop("Either xi or power must be given\n")
+xi.notation <- TRUE
+if ( is.null(power) ) power <- xi
+if ( is.null(xi) ) {
+   xi <- power
+   xi.notation <- FALSE
+}
+if ( xi != power ) {
+   cat("Different values for xi and power given; the value of xi used.\n")
+   power <- xi
+}
+index.par <- ifelse( xi.notation, "xi","p")
 
 y <- q
 
@@ -911,6 +925,11 @@ if ( power==1) {
 
 # Now, for p>2 the only option is the inversion
 if ( power> 2 ) {
+
+	# However, when y/q is very small, 
+	# the function should return 0;
+	# sometimes it fails (when *very* small...).
+	# This adjustment is made in ptweedie.inversion()
    f <- ptweedie.inversion(power=power, mu=mu, q=y, phi=phi)
 }
 
@@ -5924,6 +5943,7 @@ for (i in (1:length(ans)) ) {
    if ( is.na(ans[i]) ) { # All cases except Y=0 when 1 < pwr < 2
          
       pt2 <- function( q, mu, phi, pwr, p.given=prob ){ 
+
             ptweedie(q=q, mu=mu, phi=phi, power=pwr ) - p.given
       }
       pt <- pt2( q=start, mu=mu.1, phi=phi.1, pwr=pwr, p.given=prob)

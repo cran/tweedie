@@ -12,8 +12,8 @@ Functions for computing and fitting the Tweedie family of distributions
 \tabular{ll}{
 	Package: \tab tweedie\cr
 	Type: \tab Package\cr
-	Version: \tab 2.1.7\cr
-	Date: \tab 2013-01-15\cr
+	Version: \tab 2.2.1\cr
+	Date: \tab 2014-06-06\cr
 	License: \tab GPL (>=2)
 }
 }
@@ -65,6 +65,7 @@ x <- rnorm( length(y), 0, 1)  # Unrelated predictor
 # With exact zeros, Tweedie index  xi  must be between 1 and 2
 
 # Fit the tweedie distribution; expect  xi  about 1.5
+library(statmod)
 out <- tweedie.profile( y~1, xi.vec=seq(1.1, 1.9, length=9), do.plot=TRUE)
 out$xi.max
 
