@@ -1,2 +1,14 @@
-exportPattern("^[^\\.]")
+#  Calling the dynamic library
 useDynLib(tweedie)
+
+#  All functions exported other than those starting with "."
+exportPattern("^[^\\.]")
+
+  importFrom("graphics", "abline", "lines", "plot", "points", "rug",
+             "title")
+  importFrom("stats", "contrasts", "deviance", "dgamma", "dnorm",
+             "dpois", "fitted", "glm.control", "glm.fit",
+             "is.empty.model", "model.matrix", "model.offset",
+             "model.response", "model.weights", "optimize", "pchisq",
+             "pgamma", "pnorm", "ppois", "qchisq", "qgamma", "qpois",
+             "rgamma", "rpois", "runif", "splinefun", "uniroot")

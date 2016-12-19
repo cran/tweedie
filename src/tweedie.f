@@ -483,7 +483,7 @@
 
          area = area + result
 
-         go to 500
+         goto 500
 
       endif
 
@@ -582,6 +582,8 @@
 !      call dblepr("The value of phi is ",-1, phi, 1)
 !      call dblepr("The value of y is ",-1, y, 1)
 !      call dblepr("The value of x is ",-1, x, 1)
+      mu = 1
+*     mu  is listed an as unused input  
       call calccgf(p, phi, y, x, rl, im)
 !      call dblepr("The value of rl is ",-1, rl, 1)
 !      call dblepr("The value of im is ",-1, im, 1)
@@ -1944,7 +1946,7 @@
      &         lower, upper, tstep,     
      &         zarea0, z1lo, z1hi, zdelta, resultp
       integer  m, iteratn, ier, maxit, flag, numzr, tier,
-     &         exitstatus, its, i, go, totalits,
+     &         exitstatus, its, i, totalits,
      &         verbose, sbuffer
 
       external  f, g, intim, dk, sfzro2, zerofn,
@@ -1960,8 +1962,7 @@
 *     SET OTHER PARAMETERS
       m = -1
       pi = acos( -1.0d00 )
-*      pi = atan( 1.0d00 ) * 4.0d00
-*      pi = 3.14159 26535 89793 23846 26433d00
+
       area = 0.0d00
       area0 = 0.0d00
       area1 = 0.0d00
@@ -2026,11 +2027,11 @@
 
 *     NOW, DO A FEW MORE ITS FOR SAFETY'S SAKE
 *     as the regions can be dodgy when 1<p<2
-      go = 1
+      goflag = 1
       flag = 0
       area1 = 0.0d00
 
-550   if ( go .EQ. 1 ) then
+550   if ( goflag .EQ. 1 ) then
 
          totalits = totalits + 1
 
@@ -2082,7 +2083,7 @@
 
 *        See if we can stop now
          if ( sbuffer .GE. 3 ) then
-            go = 0
+            goflag = 0
          endif
 
          sbuffer = sbuffer + 1
@@ -2091,7 +2092,7 @@
 *         if ( ( abs(result) .LT. aimrerr/10000.d00 ) .AND.
 *     &        (abs(resultp) .LT. aimrerr/10000.d00 ) .AND.
 *     &        ( its .GT. 10 ) ) then
-*            go = 0
+*            goflag = 0
 *         endif
 
 *         if ( result .EQ. 0.0d00 ) then
@@ -2108,18 +2109,18 @@
 *      if ( ( abs(result) .LT. aimrerr/10000.d00 ) .AND.
 *     &     (abs(resultp) .LT. aimrerr/10000.d00 ) .AND.
 *     &     ( its .GT. 10 ) ) then
-*         go = 0
+*         goflag = 0
 *         exitflag = 1
 *      else
-*         go = 1
+*         goflag = 1
 *      endif
-      go = 1
+      goflag = 1
       flag = 0
       its = 0
       area = 0.0d00
       xvec(1) = zero2
 
- 1550 if ( go .EQ. 1 ) then
+ 1550 if ( goflag .EQ. 1 ) then
 
          its = its + 1
          totalits = totalits + 1
@@ -2193,12 +2194,12 @@
      &      ) then
 
 *           THEN keep going...
-            go = 1
+            goflag = 1
 
          else
 
 *           THEN stop
-            go = 0
+            goflag = 0
 
          endif
 
@@ -2216,8 +2217,6 @@
          goto 1550
 
       endif
-
-
 
       result = area0 + area1 + w
       result = result / pi
@@ -2309,7 +2308,7 @@
       f2 = zerofn( p, phi, y, t )
 *      print *,'f1, zerodfn(0) are: ',f1, zerodfn(p,phi,y,mu,0.0d00)
 *AAAAAAAAAAAAAAA
-***IT looks to me like told is here just to establish the sign of the
+***IT looks to me like  told  is here just to establish the sign of the
 *  derivative as we start.  So can we just evaluate  zerodfn() at x=0???
 
 *Well, it appears that  f1  and  zerodfn(..., 0) gives the same sign.
@@ -2525,17 +2524,17 @@
       fl = fun(p, phi, y, x1, m)
       fh = fun(p, phi, y, x2, m)
 
-      if ( ( fl .GT. 0.0d00 .AND. fh .GT. 0.0d00 ) 
-     &          .OR.
-     &     ( fl .LT. 0.0d00 .AND. fh .LT. 0.0d00 ) ) then
-
+*      if ( ( fl .GT. 0.0d00 .AND. fh .GT. 0.0d00 ) 
+*     &          .OR.
+*     &     ( fl .LT. 0.0d00 .AND. fh .LT. 0.0d00 ) ) then
+*
 *         print *,'Error: Root must be bounded.'
 *         print *,'xs are : ',x1,x2
 *         print *,'giving :', fl, fh
 *         print *,'for m = ',m
-         return
-
-      endif
+*         return
+*
+*      endif
 
       if ( fl .EQ. 0.0d00 ) then
       
@@ -2973,7 +2972,7 @@
                call dblepr("  Area = ",-1, area, 1)
             endif
             
-            go to 500
+            goto 500
 
          endif
 
@@ -3205,7 +3204,7 @@
                   call dblepr("  Area = ",-1, area, 1)
                endif
 
-               go to 600
+               goto 600
 
             endif
 
@@ -3436,7 +3435,7 @@
                   call dblepr("  Area = ", 1, area, 1)
                endif
 
-               go to 700
+               goto 700
 
             endif
 
@@ -3709,7 +3708,7 @@
 
          area = area + result
 
-         go to 500
+         goto 500
 
       endif
 
@@ -4206,7 +4205,7 @@
      &         alpha, a2, oldt, front, top, bot, rek, imk,
      &         cumddk, rl, workvec1, workvec2, lobnd,
      &         hibnd
-      integer  m, ier, n, go, its, ceil, myfloor, wv1, wv2,
+      integer  m, ier, n, its, ceil, myfloor, wv1, wv2,
      &         tpt, mdirn, boost, flag, its1, verbose
 
       external  cumf2, cumdk, cumsfzro2, cumintim, 
@@ -4354,13 +4353,13 @@
 
          endif
 
-         go to 4000
+         goto 4000
 
       endif
 
 *     Now do the cases where m is easy to find!
       its = 0
-      go = 1
+      goflag = 1
 
 *     First, we evaluate up to sidit without acceleration
 *     If sidit=0, we do one extra iteration anyway, since
@@ -4371,7 +4370,7 @@
       area1 = 0.0d00
       zold = z1
 
- 4300 if ( go .EQ. 1 ) then
+ 4300 if ( goflag .EQ. 1 ) then
 
          its = its + 1
 
@@ -4398,7 +4397,7 @@
             flo = cumintim( p, phi, y, lobnd, mu, m)
             fhi = cumintim( p, phi, y, hibnd, mu, m)
 
-            go  to 4550
+            goto 4550
 
          endif
 
@@ -4417,14 +4416,14 @@
 
 *        Update
          zold = z1
-         go = 1
+         goflag = 1
 
          if ( z1 .GT. sidit ) then
-            go = 0
+            goflag = 0
 *           Time to start accelerating!
          endif
 
-         go to 4300
+         goto 4300
 
       endif
 
@@ -4432,12 +4431,12 @@
 
 
 *     Now start accelerating
-      go = 1
+      goflag = 1
       xvec(1) = z1
       its = 0
       w = 0d00
 
- 4500 if ( go .EQ. 1 ) then
+ 4500 if ( goflag .EQ. 1 ) then
 
          its = its + 1
 
@@ -4464,7 +4463,7 @@
             flo = cumintim( p, phi, y, lobnd, mu, m)
             fhi = cumintim( p, phi, y, hibnd, mu, m)
 
-            go  to 4350
+            go to 4350
 
          endif
 
@@ -4486,12 +4485,12 @@
 
 *        Update
          zold = z1
-         go = 1
+         goflag = 1
          if ( abs(relerr) .LT. aimrerr ) then
-            go = 0
+            goflag = 0
          endif
 
-         go to 4500
+         goto 4500
 
       endif
 
@@ -4709,7 +4708,7 @@
 
             area = area + result
 
-            go to 500
+            goto 500
 
          endif
 
@@ -4895,7 +4894,7 @@
 
                area = area + result
 
-               go to 600
+               goto 600
 
             endif
 
@@ -5081,7 +5080,7 @@
 
                area = area + result
 
-               go to 700
+               goto 700
 
             endif
 

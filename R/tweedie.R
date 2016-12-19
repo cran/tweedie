@@ -393,7 +393,7 @@ density <- y
 
 # Special Cases
 if ( power==3 ){
-	density <- dinvgauss(x=y, mean=mu, dispersion=phi)
+	density <- statmod::dinvgauss(x=y, mean=mu, dispersion=phi)
 	return(density)
 }
 if ( power==2 ) {
@@ -948,6 +948,8 @@ cdf[ !y.negative ] <- f
 cdf[  y.negative ] <- 0
 
 cdf[ is.infinite( cdf ) ] <- 1
+
+cdf[ cdf>1 ] <- 1
 
 return(cdf)
 
@@ -6264,7 +6266,7 @@ for (i in (1:xi.len)) {
    catch.possible.error <- try(
       fit.model <- glm.fit( x=model.x, y=ydata, weights=weights, offset=offset,
       							 control=control,
-                            family=tweedie(var.power=p, link.power=link.power)),
+                            family=statmod::tweedie(var.power=p, link.power=link.power)),
       silent = TRUE
    )
 
@@ -6556,7 +6558,7 @@ if ( do.smooth ){
       if ( phi.method=="saddlepoint"){
          
          mu <- fitted( glm.fit( y=ydata, x=model.x, weights=weights, offset=offset,
-                                family=tweedie(xi.max, link.power=link.power)))
+                                family=statmod::tweedie(xi.max, link.power=link.power)))
          phi.max <- sum( tweedie.dev(y=ydata, mu=mu, power=xi.max) )/length( ydata )
          
       } else {
@@ -6565,7 +6567,7 @@ if ( do.smooth ){
 #                    power=p, mu=mu, y=data, 
 #                    gradient=dtweedie.dldphi)$estimate
         mu <- fitted( glm.fit( y=ydata, x=model.x, weights=weights, offset=offset,
-                               family=tweedie(xi.max, link.power=link.power)))
+                               family=statmod::tweedie(xi.max, link.power=link.power)))
         phi.max <- optimize( f=dtweedie.nlogl, maximum=FALSE, interval=c(phi.lo, phi.hi ), 
             # set lower limit phi.lo???
                              power=xi.max, mu=mu, y=ydata)$minimum
@@ -6656,7 +6658,7 @@ if ( do.ci ) {
 
 if ( fit.glm ) {
    out.glm <- glm.fit( x=model.x, y=ydata, weights=weights, offset=offset,
-         family=tweedie(var.power=xi.max, link.power=link.power) )
+         family=statmod::tweedie(var.power=xi.max, link.power=link.power) )
 
 	if ( xi.notation){
 		out <- list( y=y, x=x, ht=ht, L=L, xi=xi.vec, xi.max=xi.max, L.max=L.max, 
@@ -6718,8 +6720,8 @@ dtweedie.stable <- function(y, power, mu, phi)
 	gamma <- phi * (power-1) * 
                     ( 1/(phi*(power-2)) * cos( alpha * pi / 2 ) ) ^ (1/alpha)
         
-        require(stabledist) # Needed for  dstable
-        ds <- dstable(y, alpha=alpha, beta=beta, gamma=gamma, delta=delta, pm=k)
+#        require(stabledist) # Needed for  dstable
+        ds <- stabledist::dstable(y, alpha=alpha, beta=beta, gamma=gamma, delta=delta, pm=k)
         density <- exp((y*mu^(1-power)/(1-power)-mu^(2-power)/(2-power))/phi)*ds
 
         

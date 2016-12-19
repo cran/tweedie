@@ -1,17 +1,31 @@
- citHeader("To cite package 'tweedie' in publications use:")
-     
-     year <- sub(".*(2[[:digit:]]{3})-.*", "\\1", meta$Date)
-     vers <- paste("R package version", meta$Version)
-     
-     citEntry(entry="Manual",
-              title = "tweedie: Tweedie exponential family models",
-              author = personList(as.person("Peter K Dunn")),
-              year = year,
-              note = vers,
-     
-              textVersion =
-              paste("Peter K Dunn (",
-                    year,
-                    "). tweedie: Tweedie exponential family models. ",
-                    vers, ".", sep=""))
+citHeader("To cite tweedie in publications, please use the following articles:")
+
+
+citEntry(
+   entry = "article",
+	author = "Peter K. Dunn and Gordon K. Smyth",
+	year = 2005,
+	title = "Series evaluation of Tweedie exponential dispersion models",
+	journal = "Statistics and Computing",
+	volume=15,
+	numbers = 4,
+	pages = "267-280",
+	textVersion = "Dunn, P. K. and Smyth, G. K. (2005).  Series evaluation of Tweedie exponential dispersion models. Statistics and Computing, 15(4), 267-280."
+)
+
+
+
+
+citEntry(
+	entry = "article",
+	author = "Peter K. Dunn and Gordon K. Smyth",
+ 	year = 2008,
+ 	title = "Evaluation of Tweedie exponential dispersion models using Fourier inversion",
+	journal = "Statistics and Computing",
+	volume = 18,
+	numbers = 1,
+	pages = "73-86",
+	textVersion = "Dunn, P. K. and Smyth, G. K. (2008).  Evaluation of Tweedie exponential dispersion models using Fourier inversion. Statistics and Computing, 18(1), 73-86."
+
+)
 
