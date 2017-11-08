@@ -2,7 +2,7 @@
 \alias{dtweedie.saddle}
 \title{Tweedie Distributions (saddlepoint approximation)}
 \description{Saddlepoint density for the Tweedie distributions}
-\usage{dtweedie.saddle(y, xi=power, mu, phi, eps=1/6, power=NULL)}
+\usage{dtweedie.saddle(y, xi=NULL, mu, phi, eps=1/6, power=NULL)}
 \arguments{
 	\item{y}{the vector of responses}
 	\item{xi}{the value of \eqn{\xi}{xi} such that the variance is 
@@ -61,11 +61,13 @@
 	Exact saddlepoint approximations.
 	\emph{Biometrika},
 	\bold{67}, 59--63.
+	\doi{10.1093/biomet/67.1.59}
 	
    Dunn, P. K. and Smyth, G. K. (2008).
    Evaluation of Tweedie exponential dispersion model densities by Fourier inversion.
    \emph{Statistics and Computing}, 
    \bold{18}, 73--86.
+	\doi{10.1007/s11222-007-9039-6}
 	
 	Dunn, Peter K and Smyth, Gordon K (2001).
 	Tweedie family densities: methods of evaluation.
@@ -76,7 +78,8 @@
 	Series evaluation of Tweedie exponential dispersion model densities
 	\emph{Statistics and Computing},
 	\bold{15}(4). 267--280.
-	
+	\doi{10.1007/s11222-005-4070-y}
+
 	Jorgensen, B. (1987).
 	Exponential dispersion models.
 	\emph{Journal of the Royal Statistical Society}, B,
@@ -90,6 +93,7 @@
 	An extended quasi-likelihood function.
 	\emph{Biometrika},
 	\bold{74}(2), 221--232.
+	\doi{10.1093/biomet/74.2.221}
 	
 	Tweedie, M. C. K. (1984). 
 	An index which distinguishes between some important exponential families.

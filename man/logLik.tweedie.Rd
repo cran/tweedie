@@ -1,27 +1,24 @@
-\name{AICtweedie}
-\alias{AICtweedie}
+\name{logLiktweedie}
+\alias{logLiktweedie}
 \title{Tweedie Distributions}
-\description{The AIC for Tweedie glms}
+\description{The log likelihood for Tweedie models}
 \usage{
-	AICtweedie( glm.obj, dispersion=NULL, k = 2, verbose=TRUE)
+	logLiktweedie( glm.obj, dispersion=NULL)
 }
 \arguments{
 	\item{glm.obj}{a fitted Tweedie \code{glm} object}
 	\item{dispersion}{the dispersion parameter \eqn{\phi}{phi}; the default is \code{NULL} which means to use an estimate}
-	\item{k}{numeric: the penalty per parameter to be used; the default is \eqn{k=2}}
-	\item{verbose}{if \code{TRUE} (the default), a warning message is produced about the Poisson case; see the second Note below}
 }
 \value{
-	Returns a numeric value with the
-   corresponding \acronym{AIC} (or \acronym{BIC}, depending on \eqn{k})
+	Returns the log-likelihood from the specified model
 }
 \details{
-	See \code{\link{AIC}} for more details on the \acronym{AIC};
-	see \code{\link{dtweedie}} for more details on computing the Tweedie densities
+	The log-likelihood is computed from the \acronym{AIC},
+	so see \code{\link{AICtweedie}} for more details.
 }
     
 \section{Note}{
-	Computing the \acronym{AIC} may take a long time.
+	Computing the log-likelihood may take a long time.
 }
 \section{Note}{
 	Tweedie distributions with the index parameter as 1
@@ -41,13 +38,13 @@
    \emph{Statistics and Computing}, 
    \bold{18}, 73--86.
    \doi{10.1007/s11222-007-9039-6}
-	
+
 	Dunn, Peter K and Smyth, Gordon K (2005).
 	Series evaluation of Tweedie exponential dispersion model densities
 	\emph{Statistics and Computing},
 	\bold{15}(4). 267--280.
 	\doi{10.1007/s11222-005-4070-y}
-	
+
 	Jorgensen, B. (1997).
 	\emph{Theory of Dispersion Models}.
 	Chapman and Hall, London.
@@ -56,7 +53,7 @@
    \emph{Akaike Information Criterion Statistics}. 
    D. Reidel Publishing Company.
 }
-\seealso{\code{\link{AIC}} }
+\seealso{\code{\link{AICtweedie}} }
 
 \examples{
 library(statmod) # Needed to use  tweedie  family object
@@ -71,8 +68,8 @@ m1 <- glm( test.data~1, family=tweedie(link.power=0, var.power=2) )
 m2 <- glm( test.data~1, family=Gamma(link=log))
 
 ### The models are equivalent, so the AIC shoud be the same:
-AICtweedie(m1)
-AIC(m2)
+logLiktweedie(m1)
+logLik(m2)
 
 } 
 \keyword{models}

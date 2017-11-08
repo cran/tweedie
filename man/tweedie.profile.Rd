@@ -137,7 +137,7 @@
    Since the function can be slow and sometimes problematic,
    feedback can be good;
    but it can also be unnecessary when one knows all is well.}
-   \item{add0}{if \code{TRUE}, the value \code{p=0} is used in forming the profile lohg-likelihood
+   \item{add0}{if \code{TRUE}, the value \code{p=0} is used in forming the profile log-likelihood
    (corresponding to the normal distribution);
    the default value is \code{add0=FALSE}}
 }
@@ -149,7 +149,7 @@
    a plot is produced that shows the profile log-likelihood
    computed at each value in \code{p.vec}
    (smoothed if \code{do.smooth=TRUE}).
-   This function can be tempermental 
+   This function can be temperamental 
    (for theoretical reasons involved in numerically computing the density),
    and this plot shows the values of \eqn{p}{p} requested on the
    horizontal axis (using \code{\link{rug}}); 
@@ -230,7 +230,14 @@
    Evaluation of Tweedie exponential dispersion model densities by Fourier inversion.
    \emph{Statistics and Computing}, 
    \bold{18}, 73--86.
+   \doi{10.1007/s11222-007-9039-6}
    
+   Dunn, Peter K and Smyth, Gordon K (2005).
+   Series evaluation of Tweedie exponential dispersion model densities
+   \emph{Statistics and Computing},
+   \bold{15}(4). 267--280.
+   \doi{10.1007/s11222-005-4070-y}
+
    Dunn, Peter K and Smyth, Gordon K (2001).
    Tweedie family densities: methods of evaluation.
    \emph{Proceedings of the 16th International Workshop on Statistical Modelling},
@@ -250,6 +257,7 @@
    \emph{Biometrika}
    \bold{74}(2),
    221--232.
+   \doi{10.1093/biomet/74.2.221}
    
    Tweedie, M. C. K. (1984).
    An index which distinguishes between some important exponential families.

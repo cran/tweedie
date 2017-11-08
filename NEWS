@@ -1,9 +1,30 @@
+06 November 2017: tweedie 2.3
+	- Fixed an issue with AICtweedie, where the incorrect AIC
+	  was given when prior weights used (reported by David Scollnik)
+	- Fixed a compilation error (in the subroutine smallp, where 
+	  variables were declared as initialised (mant thanks to 
+	  Iñaki Úcar <i.ucar86@gmail.com>)
+	- Other minor edits.
+
+23 August 2017: tweedie 2.2.10
+   - Kept it even more quiet
+
+
+22 August 2017: tweedie 2.2.9
+
+   - Fixed tweedie.f to keep it quiet more often (sometimes, diagnostic reports 
+     meant for internal monitoring, were printed)
+   - Fixed a problem reported by Gustavo Lacerda, where  ptweedie()  returned NaN
+   - As a result, the series is now used in far more cases when  1<xi<2  for  ptweedie()
+   - Changed  rtweedie()  algorithm for the case 1<xi<2 (thanks to Carlos J. Gil Bellosta)
+   - New function  tweedie.convert()  added
+
 19 December 2016: tweedie 2.2.5
 
-- Added CITATION file
-- Fixed an issue where the Tweedie cdf could return a value greater than one (reported by Jeremie Juste)
-- Minor tidy of FORTRAN code
-- Minor tidies in R code
+   - Added CITATION file
+   - Fixed an issue where the Tweedie cdf could return a value greater than one (reported by Jeremie Juste)
+   - Minor tidy of FORTRAN code
+   - Minor tidies in R code
 
 June 2014: tweedie 2.1.9 
   - Some administrative fixes for CRAN

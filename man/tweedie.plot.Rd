@@ -37,11 +37,14 @@
    Evaluation of Tweedie exponential dispersion model densities by Fourier inversion.
    \emph{Statistics and Computing}, 
    \bold{18}, 73--86.
-	
+	 \doi{10.1007/s11222-007-9039-6}
+
    Dunn, Peter K and Smyth, Gordon K (2005).
    Series evaluation of Tweedie exponential dispersion model densities
    \emph{Statistics and Computing},
    \bold{15}(4). 267--280.
+   \doi{10.1007/s11222-005-4070-y}
+
    
    Dunn, Peter K and Smyth, Gordon K (2001).
    Tweedie family densities: methods of evaluation.
@@ -61,18 +64,21 @@
    Numerical calculation of stable densities and distribution functions.
    \emph{Communication in Statistics---Stochastic models},
    \bold{13}(4). 759--774.
+   \doi{10.1080/15326349708807450}
    
    Sidi, Avram (1982).
    The numerical evaluation of very oscillatory infinite integrals by
    extrapolation.
    \emph{Mathematics of Computation}
    \bold{38}(158), 517--529.
+   \doi{10.1090/S0025-5718-1982-0645667-5}
    
    Sidi, Avram (1988).  
    A user-friendly extrapolation method for
    oscillatory infinite integrals.
    \emph{Mathematics of Computation}
    \bold{51}(183), 249--266.
+   \doi{10.1090/S0025-5718-1988-0942153-5}
    
    Tweedie, M. C. K. (1984).
    An index which distinguishes between some important exponential families.

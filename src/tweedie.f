@@ -9,7 +9,7 @@
 ***               Now we continue anyway.  We did this because often we
 ***               stopped after 2, 3 or 4 iterations, without really knowing why.
 *
-* The entry points are  pdf  and  cdf  and employ the asymptotic Sidi method,
+* The entry points are  twpdf  and  twcdf  and employ the asymptotic Sidi method,
 * or the exact zeros method
 *
 * IN R, print statements for debugging as follows:
@@ -17,7 +17,7 @@
 *     call intpr("The value of exact is ",-1, exact, 1)
 ******************************************************************
 
-      subroutine pdf(p, phi, y, mu, exact, verbose,
+      subroutine twpdf(p, phi, y, mu, exact, verbose,
      &               funvalue, exitstatus, relerr, its )
 
 ***
@@ -27,7 +27,7 @@
 *     moment generating function.
 *
 ***
-*     IN:   p, phi, y, mu, exact
+*     IN:   p, phi, y, mu, exact, verbose
 *     OUT:  funvalue, exitstatus, relerr, its
 ***
 *** NOTE:  WE SHOULD ALWAYS GET mu=1 FROM R
@@ -63,6 +63,7 @@
       exitstatus = 1
       relerr = 0.0d00
       its = 0
+      verbose = 0
       
 *     SPECIAL CASES {
       if ( p .EQ. 1.0d00 ) then
@@ -170,7 +171,7 @@
 ******************************************************************
 ******************************************************************
 
-      subroutine cdf(p, phi, y, mu, exact,
+      subroutine twcdf(p, phi, y, mu, exact,
      &              funvalue, exitstatus, relerr, its )
 
 ***
@@ -1693,6 +1694,14 @@
          sum = sum + weights(i) * 
      &            ( f1( p, phi, y, mu, xl ) +
      &              f1( p, phi, y, mu, xu )   )
+
+*         call dblepr(" a  = ", -1, a, 1)
+*         call dblepr(" b  = ", -1, b, 1)
+*         call dblepr(" xl = ", -1, xl, 1)
+*         call dblepr(" xu = ", -1, xu, 1)
+*         call dblepr(" f1(xl) = ", -1, f1( p, phi, y, mu, xl ), 1)
+*         call dblepr(" f1(xu) = ", -1, f1( p, phi, y, mu, xu ), 1)
+     
 !      call dblepr("The value of sum is ",-1, sum, 1)
 !      call dblepr("The value of weights(i) is ",-1, weights(i), 1)
 !      call dblepr("The value of f1(lo) is ",-1, 
@@ -1707,7 +1716,7 @@
       return
       end
 
-*****************************************************
+*************************************p****************
 *******************************************************************
 
       double precision function imgdcgf(p, phi, x)
@@ -1962,6 +1971,9 @@
 *     SET OTHER PARAMETERS
       m = -1
       pi = acos( -1.0d00 )
+      
+      w = 0.0d00
+      lambda = 0.0d00
 
       area = 0.0d00
       area0 = 0.0d00
@@ -3618,6 +3630,7 @@
       itsidi = 0
       relerr = 1.0d00
       flag = 0
+      verbose = 0
 
 
       wold(1) = 0.0d00
@@ -4476,6 +4489,13 @@
          call gaussq( cumf, result, zold, z1,
      &                p, phi, y, mu )
          area = area + result
+*         verbose = 1
+         if ( verbose .EQ. 1 ) then
+*            call dblepr("    cumf) = ", -1, cumf, 1)
+            call dblepr("    result = ", -1, result, 1)
+            call dblepr("    zold = ", -1, zold, 1)
+            call dblepr("    z1 = ", -1, z1, 1)
+         endif
 
 *        Accelerate
          xvec( its+1 ) = z1
@@ -4546,6 +4566,7 @@
 
 
 *     SET OTHER PARAMETERS
+*      verbose = 1
       verbose = 0
       pi = acos( -1.0d00 )
 *      pi = 3.14159 26535 89793 23846 26433d00
