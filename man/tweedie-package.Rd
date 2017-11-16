@@ -12,8 +12,8 @@ Functions for computing and fitting the Tweedie family of distributions
 \tabular{ll}{
 	Package: \tab tweedie\cr
 	Type: \tab Package\cr
-	Version: \tab 2.3.0\cr
-	Date: \tab 2017-10-19\cr
+	Version: \tab 2.3.1\cr
+	Date: \tab 2017-11-15\cr
 	License: \tab GPL (>=2)
 }
 }
@@ -29,31 +29,31 @@ Maintainer: Peter K Dunn <pdunn2@usc.edu.au>
    \bold{18}, 73--86.
    \doi{10.1007/s11222-007-9039-6}
 	
-	Dunn, Peter K and Smyth, Gordon K (2005).
-	Series evaluation of Tweedie exponential dispersion model densities
-	\emph{Statistics and Computing},
-	\bold{15}(4). 267--280.
-	\doi{10.1007/s11222-005-4070-y}
+   Dunn, Peter K and Smyth, Gordon K (2005).
+   Series evaluation of Tweedie exponential dispersion model densities
+   \emph{Statistics and Computing},
+   \bold{15}(4). 267--280.
+   \doi{10.1007/s11222-005-4070-y}
 	
-	Dunn, Peter K and Smyth, Gordon K (2001).
-	Tweedie family densities: methods of evaluation.
-	\emph{Proceedings of the 16th International Workshop on Statistical Modelling},
-	Odense, Denmark, 2--6 July
+   Dunn, Peter K and Smyth, Gordon K (2001).
+   Tweedie family densities: methods of evaluation.
+   \emph{Proceedings of the 16th International Workshop on Statistical Modelling},
+   Odense, Denmark, 2--6 July
 	
-	Jorgensen, B. (1987).
-	Exponential dispersion models.
-	\emph{Journal of the Royal Statistical Society}, B,
-	\bold{49}, 127--162.
+   Jorgensen, B. (1987).
+   Exponential dispersion models.
+   \emph{Journal of the Royal Statistical Society}, B,
+   \bold{49}, 127--162.
 	
-	Jorgensen, B. (1997).
-	\emph{Theory of Dispersion Models}.
-	Chapman and Hall, London.
+   Jorgensen, B. (1997).
+   \emph{Theory of Dispersion Models}.
+   Chapman and Hall, London.
 	
-	Tweedie, M. C. K. (1984).
-	An index which distinguishes between some important exponential families.
-	\emph{Statistics: Applications and New Directions.
-	Proceedings of the Indian Statistical Institute Golden Jubilee International Conference}
-	(Eds. J. K. Ghosh and J. Roy), pp. 579--604. Calcutta: Indian Statistical Institute.
+   Tweedie, M. C. K. (1984).
+   An index which distinguishes between some important exponential families.
+   \emph{Statistics: Applications and New Directions.
+   Proceedings of the Indian Statistical Institute Golden Jubilee International Conference}
+   (Eds. J. K. Ghosh and J. Roy), pp. 579--604. Calcutta: Indian Statistical Institute.
 }
 \keyword{ models }
 \examples{

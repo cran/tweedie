@@ -42,7 +42,7 @@ ptweedie.inversion <- function(q, mu, phi,  power, exact=FALSE ){
     } else {
       
       #   cat(power,phi[i], y[i], mu[i], as.integer(exact),"\n")
-      tmp <- .Fortran( twcdf,
+      tmp <- .Fortran( "twcdf",
                        as.double(power),
                        as.double(phi[i]),
                        as.double(y[i]),
@@ -1060,7 +1060,7 @@ ptweedie.series <- function(q, power, mu, phi) {
   logfmax <-  -log(lambda)/2
   estlogf <- logfmax
   
-  N <- min( lambda )
+  N <- max( lambda )
   
   while ( estlogf > (logfmax - drop) ) {
     N <- N + 1
@@ -5629,7 +5629,7 @@ dtweedie.inversion <- function(y, power, mu, phi, exact=TRUE, method=3){
       # NOTE: FOR ALL  METHODS, WE HAVE mu=1
       
       if ( use.method==2 ) {
-        tmp <- .Fortran( twpdf,
+        tmp <- .Fortran( "twpdf",
                          as.double(power),
                          as.double(phi[i] / (mu[i]^(2-power)) ), # phi
                          as.double(y[i]/mu[i]), # y
@@ -5648,7 +5648,7 @@ dtweedie.inversion <- function(y, power, mu, phi, exact=TRUE, method=3){
         
       } else {
         if ( use.method==1 ) {
-          tmp <- .Fortran( twpdf,
+          tmp <- .Fortran( "twpdf",
                            as.double(power),
                            as.double(phi[i]), # phi
                            as.double(y[i]), # y
@@ -5666,7 +5666,7 @@ dtweedie.inversion <- function(y, power, mu, phi, exact=TRUE, method=3){
           density[i] <- den * m1
           
         } else { # use.method==3
-          tmp <- .Fortran( twpdf,
+          tmp <- .Fortran( "twpdf",
                            as.double(power),
                            as.double(phi[i]/(y[i]^(2-power))), # phi
                            as.double(1), # y

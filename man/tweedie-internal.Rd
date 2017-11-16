@@ -10,8 +10,8 @@
 \alias{dtweedie.series.bigp}
 \alias{dtweedie.series.smallp}
 \alias{stored.grids}
-\alias{twpdf}
 \alias{twcdf}
+\alias{twpdf}
 
 
 \title{Tweedie internal function}
@@ -59,7 +59,7 @@
 	\item{funvalue}{the value of the call returned by the FORTRAN code}
 	\item{exitstatus}{the exit status returned by the FORTRAN code}
 	\item{relerr}{an estimation of the relative error returned by the FORTRAN code}
-	\item{its}{the number of iterations of the algorithm returned by the FORTRAN code}
+	\item{its}{the number of iterations of the algorithm returned by the FORTRAN code}	
 }
 \details{
 These are not to be called by the user.
