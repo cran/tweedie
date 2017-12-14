@@ -1,6 +1,6 @@
 Package: tweedie
-Version: 2.3.1
-Date: 2017-11-15
+Version: 2.3.2
+Date: 2017-12-14
 Title: Evaluation of Tweedie Exponential Family Models
 Authors@R: person("Peter K.", "Dunn", email="pdunn2@usc.edu.au", role=c("cre", "aut") )
 Author: Peter K. Dunn [cre, aut]
@@ -11,6 +11,6 @@ Description: Maximum likelihood computations for Tweedie families, including the
 License: GPL (>= 2)
 NeedsCompilation: yes
 RoxygenNote: 6.0.1
-Packaged: 2017-11-15 23:52:51 UTC; pdunn2
+Packaged: 2017-12-14 01:48:58 UTC; pdunn2
 Repository: CRAN
-Date/Publication: 2017-11-16 09:28:58 UTC
+Date/Publication: 2017-12-14 16:27:39 UTC

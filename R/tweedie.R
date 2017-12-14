@@ -6890,12 +6890,14 @@ tweedie.convert <- function(xi=NULL, mu, phi, power=NULL){
   
   if ( is.null(power) & is.null(xi) ) stop("Either xi or power must be given\n")
   xi.notation <- TRUE
-  if ( is.null(power) ) {
+  if ( is.null(power) ) {   # Then  xi  is given
+    if ( !is.numeric(xi)) stop("xi  must be numeric.\n")
     power <- xi
   } else {
     xi.notation <- FALSE
   }
-  if ( is.null(xi) ) {
+  if ( is.null(xi) ) {   # Then   power  is given
+    if ( !is.numeric(xi)) stop("power  must be numeric.\n")
     xi.notation <- FALSE
     xi <- power
   }
@@ -6920,11 +6922,18 @@ tweedie.convert <- function(xi=NULL, mu, phi, power=NULL){
   # Now  mu  and  phi  will be the same length if one of them happened to be a scalar, so this works:
   if( length(mu) != length(phi) ) stop("phi and mu must be scalars, or the same length.\n")
   
-  lambda <- ( mu^(2-xi) ) / ( phi*(2-xi) )
-  alpha  <- (2-xi)  /(xi-1)
-  gam    <- phi * (xi - 1) * mu^(xi-1)
+  lambda <- ( mu^(2 - xi) ) / ( phi * (2 - xi) )  # Poisson distribution mean
+  alpha  <- (2 - xi)  / (xi - 1)           # gamma distribution alpha (shape)
+  gam    <- phi * (xi - 1) * mu^(xi - 1)   # gamma distribution beta  (scale)
   p0     <- exp( -lambda )
+  phi.g  <- (2 - xi) * (xi - 1) * phi^2 * mu^( 2 * (xi-1) )
+  mu     <- gam/phi
   
-  list( poisson.lambda=lambda, gamma.shape=alpha, gamma.scale=gam, p0=p0)
+  list( poisson.lambda = lambda, 
+        gamma.shape = alpha, 
+        gamma.scale = gam, 
+        p0 = p0,
+        gamma.mean = mu,
+        gamma.phi = phi.g)
   
 }

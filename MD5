@@ -1,8 +1,8 @@
-66982f91d948034f888491e412a8893c *DESCRIPTION
+e0989ea6340c72892fd57417ba68ebb3 *DESCRIPTION
 04624ee50c3a36234cd7375636cb3bd8 *NAMESPACE
-a5af53ba01de7861ded66c48c6e4b99d *NEWS
-f563c35b6b747c689daad44cc41d4def *R/tweedie.R
-1677af57d0b5beaac529e74117698825 *build/partial.rdb
+f4f8b2880f070887daf384b62845caed *NEWS
+260e821ee068ab7c21c6713e17eedbcf *R/tweedie.R
+0e8eaffa429aed253920c2dbd2b4cbd6 *build/partial.rdb
 229514023f5ca9f09dde7136d5e2e67d *inst/CITATION
 95ffc80aff7b9b6fbc52c96265eee4f6 *man/AICtweedie.Rd
 3c6ff21d1aa0b0d390053a8db6dcf01f *man/dtweedie.Rd
@@ -10,10 +10,10 @@ f563c35b6b747c689daad44cc41d4def *R/tweedie.R
 912d72f7b43a64a0b423975a3a66bfef *man/dtweedie.saddle.Rd
 f9b45ab30199c8cbf047abe81d81f455 *man/logLik.tweedie.Rd
 c905463efc44229260a4ec3558ec865b *man/tweedie-internal.Rd
-e7ee3f7b30315bc24d15d03d91939bb8 *man/tweedie-package.Rd
-49ba3daa7f223d5c5c1c581495cc9c2f *man/tweedie.convert.Rd
+b415322cf854ff62a3901f4e565a01b2 *man/tweedie-package.Rd
+ef1b4d8b444a45455867847a652aec19 *man/tweedie.convert.Rd
 641458a4ecced34d256f141e20a3a1c0 *man/tweedie.dev.Rd
 1c86f92466ed2587abbfb78a6eacaef5 *man/tweedie.plot.Rd
-2008d992f60562ea92c39941766b7068 *man/tweedie.profile.Rd
+cac299fe8b7d01f8993fcf1fde80528e *man/tweedie.profile.Rd
 44d7e4df5ab0bedf450751e5698e9088 *src/init.c
 6e22df779ab53a7a651bd95051e36dde *src/tweedie.f

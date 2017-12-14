@@ -13,14 +13,17 @@
 	\item{phi}{the dispersion}
 }
 \value{
-	a list containing the values of
-	the mean of the underlying Poisson distribution (as \code{poisson.lambda}),
-	the scale parameter of the underlying gamma distribution (as \code{gamma.scale}),
-	the shape parameter of the underlying gamma distribution (as \code{gamma.shape}),
-	and the probability of obtaining a zero response (as \code{p0}).
+  a list containing the values of
+  the mean of the underlying Poisson distribution (as \code{poisson.lambda}),
+  the scale parameter of the underlying gamma distribution (as \code{gamma.scale}),
+  the shape parameter of the underlying gamma distribution (as \code{gamma.shape}),
+  the probability of obtaining a zero response (as \code{p0}),
+  the mean of the underlying gamma distribution (as \code{gamma.mean}),
+  and
+  the dispersion parameter of the underlying gamma distribution (as \code{gamma.phi}).
 }
 \details{
-    The Tweedie family of distributions with \eqn{1<p<2}{1 < power < 2}
+    The Tweedie family of distributions with \eqn{1<\xi<2}{1 < power < 2}
     is the Poisson sum of gamma distributions
     (where the Poisson distribution has mean \eqn{\lambda}{lambda},
     and the gamma distribution has scale and shape parameters).
@@ -42,22 +45,22 @@
    \bold{18}, 73--86.
    \doi{10.1007/s11222-007-9039-6}
 
-	Dunn, Peter K and Smyth, Gordon K (2005).
-	Series evaluation of Tweedie exponential dispersion model densities
-	\emph{Statistics and Computing},
-	\bold{15}(4). 267--280.
-	\doi{10.1007/s11222-005-4070-y}
+  Dunn, Peter K and Smyth, Gordon K (2005).
+  Series evaluation of Tweedie exponential dispersion model densities
+  \emph{Statistics and Computing},
+  \bold{15}(4). 267--280.
+  \doi{10.1007/s11222-005-4070-y}
 	
-	Dunn, Peter K and Smyth, Gordon K (2001).
-	Tweedie family densities: methods of evaluation.
-	\emph{Proceedings of the 16th International Workshop on Statistical Modelling},
-	Odense, Denmark, 2--6 July
+  Dunn, Peter K and Smyth, Gordon K (2001).
+  Tweedie family densities: methods of evaluation.
+  \emph{Proceedings of the 16th International Workshop on Statistical Modelling},
+  Odense, Denmark, 2--6 July
 	
-	Tweedie, M. C. K. (1984).
-	An index which distinguishes between some important exponential families.
-	\emph{Statistics: Applications and New Directions.
-	Proceedings of the Indian Statistical Institute Golden Jubilee International Conference}
-	(Eds. J. K. Ghosh and J. Roy), pp. 579-604. Calcutta: Indian Statistical Institute.
+  Tweedie, M. C. K. (1984).
+  An index which distinguishes between some important exponential families.
+  \emph{Statistics: Applications and New Directions.
+  Proceedings of the Indian Statistical Institute Golden Jubilee International Conference}
+  (Eds. J. K. Ghosh and J. Roy), pp. 579-604. Calcutta: Indian Statistical Institute.
 }
 \seealso{\code{\link{dtweedie.saddle}} }
 

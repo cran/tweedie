@@ -110,7 +110,7 @@
    or
    \code{"saddlepoint"}.
    If there are any troubles using this function,
-   often a change of method will fix the problem.
+   sometimes a change of method will fix the problem.
    Note that \code{method="saddlepoint"}
    is only an approximate method for computing the (log-) likelihood.
    Using \code{method="interpolation"}
