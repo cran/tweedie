@@ -1,6 +1,6 @@
-DATE ; tweedie 2.3.2
+20 January 2020 ; tweedie 2.3.3
   - Added outputs gamma.mean and gamma.phi to tweedie.convert()
-  - Added more error checks to  tweedie.convert()  to prevent a model being provided
+  - Minor fixes
 
 15 November 2017: tweedie 2.3.1
    - Updated pwteedie.series to fix a bug (reported by Lu Yang),

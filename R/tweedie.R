@@ -6890,14 +6890,14 @@ tweedie.convert <- function(xi=NULL, mu, phi, power=NULL){
   
   if ( is.null(power) & is.null(xi) ) stop("Either xi or power must be given\n")
   xi.notation <- TRUE
-  if ( is.null(power) ) {   # Then  xi  is given
-    if ( !is.numeric(xi)) stop("xi  must be numeric.\n")
+  if ( is.null(power) ) {
+    if ( !is.numeric(xi)) stop("xi must be numeric.")
     power <- xi
   } else {
     xi.notation <- FALSE
   }
-  if ( is.null(xi) ) {   # Then   power  is given
-    if ( !is.numeric(xi)) stop("power  must be numeric.\n")
+  if ( is.null(xi) ) {
+    if ( !is.numeric(power)) stop("power must be numeric.")
     xi.notation <- FALSE
     xi <- power
   }
@@ -6919,7 +6919,8 @@ tweedie.convert <- function(xi=NULL, mu, phi, power=NULL){
     if ( length(mu)  == 1 ) mu  <- array(dim=length(phi), mu  ) 
     if ( length(phi) == 1 ) phi <- array(dim=length(mu),  phi ) 
   }
-  # Now  mu  and  phi  will be the same length if one of them happened to be a scalar, so this works:
+  # Now  mu  and  phi  will be the same length if one of them happened to be a scalar, 
+  # so this works:
   if( length(mu) != length(phi) ) stop("phi and mu must be scalars, or the same length.\n")
   
   lambda <- ( mu^(2 - xi) ) / ( phi * (2 - xi) )  # Poisson distribution mean
@@ -6934,6 +6935,6 @@ tweedie.convert <- function(xi=NULL, mu, phi, power=NULL){
         gamma.scale = gam, 
         p0 = p0,
         gamma.mean = mu,
-        gamma.phi = phi.g)
+        gamma.phi = phi.g )
   
 }
