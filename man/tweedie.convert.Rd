@@ -65,7 +65,7 @@
 \seealso{\code{\link{dtweedie.saddle}} }
 
 \examples{
-tweedie.convert(xi = 1.5, mu = 1, phi = 1)
+tweedie.convert(xi=1.5, mu=1, phi=1)
 } 
 \keyword{models}
 

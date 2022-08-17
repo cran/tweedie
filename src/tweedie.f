@@ -198,9 +198,9 @@
 *    x        : the range over which the integral is to be integrated;
 *               an internal variable and NOT the value at which
 *               the function is to be evaluated
-*    c        : the constant mapping to the distribution with mean=1
-*    lambda   : for 1<p<2, P(Y=0) = exp( -lambda )
-*    p        : the index (ie variance function is V(mu) = mu^p)
+*    c        : the constant mapping to the distribution with mean = 1
+*    lambda   : for 1 < p < 2, P(Y = 0) = exp( -lambda )
+*    p        : the index (ie variance function is V(mu) = mu ^ p)
 *    phi      : the dispersion parameter
 *    funvalue : the value of the function at the given value of  x
 *    bound    : The bound using Chebyshev theorm.
@@ -216,6 +216,7 @@
       exitstatus = 1
       relerr = 0.0d00
       its = 0
+      lambda = 0
 
 
 *     SPECIAL CASES {
@@ -230,7 +231,7 @@
 
          elseif ( y .EQ. 0.0d00 ) then
 
-*           If  y=0 in P-G case, then we don't need to integrate, just
+*           If  y = 0 in P-G case, then we don't need to integrate, just
 *           evaluate; otherwise, integrate
 
             lambda = calclambda(p, phi, mu)

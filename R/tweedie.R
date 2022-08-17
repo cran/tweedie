@@ -1,25 +1,25 @@
 #############################################################################
-ptweedie.inversion <- function(q, mu, phi,  power, exact=FALSE ){ 
+ptweedie.inversion <- function(q, mu, phi,  power, exact = FALSE ){ 
   # Peter K Dunn 
   # 08 Feb 2000--2005
   
   y <- q
-  cdf <- array( dim=length(y) )
+  cdf <- array( dim = length(y) )
   # Error checks
-  if ( power<1) stop("power must be greater than 1.")
-  if ( any(phi<= 0) ) stop("phi must be positive.")
-  if ( any(y<0) ) stop("y must be a non-negative vector.")
-  if ( any(mu<=0) ) stop("mu must be positive.")
-  if ( length(mu)>1) {
-    if ( length(mu)!=length(y) ) stop("mu must be scalar, or the same length as y.")
+  if ( power < 1) stop("power must be greater than 1.")
+  if ( any(phi <= 0) ) stop("phi must be positive.")
+  if ( any(y < 0) ) stop("y must be a non-negative vector.")
+  if ( any(mu <= 0) ) stop("mu must be positive.")
+  if ( length(mu) > 1) {
+    if ( length(mu) != length(y) ) stop("mu must be scalar, or the same length as y.")
   } else {
-    mu <- array( dim=length(y), mu )
+    mu <- array( dim = length(y), mu )
     # A vector of all mu's
   }
-  if ( length(phi)>1) {
-    if ( length(phi)!=length(y) ) stop("phi must be scalar, or the same length as y.")
+  if ( length(phi) > 1) {
+    if ( length(phi) != length(y) ) stop("phi must be scalar, or the same length as y.")
   } else {
-    phi <- array( dim=length(y), phi )
+    phi <- array( dim = length(y), phi )
     # A vector of all phi's
   }
   
@@ -72,10 +72,12 @@ dtweedie.dldphi.saddle <- function(phi, mu, power, y){
   # Peter Dunn
   # 13 August 2002
   
-  dev <- tweedie.dev( power=power, y=y, mu=mu)
-  l <-  (-1)/(2*phi) + dev/(2*phi^2)
+  dev <- tweedie.dev( power = power, 
+                      y = y, 
+                      mu = mu)
+  l <-  (-1) / (2 * phi) + dev / (2 * phi ^ 2)
   
-  -2* sum(l)
+  -2 * sum(l)
 }
 
 
@@ -92,7 +94,10 @@ dtweedie.logl <- function(phi, y, mu, power) {
   # Peter Dunn
   # 26 April 2001
   
-  sum( log( dtweedie( y=y, mu=mu, phi=phi, power=power) ) )
+  sum( log( dtweedie( y = y, 
+                      mu = mu, 
+                      phi = phi, 
+                      power = power) ) )
   
 }
 
@@ -101,7 +106,7 @@ dtweedie.logl <- function(phi, y, mu, power) {
 
 
 #############################################################################
-logLiktweedie <- function(glm.obj, dispersion=NULL) {
+logLiktweedie <- function(glm.obj, dispersion = NULL) {
   # Computes the log-likelihood for
   # a Tweedie glm.  
   
@@ -109,9 +114,12 @@ logLiktweedie <- function(glm.obj, dispersion=NULL) {
   # 19 October 2017
   
   p <- get("p", envir = environment(glm.obj$family$variance))
-  if (p==1) message("*** Tweedie index power = 1: Consider using  dispersion=1  in call to  logLiktweedie().\n")
+  if (p == 1) message("*** Tweedie index power = 1: Consider using  dispersion = 1  in call to  logLiktweedie().\n")
   
-  AICtweedie(glm.obj, dispersion=dispersion, k=0, verbose=FALSE) / (-2)
+  AICtweedie(glm.obj, 
+             dispersion = dispersion, 
+             k = 0, 
+             verbose = FALSE) / (-2)
 }
 
 
@@ -122,7 +130,11 @@ dtweedie.logl.saddle <- function( phi, power, y, mu, eps=0){
   
   # Peter Dunn
   # 01 May 2001
-  sum( log( dtweedie.saddle(power=power, phi=phi, y=y, mu=mu, eps=eps) ) )
+  sum( log( dtweedie.saddle(power = power, 
+                            phi = phi, 
+                            y = y, 
+                            mu = mu,
+                            eps = eps) ) )
   
 }
 
@@ -137,11 +149,11 @@ dtweedie.logv.bigp <- dtweedie.logv.bigp <- function( y, phi, power){
   # Error traps
   #
   
-  if ( power<2) stop("power must be greater than 2.")
-  if ( any(phi<= 0) ) stop("phi must be positive.")
-  if ( any(y<=0) ) stop("y must be a strictly positive vector.")
-  if ( length(phi)>1) {
-    if ( length(phi)!=length(y) ) stop("phi must be scalar, or the same length as y.")
+  if ( power < 2) stop("power must be greater than 2.")
+  if ( any(phi <= 0) ) stop("phi must be positive.")
+  if ( any(y <= 0) ) stop("y must be a strictly positive vector.")
+  if ( length(phi) > 1) {
+    if ( length(phi) != length(y) ) stop("phi must be scalar, or the same length as y.")
   } else {
     phi <- array( dim = length(y), phi )
     # A vector of all phi's
@@ -153,11 +165,10 @@ dtweedie.logv.bigp <- dtweedie.logv.bigp <- function( y, phi, power){
   #
   
   p <- power
-  a <- ( 2-p ) / ( 1-p )
+  a <- ( 2 - p ) / ( 1 - p )
   a1 <- 1 - a
   
-  r <- -a1*log(phi) - log(p-2) - a*log(y) +
-    a*log(p-1)
+  r <- -a1 * log(phi) - log(p - 2) - a * log(y) + a * log(p - 1)
   drop <- 37
   
   #
@@ -166,10 +177,10 @@ dtweedie.logv.bigp <- dtweedie.logv.bigp <- function( y, phi, power){
   #
   
   logz <- max(r)
-  k.max <- max( y^(2-p) / ( phi * (p-2) ) )
+  k.max <- max( y ^ (2 - p) / ( phi * (p - 2) ) )
   k <- max( 1, k.max )
   
-  c <- logz + a1 + a*log(a)
+  c <- logz + a1 + a * log(a)
   vmax <- k.max * a1
   estlogv <- vmax
   #
@@ -182,7 +193,7 @@ dtweedie.logv.bigp <- dtweedie.logv.bigp <- function( y, phi, power){
   
   while ( estlogv > (vmax - drop) ) {
     k <- k + 2
-    estlogv <- k*( c - a1*log(k) )
+    estlogv <- k*( c - a1 * log(k) )
   }
   
   hi.k <- ceiling(k)
@@ -190,15 +201,15 @@ dtweedie.logv.bigp <- dtweedie.logv.bigp <- function( y, phi, power){
   # Now the lower limit of k
   #
   logz <- min(r)
-  k.max <- min( y^(2-p) / ( phi * (p-2) ) )
+  k.max <- min( y ^ (2 - p) / ( phi * (p - 2) ) )
   k <- max( 1, k.max )
-  c <- logz + a1 + a*log(a)
+  c <- logz + a1 + a * log(a)
   vmax <- k.max * a1
   estlogv <- vmax
   
-  while ( (estlogv > (vmax-drop) ) && ( k>=2) ) {
+  while ( (estlogv > (vmax - drop) ) && ( k >= 2) ) {
     k <- max(1, k - 2)
-    estlogv <- k*( c - a1*log(k) )
+    estlogv <- k*( c - a1 * log(k) )
   }
   
   lo.k <- max(1, floor(k) )
@@ -208,34 +219,39 @@ dtweedie.logv.bigp <- dtweedie.logv.bigp <- function( y, phi, power){
   # We ensure it works for vector y.
   #
   k <- seq(lo.k, hi.k) 
-  o <- matrix( 1, nrow=length(y)) 
+  o <- matrix( 1, nrow = length(y)) 
   
-  g <- matrix( lgamma( 1+a*k) - lgamma(1+k),
-               nrow=1, ncol=length(k) )
+  g <- matrix( lgamma( 1 + a * k) - lgamma(1 + k),
+               nrow = 1, 
+               ncol = length(k) )
   
   og <- o %*% g
   A <- outer(r, k) + og
-  C <- matrix( sin( -a*pi*k ) * (-1)^k,
-               nrow=1, ncol=length(k) )
+  C <- matrix( sin( -a * pi * k ) * (-1)^k,
+               nrow = 1, 
+               ncol = length(k) )
   
   C <- o %*% C
   m <- apply(A, 1, max)
   ve <- exp(A - m)
-  sum.ve <- apply( ve*C, 1, sum )
+  sum.ve <- apply( ve * C, 1, sum )
   
   # Now be careful!  Because of the +/- nature of the sin term,
   # sum.ve can be very small but negative  due to subtractive
   # cancellation.  Treat those carefully and separately.
   
-  neg.sum.ve <- (sum.ve<=0)
-  pos.sum.ve <- (sum.ve>0)
+  neg.sum.ve <- (sum.ve <= 0)
+  pos.sum.ve <- (sum.ve > 0)
   
   logv <- sum.ve
   sum.ve[neg.sum.ve] <- 0
   logv[neg.sum.ve] <- -Inf
   logv[pos.sum.ve] <- log( sum.ve[pos.sum.ve] ) + m[pos.sum.ve]
   
-  list(lo=lo.k, hi=hi.k, logv=logv, k.max=k.max )
+  list(lo = lo.k, 
+       hi = hi.k, 
+       logv = logv, 
+       k.max = k.max )
   
 }
 
@@ -251,20 +267,19 @@ dtweedie.logw.smallp <- function(y, phi, power){
   # Error traps
   #
   
-  if ( power<1) stop("power must be between 1 and 2.")
-  if ( power>2) stop("power must be between 1 and 2.")
-  if ( any(phi<=0) ) stop("phi must be positive.")
-  if ( any(y<=0) ) stop("y must be a strictly positive vector.")
+  if ( power < 1) stop("power must be between 1 and 2.")
+  if ( power > 2) stop("power must be between 1 and 2.")
+  if ( any(phi <= 0) ) stop("phi must be positive.")
+  if ( any(y <= 0) ) stop("y must be a strictly positive vector.")
   
   #
   # Set up
   #
   p <- power
-  a <- ( 2-p ) / ( 1-p )         # Note that a<0 for 1<p<2
+  a <- ( 2 - p ) / ( 1 - p )         # Note that a<0 for 1<p<2
   
   a1 <- 1 - a
-  r <- -a*log(y) + a*log(p-1) - a1*log(phi) -
-    log(2-p)        # All terms to power j
+  r <- -a * log(y) + a * log(p - 1) - a1 * log(phi) - log(2 - p)        # All terms to power j
   
   drop <- 37             # Accuracy of terms: exp(-37)
   #
@@ -272,20 +287,20 @@ dtweedie.logw.smallp <- function(y, phi, power){
   # to approximate gamma terms, and find max as j.max
   #
   logz <- max(r)             # To find largest  j  needed
-  j.max <- max( y^( 2-p ) / ( phi * (2-p) ) )
+  j.max <- max( y ^ ( 2 - p ) / ( phi * (2 - p) ) )
   j <- max( 1, j.max )
   
-  cc <- logz + a1 + a*log(-a)    #
+  cc <- logz + a1 + a * log(-a)    #
   # This is all the terms to j-power, not needing any other j terms.
   # The other terms are introduced when we know the values of j
   
-  wmax <- a1*j.max
+  wmax <- a1 * j.max
   estlogw <- wmax
   
   # First, the upper limit of j
-  while(estlogw > (wmax-drop) ){
+  while(estlogw > (wmax - drop) ){
     j <- j + 2
-    estlogw <- j*(cc - a1*log(j))
+    estlogw <- j * (cc - a1 * log(j))
   }
   
   hi.j <- ceiling(j)
@@ -296,17 +311,17 @@ dtweedie.logw.smallp <- function(y, phi, power){
   #
   #
   logz <- min(r) 
-  j.max <- min( y^( 2-power ) / ( phi * (2-power) ) )
+  j.max <- min( y ^ (2 - power) / ( phi * (2 - power) ) )
   
   j <- max( 1, j.max)
-  wmax <- a1*j.max 
+  wmax <- a1 * j.max 
   estlogw <- wmax 
   
   # First, optimize to find the location of the maximum
-  while ( ( estlogw > (wmax-drop) ) && ( j>=2) ) {
+  while ( ( estlogw > (wmax - drop) ) && ( j >= 2) ) {
     j <- max(1, j - 2)
     oldestlogw <- estlogw
-    estlogw <- j*(cc-a1*log(j))
+    estlogw <- j * (cc - a1 * log(j))
   }
   
   lo.j <- max(1, floor(j))
@@ -316,25 +331,29 @@ dtweedie.logw.smallp <- function(y, phi, power){
   
   j <- seq( lo.j, hi.j)      # sequence of j terms needed
   
-  o <- matrix( 1, nrow=length(y))     # matrix of ones
+  o <- matrix( 1, nrow = length(y))     # matrix of ones
   
-  g <- matrix(lgamma( j+1 ) + lgamma( -a*j ),
-              nrow=1, ncol=hi.j - lo.j + 1)
+  g <- matrix(lgamma( j + 1 ) + lgamma( -a * j ),
+              nrow = 1, 
+              ncol = hi.j - lo.j + 1)
   
   og <- o %*% g              # matrix of gamma terms
   A <- outer(r, j) - og      # the series, almost ready to sum
-  m <- apply(A,1,max)        # avoid overflow; find maximum values
+  m <- apply(A, 1, max)      # avoid overflow; find maximum values
   we <- exp( A - m )         # evaluate terms, less max.
-  sum.we <- apply( we,1,sum) # sum terms
+  sum.we <- apply( we, 1, sum) # sum terms
   logw <- log( sum.we ) + m  # now restore max.
   
-  list(lo=lo.j, hi=hi.j, logw=logw, j.max=j.max )
+  list(lo = lo.j, 
+       hi = hi.j, 
+       logw = logw, 
+       j.max = j.max )
   
 }
 
 
 #############################################################################
-dtweedie <- function(y, xi=NULL, mu, phi, power=NULL)
+dtweedie <- function(y, xi = NULL, mu, phi, power = NULL)
 {
   #
   # This is a function for determining Tweedie densities.
@@ -385,87 +404,96 @@ dtweedie <- function(y, xi=NULL, mu, phi, power=NULL)
     cat("Different values for xi and power given; the value of xi used.\n")
     power <- xi
   }
-  index.par       <- ifelse( xi.notation, "xi","p")
-  index.par.long  <- ifelse( xi.notation, "xi","power")
+  index.par       <- ifelse( xi.notation, "xi", "p")
+  index.par.long  <- ifelse( xi.notation, "xi", "power")
   
   
   # Error checks
-  if ( any(power<1) )  stop( paste(index.par.long, "must be greater than 1.\n") )
-  if ( any(phi<=0) ) stop("phi must be positive.")
-  if ( any(y<0) ) stop("y must be a non-negative vector.\n")
-  if ( any(mu<=0) ) stop("mu must be positive.\n")
-  if ( length(mu)>1) {
-    if ( length(mu)!=length(y) ) stop("mu must be scalar, or the same length as y.\n")
+  if ( any(power < 1) )  stop( paste(index.par.long, "must be greater than 1.\n") )
+  if ( any(phi <= 0) ) stop("phi must be positive.")
+  if ( any(y < 0) ) stop("y must be a non-negative vector.\n")
+  if ( any(mu <= 0) ) stop("mu must be positive.\n")
+  if ( length(mu) > 1) {
+    if ( length(mu) != length(y) ) stop("mu must be scalar, or the same length as y.\n")
   } else {
-    mu <- array( dim=length(y), mu )
+    mu <- array( dim = length(y), mu )
     # A vector of all mu's
   }
-  if ( length(phi)>1) {
-    if ( length(phi)!=length(y) ) stop("phi must be scalar, or the same length as y.\n")
+  if ( length(phi) > 1) {
+    if ( length(phi) != length(y) ) stop("phi must be scalar, or the same length as y.\n")
   } else {
-    phi <- array( dim=length(y), phi )
+    phi <- array( dim = length(y), phi )
     # A vector of all phi's
   }
   
   density <- y
   
   # Special Cases
-  if ( power==3 ){
-    density <- statmod::dinvgauss(x=y, mean=mu, dispersion=phi)
+  if ( power == 3 ){
+    density <- statmod::dinvgauss(x = y, 
+                                  mean = mu, 
+                                  dispersion = phi)
     return(density)
   }
-  if ( power==2 ) {
-    density <- dgamma( rate=1/(phi*mu), shape=1/phi, x=y )
+  if ( power == 2 ) {
+    density <- dgamma( rate = 1 / (phi * mu), 
+                       shape = 1 / phi, 
+                       x = y )
     return(density)
   }
-  if ( power==0) {
-    density <- dnorm( mean=mu, sd=sqrt(phi), x=y )
+  if ( power == 0) {
+    density <- dnorm( mean = mu, 
+                      sd = sqrt(phi), 
+                      x = y )
     return(density)
   }
-  if ( (power==1) & (all(phi==1))) {
+  if ( (power == 1) & (all(phi == 1))) {
     # Poisson case
-    density <- dpois(x=y/phi, lambda=mu/phi )
+    density <- dpois(x = y / phi, 
+                     lambda = mu / phi )
     return(density)
   }
   
   # Set up
-  id.type0 <- array( dim=length(y) )
+  id.type0 <- array( dim = length(y) )
   id.series <- id.type0
   id.interp <- id.type0
   
   ###   Now consider the cases 1<p<2   ###
-  id.type0 <- (y==0)
+  id.type0 <- (y == 0)
   if (any(id.type0)) {
     if ( power > 2 ) {
       density[id.type0] <- 0
     } else {
-      lambda <- mu[id.type0]^(2-power)/(phi[id.type0]*(2-power))
+      lambda <- mu[id.type0] ^ (2 - power) / (phi[id.type0] * (2 - power))
       density[id.type0] <- exp( -lambda )
     }
   }
   
   
-  xi <- array( dim=length(y) )
+  xi <- array( dim = length(y) )
   xi[id.type0] <- 0
-  xi[!id.type0] <- phi[!id.type0] * y[!id.type0]^(power-2)
+  xi[!id.type0] <- phi[!id.type0] * y[!id.type0] ^ (power - 2)
   xix <- xi / ( 1 + xi )
   
-  if ( (power>1) && (power<=1.1) ) {
+  if ( (power > 1) && (power <= 1.1) ) {
     id.series <- (!id.type0)
     if (any(id.series)){
-      density[id.series] <- dtweedie.series(y=y[id.series],
-                                            mu=mu[id.series], phi=phi[id.series], power=power)
+      density[id.series] <- dtweedie.series(y = y[id.series],
+                                            mu = mu[id.series], 
+                                            phi = phi[id.series],
+                                            power = power)
     }
-    return(density=density)
+    return(density = density)
   }
   
-  if ( power==1 ) { # AND phi not equal to one here
+  if ( power == 1 ) { # AND phi not equal to one here
     id.series <- rep(TRUE, length(id.series))
     id.interp <- rep(FALSE, length(id.series))
   }
-  if ( (power>1.1) && (power<=1.2) ) {
-    id.interp <- ( (xix>0) & (xix<0.1) )
-    id.series <- (!(id.interp|id.type0))
+  if ( (power > 1.1) && (power <= 1.2) ) {
+    id.interp <- ( (xix > 0) & (xix < 0.1) )
+    id.series <- (!(id.interp | id.type0))
     if ( any(id.interp)) {
       grid <- stored.grids(power)
       p.lo <- 1.1
@@ -477,9 +505,9 @@ dtweedie <- function(y, xi=NULL, mu, phi, power=NULL)
     }
   }
   
-  if ( (power>1.2) && (power<=1.3) ) {
-    id.interp <- ( (xix>0) & (xix<0.3) )
-    id.series <- (!(id.interp|id.type0))
+  if ( (power > 1.2) && (power <= 1.3) ) {
+    id.interp <- ( (xix > 0) & (xix < 0.3) )
+    id.series <- (!(id.interp | id.type0))
     if ( any(id.interp)) {
       grid <- stored.grids(power)
       p.lo <- 1.2
@@ -490,9 +518,9 @@ dtweedie <- function(y, xi=NULL, mu, phi, power=NULL)
       nx <- 25
     }
   }
-  if ( (power>1.3) && (power<=1.4) ) {
-    id.interp <- ( (xix>0) & (xix<0.5) )
-    id.series <- (!(id.interp|id.type0))
+  if ( (power > 1.3) && (power <= 1.4) ) {
+    id.interp <- ( (xix > 0) & (xix < 0.5) )
+    id.series <- (!(id.interp | id.type0))
     if ( any(id.interp)) {
       grid <- stored.grids(power)
       p.lo <- 1.3
@@ -503,9 +531,9 @@ dtweedie <- function(y, xi=NULL, mu, phi, power=NULL)
       nx <- 25
     }
   }
-  if ( (power>1.4) && (power<=1.5) ) {
-    id.interp <- ( (xix>0) & (xix<0.8) )
-    id.series <- (!(id.interp|id.type0))
+  if ( (power > 1.4) && (power <= 1.5) ) {
+    id.interp <- ( (xix > 0) & (xix < 0.8) )
+    id.series <- (!(id.interp | id.type0))
     if ( any(id.interp)) {
       grid <- stored.grids(power)
       p.lo <- 1.4
@@ -516,9 +544,9 @@ dtweedie <- function(y, xi=NULL, mu, phi, power=NULL)
       nx <- 25
     }
   }
-  if ( (power>1.5) && (power<2) ) {
-    id.interp <- ( (xix>0) & (xix<0.9) )
-    id.series <- (!(id.interp|id.type0))
+  if ( (power > 1.5) && (power < 2) ) {
+    id.interp <- ( (xix > 0) & (xix < 0.9) )
+    id.series <- (!(id.interp | id.type0))
     if ( any(id.interp)) {
       grid <- stored.grids(power)
       p.lo <- 1.5
@@ -531,9 +559,9 @@ dtweedie <- function(y, xi=NULL, mu, phi, power=NULL)
   }
   
   ### Cases p>2   ###
-  if ( (power>2) && (power<3) ) {
-    id.interp <- ( (xix>0) & (xix<0.9) )
-    id.series <- (!(id.interp|id.type0))
+  if ( (power > 2) && (power < 3) ) {
+    id.interp <- ( (xix > 0) & (xix < 0.9) )
+    id.series <- (!(id.interp | id.type0))
     if ( any(id.interp)) {
       grid <- stored.grids(power)
       p.lo <- 2
@@ -544,9 +572,9 @@ dtweedie <- function(y, xi=NULL, mu, phi, power=NULL)
       nx <- 25
     }
   }
-  if ( (power>=3) && (power<4) ) {
-    id.interp <- ( (xix>0) & (xix<0.9) )
-    id.series <- (!(id.interp|id.type0))
+  if ( (power >= 3) && (power < 4) ) {
+    id.interp <- ( (xix > 0) & (xix < 0.9) )
+    id.series <- (!(id.interp | id.type0))
     if ( any(id.interp)) {
       grid <- stored.grids(power)
       p.lo <- 3
@@ -557,9 +585,9 @@ dtweedie <- function(y, xi=NULL, mu, phi, power=NULL)
       nx <- 25
     }
   }
-  if ( (power>=4) && (power<5) ) {
-    id.interp <- ( (xix>0) & (xix<0.9) )
-    id.series <- (!(id.interp|id.type0))
+  if ( (power >= 4) && (power < 5) ) {
+    id.interp <- ( (xix > 0) & (xix < 0.9) )
+    id.series <- (!(id.interp | id.type0))
     if ( any(id.interp)) {
       grid <- stored.grids(power)
       p.lo <- 4
@@ -570,9 +598,9 @@ dtweedie <- function(y, xi=NULL, mu, phi, power=NULL)
       nx <- 25
     }
   }
-  if ( (power>=5) && (power<7) ) {
-    id.interp <- ( (xix>0) & (xix<0.5) )
-    id.series <- (!(id.interp|id.type0))
+  if ( (power >= 5) && (power < 7) ) {
+    id.interp <- ( (xix > 0) & (xix < 0.5) )
+    id.series <- (!(id.interp | id.type0))
     if ( any(id.interp)) {
       grid <- stored.grids(power)
       p.lo <- 5
@@ -583,9 +611,9 @@ dtweedie <- function(y, xi=NULL, mu, phi, power=NULL)
       nx <- 25
     }
   }
-  if ( (power>=7) && (power<=10) ) {
-    id.interp <- ( (xix>0) & (xix<0.3) )
-    id.series <- (!(id.interp|id.type0))
+  if ( (power >= 7) && (power <= 10) ) {
+    id.interp <- ( (xix > 0) & (xix < 0.3) )
+    id.series <- (!(id.interp | id.type0))
     if ( any(id.interp)) {
       grid <- stored.grids(power)
       p.lo <- 7
@@ -597,24 +625,33 @@ dtweedie <- function(y, xi=NULL, mu, phi, power=NULL)
     }
   }
   
-  if ( power>10) {
-    id.series <- (y!=0)
-    id.interp <- (!(id.series|id.type0))
+  if ( power > 10) {
+    id.series <- (y != 0)
+    id.interp <- (!(id.series | id.type0))
   }
   
   if (any(id.series)) {
-    density[id.series] <- dtweedie.series(y=y[id.series],
-                                          mu=mu[id.series], phi=phi[id.series], power=power)
+    density[id.series] <- dtweedie.series(y = y[id.series],
+                                          mu = mu[id.series], 
+                                          phi = phi[id.series],
+                                          power = power)
   }
   
   if (any(id.interp)) {
-    dim( grid ) <- c( nx+1, np+1 )
-    rho <- dtweedie.interp(grid, np=np, nx=nx,
-                           xix.lo=xix.lo, xix.hi=xix.hi,
-                           p.lo=p.lo, p.hi=p.hi,
-                           power=power, xix=xix[id.interp] )
-    dev <- tweedie.dev(power = power, mu = mu[id.interp], y = y[id.interp])
-    front <- rho/(y[id.interp] * sqrt(2 * pi * xi[id.interp]))
+    dim( grid ) <- c( nx + 1, np + 1 )
+    rho <- dtweedie.interp(grid, 
+                           np = np, 
+                           nx = nx,
+                           xix.lo = xix.lo, 
+                           xix.hi = xix.hi,
+                           p.lo = p.lo, 
+                           p.hi = p.hi,
+                           power = power, 
+                           xix = xix[id.interp] )
+    dev <- tweedie.dev(power = power, 
+                       mu = mu[id.interp], 
+                       y = y[id.interp])
+    front <- rho / (y[id.interp] * sqrt(2 * pi * xi[id.interp]))
     density[id.interp] <- front * exp(-1/(2 * phi[id.interp]) * dev)
   }
   
@@ -648,21 +685,21 @@ dtweedie.saddle <- function(y, xi=NULL, mu, phi, eps=1/6, power=NULL) {
     cat("Different values for xi and power given; the value of xi used.\n")
     power <- xi
   }
-  index.par       <- ifelse( xi.notation, "xi","p")
-  index.par.long  <- ifelse( xi.notation, "xi","power")
+  index.par       <- ifelse( xi.notation, "xi", "p")
+  index.par.long  <- ifelse( xi.notation, "xi", "power")
   
   
   # Error traps
   #
   if( any(phi <= 0) )
     stop("phi must be positive.")
-  if( (power >=1) & any(y < 0))
+  if( (power >= 1) & any(y < 0))
     stop("y must be a non-negative vector.")
   if( any(mu <= 0) )
     stop("mu must be positive.")
-  if ( length(mu)==1 )
+  if ( length(mu) == 1 )
     mu <- array( dim=length(y), mu )
-  if ( length(phi)==1 )
+  if ( length(phi) == 1 )
     phi <- array( dim=length(y), phi )
   #
   # END error checks
@@ -682,14 +719,16 @@ dtweedie.saddle <- function(y, xi=NULL, mu, phi, eps=1/6, power=NULL) {
   #        }
   #      else{
   
-  dev <- tweedie.dev(y=y, mu=mu, power=power)
-  density <- (2*pi*phi*y.eps^power)^(-1/2) * exp( -dev/(2*phi) )
+  dev <- tweedie.dev(y = y, 
+                     mu = mu, 
+                     power = power)
+  density <- (2 * pi * phi * y.eps ^ power) ^ (-1/2) * exp( -dev / (2 * phi) )
   
   #      }
   #   }
-  if ( any(y==0) ){
+  if ( any(y == 0) ){
     if((power >= 1) && (power < 2)) {
-      lambda <- mu[y0]^(2 - power)/(phi[y0] * (2 - power))
+      lambda <- mu[y0] ^ (2 - power) / (phi[y0] * (2 - power))
       density[y0] <- exp( -lambda)
     } else {
       density[y0] <- 0
@@ -716,34 +755,39 @@ dtweedie.series.bigp <- function(power, y, mu, phi){
   # Error traps
   #
   
-  if ( power<2) stop("power must be greater than 2.")
-  if ( any(phi<=0) ) stop("phi must be positive.")
-  if ( any(y<=0) ) stop("y must be a strictly positive vector.")
-  if ( any(mu<=0) ) stop("mu must be positive.")
-  if ( length(mu)>1) {
-    if ( length(mu)!=length(y) ) stop("mu must be scalar, or the same length as y.")
+  if ( power < 2) stop("power must be greater than 2.")
+  if ( any(phi <= 0) ) stop("phi must be positive.")
+  if ( any(y <= 0) ) stop("y must be a strictly positive vector.")
+  if ( any(mu <= 0) ) stop("mu must be positive.")
+  if ( length(mu) > 1) {
+    if ( length(mu) != length(y) ) stop("mu must be scalar, or the same length as y.")
   } else {
-    mu <- array( dim=length(y), mu )
+    mu <- array( dim = length(y), mu )
     # A vector of all mu's
   }
-  if ( length(phi)>1) {
-    if ( length(phi)!=length(y) ) stop("phi must be scalar, or the same length as y.")
+  if ( length(phi) > 1) {
+    if ( length(phi) != length(y) ) stop("phi must be scalar, or the same length as y.")
   } else {
-    phi <- array( dim=length(y), phi )
+    phi <- array( dim = length(y), phi )
     # A vector of all phi's
   }
   
   
-  result <- dtweedie.logv.bigp(power=power, y=y, phi=phi)
+  result <- dtweedie.logv.bigp(power = power, 
+                               y = y, 
+                               phi = phi)
   logv <- result$logv
   
-  theta <- mu^(1-power) / ( 1 - power )
-  kappa <- mu^(2-power) / ( 2 - power )
+  theta <- mu ^ (1 - power) / ( 1 - power )
+  kappa <- mu ^ (2 - power) / ( 2 - power )
   
-  logfnew <- (y*theta-kappa)/phi - log( pi*y) + logv
+  logfnew <- (y * theta - kappa) / phi - log( pi * y) + logv
   f <- exp( logfnew )
   
-  list(density=f, logv=logv, lo=result$lo, hi=result$hi )
+  list(density = f, 
+       logv = logv, 
+       lo = result$lo, 
+       hi = result$hi )
   
 }
 
@@ -759,18 +803,18 @@ dtweedie.series <- function(y, power, mu, phi){
   # Error traps
   #
   
-  if ( power<1) stop("power must be between 1 and 2.")
-  if ( any(phi<=0) ) stop("phi must be positive.")
-  if ( any(y<0) ) stop("y must be a non-negative vector.")
-  if ( any(mu<=0) ) stop("mu must be positive.")
-  if ( length(mu)>1) {
-    if ( length(mu)!=length(y) ) stop("mu must be scalar, or the same length as y.")
+  if ( power < 1) stop("power must be between 1 and 2.")
+  if ( any(phi <= 0) ) stop("phi must be positive.")
+  if ( any(y < 0) ) stop("y must be a non-negative vector.")
+  if ( any(mu <= 0) ) stop("mu must be positive.")
+  if ( length(mu) > 1) {
+    if ( length(mu) != length(y) ) stop("mu must be scalar, or the same length as y.")
   } else {
     mu <- array( dim = length(y), mu )
     # A vector of all mu's
   }
-  if ( length(phi)>1) {
-    if ( length(phi)!=length(y) ) stop("phi must be scalar, or the same length as y.")
+  if ( length(phi) > 1) {
+    if ( length(phi) != length(y) ) stop("phi must be scalar, or the same length as y.")
   } else {
     phi <- array( dim = length(y), phi )
     # A vector of all phi's
@@ -779,16 +823,19 @@ dtweedie.series <- function(y, power, mu, phi){
   
   y0 <- (y == 0 )
   yp <- ( y!=0 )
-  density <- array( dim=length(y))
+  density <- array( dim = length(y))
   
-  if ( (power == 2) | (power==1) ) { # Special cases
+  if ( (power == 2) | (power == 1) ) { # Special cases
     if ( power == 2 ){
-      density <- dgamma( y, shape=1/phi, rate=1/(phi * mu ) )
+      density <- dgamma( y, 
+                         shape = 1 / phi, 
+                         rate = 1 / (phi * mu ) )
     }
     
     if ( (power == 1) ){
-      density <- dpois(x=y/phi, lambda=mu/phi ) / phi  # Using identity: f(y; mu, phi) = c f(cy; c mu, c phi) for p=1.  Now set c = 1/phi
-      if ( !all(phi==1)){
+      density <- dpois(x = y / phi, 
+                       lambda = mu / phi ) / phi  # Using identity: f(y; mu, phi) = c f(cy; c mu, c phi) for p=1.  Now set c = 1/phi
+      if ( !all(phi == 1)){
         warnings("The density computations when phi=1 may be subject to errors using floating-point arithmetic\n")
       }
     }
@@ -798,25 +845,29 @@ dtweedie.series <- function(y, power, mu, phi){
     #   }
   } else{
     
-    if ( any(y==0) ) {
-      if ( power>2 ) {
-        density[y0] <- 0*y[y0]
+    if ( any(y == 0) ) {
+      if ( power > 2 ) {
+        density[y0] <- 0 * y[y0]
       }
-      if ( ( power>1) && (power<2) ) {
-        lambda <- mu[y0]^(2-power) / ( phi[y0] * (2-power) )
+      if ( ( power > 1) && (power < 2) ) {
+        lambda <- mu[y0] ^ (2 - power) / ( phi[y0] * (2 - power) )
         density[y0] <- exp( -lambda )
       }
     }
     
-    if ( any( y!=0 ) ) { 
+    if ( any( y!= 0 ) ) { 
       if ( power > 2 ) {
-        density[yp] <- dtweedie.series.bigp(
-          power=power,mu=mu[yp], y=y[yp], phi=phi[yp])$density
+        density[yp] <- dtweedie.series.bigp(power = power,
+                                            mu = mu[yp], 
+                                            y = y[yp],
+                                            phi = phi[yp])$density
       }
       
       if ( ( power > 1 ) && ( power < 2 ) ) {
-        density[yp] <- dtweedie.series.smallp(
-          power=power,mu=mu[yp], y=y[yp], phi=phi[yp])$density
+        density[yp] <- dtweedie.series.smallp(power = power,
+                                              mu = mu[yp], 
+                                              y = y[yp],
+                                              phi = phi[yp])$density
       }
     }
   }
@@ -840,33 +891,38 @@ dtweedie.series.smallp <- function(power, y, mu, phi){
   # Error traps
   #
   
-  if ( power<1) stop("power must be between 1 and 2.")
-  if ( power>2) stop("power must be between 1 and 2.")
-  if ( any(phi<=0) ) stop("phi must be positive.")
-  if ( any(y<=0) & (power>=2) ) stop("y must be a strictly positive vector.")
-  if ( any(y<0) & (power>1) & (power < 2) ) stop("y must be a non-negative vector.")
-  if ( any(mu<=0) ) stop("mu must be positive.")
-  if ( length(mu)>1) {
-    if ( length(mu)!=length(y) ) stop("mu must be scalar, or the same length as y.")
+  if ( power < 1) stop("power must be between 1 and 2.")
+  if ( power > 2) stop("power must be between 1 and 2.")
+  if ( any(phi <= 0) ) stop("phi must be positive.")
+  if ( any(y <= 0) & (power >= 2) ) stop("y must be a strictly positive vector.")
+  if ( any(y < 0) & (power > 1) & (power < 2) ) stop("y must be a non-negative vector.")
+  if ( any(mu <= 0) ) stop("mu must be positive.")
+  if ( length(mu) > 1) {
+    if ( length(mu) != length(y) ) stop("mu must be scalar, or the same length as y.")
   } else {
     mu <- array( dim = length(y), mu )
   }
-  if ( length(phi)>1) {
-    if ( length(phi)!=length(y) ) stop("phi must be scalar, or the same length as y.")
+  if ( length(phi) > 1) {
+    if ( length(phi) != length(y) ) stop("phi must be scalar, or the same length as y.")
   } else {
-    phi <- array( dim=length(y), phi )
+    phi <- array( dim = length(y), phi )
   }
   
-  result <- dtweedie.logw.smallp( y=y, power=power, phi=phi)
+  result <- dtweedie.logw.smallp( y = y, 
+                                  power = power, 
+                                  phi = phi)
   logw <- result$logw
   
   
-  tau <- phi * (power-1) * mu^( power-1 )
-  lambda <- mu^( 2-power ) / ( phi * ( 2-power ) )
-  logf <- -y/tau - lambda - log(y) + logw
+  tau <- phi * (power - 1) * mu ^ ( power - 1 )
+  lambda <- mu ^ (2 - power) / ( phi * (2 - power) )
+  logf <- -y / tau - lambda - log(y) + logw
   f <- exp( logf )
   
-  list(density=f, logw=logw, hi=result$hi, lo=result$lo)
+  list(density = f, 
+       logw = logw, 
+       hi = result$hi, 
+       lo = result$lo)
   
 }
 
@@ -874,7 +930,7 @@ dtweedie.series.smallp <- function(power, y, mu, phi){
 
 
 #############################################################################
-ptweedie <- function(q, xi=NULL, mu, phi, power=NULL) {
+ptweedie <- function(q, xi = NULL, mu, phi, power = NULL) {
   # Evaluates the cdf for
   # Tweedie distributions.
   
@@ -897,34 +953,34 @@ ptweedie <- function(q, xi=NULL, mu, phi, power=NULL) {
     cat("Different values for xi and power given; the value of xi used.\n")
     power <- xi
   }
-  index.par       <- ifelse( xi.notation, "xi","p")
-  index.par.long  <- ifelse( xi.notation, "xi","power")
+  index.par       <- ifelse( xi.notation, "xi", "p")
+  index.par.long  <- ifelse( xi.notation, "xi", "power")
   
   
   y <- q
   
-  y.negative <- (y<0)
+  y.negative <- (y < 0)
   y.original <- y
   y <- y[ !y.negative ]
   
   # Error checks
-  if ( any(power<1) )  stop( paste(index.par.long, "must be greater than 1.\n") )
-  if ( any(phi<=0) ) stop("phi must be positive.")
-  # if ( any(y<0) ) stop("y must be a non-negative vector.\n")
-  if ( any(mu<=0) ) stop("mu must be positive.\n")
-  if ( length(mu)>1) {
-    if ( length(mu)!=length(y.original) ) stop("mu must be scalar, or the same length as y.\n")
+  if ( any(power < 1) )  stop( paste(index.par.long, "must be greater than 1.\n") )
+  if ( any(phi <= 0) ) stop("phi must be positive.")
+  # if ( any(y < 0) ) stop("y must be a non-negative vector.\n")
+  if ( any(mu <= 0) ) stop("mu must be positive.\n")
+  if ( length(mu) > 1) {
+    if ( length(mu) != length(y.original) ) stop("mu must be scalar, or the same length as y.\n")
   } else {
-    mu <- array( dim=length(y.original), mu )
+    mu <- array( dim = length(y.original), mu )
     # A vector of all mu's
   }
   mu.original <- mu
   mu <- mu[ !y.negative ]
   
-  if ( length(phi)>1) {
-    if ( length(phi)!=length(y.original) ) stop("phi must be scalar, or the same length as y.\n")
+  if ( length(phi) > 1) {
+    if ( length(phi) != length(y.original) ) stop("phi must be scalar, or the same length as y.\n")
   } else {
-    phi <- array( dim=length(y.original), phi )
+    phi <- array( dim = length(y.original), phi )
     # A vector of all phi's
   }
   phi.original <- phi
@@ -932,18 +988,23 @@ ptweedie <- function(q, xi=NULL, mu, phi, power=NULL) {
   
   
   
-  cdf.positives <- array( dim=length(y) )
+  cdf.positives <- array( dim = length(y) )
   cdf <- y.original
   
   # Special Cases
-  if ( power==2 ) {
-    f <- pgamma( rate=1/(phi*mu), shape=1/phi, q=y )
+  if ( power == 2 ) {
+    f <- pgamma( rate = 1 / (phi * mu), 
+                 shape = 1 / phi, 
+                 q = y )
   }
-  if ( power==0) {
-    f <- pnorm( mean=mu, sd=sqrt(phi), q=y )
+  if ( power == 0) {
+    f <- pnorm( mean = mu, 
+                sd = sqrt(phi),
+                q = y )
   }
-  if ( power==1) {
-    f <- ppois(q=y, lambda=mu/phi )
+  if ( power == 1) {
+    f <- ppois(q = y, 
+               lambda = mu / phi )
   }
   
   # Now, for p>2 the only option is the inversion
@@ -953,7 +1014,10 @@ ptweedie <- function(q, xi=NULL, mu, phi, power=NULL) {
     # the function should return 0;
     # sometimes it fails (when *very* small...).
     # This adjustment is made in ptweedie.inversion()
-    f <- ptweedie.inversion(power=power, mu=mu, q=y, phi=phi)
+    f <- ptweedie.inversion(power = power, 
+                            mu = mu, 
+                            q = y, 
+                            phi = phi)
   }
   
   # Now for 1<p<2, the two options are the series or inversion.
@@ -983,12 +1047,18 @@ ptweedie <- function(q, xi=NULL, mu, phi, power=NULL) {
   ### REVISED CODE:
   ### The choice of  1.999 is arbitrary.  Probably needs serious attention to decide properly
   ### Changed early 2017; thanks to Gustavo Lacerda
-  if ( (power>1) & (power<2) ) {
+  if ( (power > 1) & (power < 2) ) {
     
-    if ( power <1.999) {
-      f <- ptweedie.series(power=power, q=y, mu=mu, phi=phi )
+    if ( power < 1.999) {
+      f <- ptweedie.series(power = power, 
+                           q = y, 
+                           mu = mu, 
+                           phi = phi )
     } else{
-      f <- ptweedie.inversion( power=power, q=y, mu=mu, phi=phi)
+      f <- ptweedie.inversion( power = power, 
+                               q = y, 
+                               mu = mu, 
+                               phi = phi)
     }
   }
   cdf[ !y.negative ] <- f
@@ -996,7 +1066,7 @@ ptweedie <- function(q, xi=NULL, mu, phi, power=NULL) {
   
   cdf[ is.infinite( cdf ) ] <- 1
   
-  cdf[ cdf>1 ] <- 1
+  cdf[ cdf > 1 ] <- 1
   
   return(cdf)
   
@@ -1012,28 +1082,28 @@ ptweedie.series <- function(q, power, mu, phi) {
   #
   y <- q
   # Error checks
-  if ( power<1) stop("power must be between 1 and 2.\n")
-  if ( power>2) stop("power must be between 1 and 2.\n")
-  if ( any(phi<= 0)) stop("phi must be positive.\n")
-  if ( any(y<0) ) stop("y must be a non-negative vector.\n")
-  if ( any(mu<=0) ) stop("mu must be positive.\n")
-  if ( length(mu)>1) {
-    if ( length(mu)!=length(y) ) stop("mu must be scalar, or the same length as y.\n")
+  if ( power < 1) stop("power must be between 1 and 2.\n")
+  if ( power > 2) stop("power must be between 1 and 2.\n")
+  if ( any(phi <= 0)) stop("phi must be positive.\n")
+  if ( any(y < 0) ) stop("y must be a non-negative vector.\n")
+  if ( any(mu <= 0) ) stop("mu must be positive.\n")
+  if ( length(mu) > 1) {
+    if ( length(mu) != length(y) ) stop("mu must be scalar, or the same length as y.\n")
   } else {
-    mu <- array( dim=length(y), mu )
+    mu <- array( dim = length(y), mu )
   }
-  if ( length(phi)>1) {
-    if ( length(phi)!=length(y) ) stop("phi must be scalar, or the same length as y.\n")
+  if ( length(phi) > 1) {
+    if ( length(phi) != length(y) ) stop("phi must be scalar, or the same length as y.\n")
   } else {
-    phi <- array( dim=length(y), phi )
+    phi <- array( dim = length(y), phi )
   }
   
   
   # Set up
   p <- power
-  lambda <- mu^(2-p) / ( phi * (2-p) )
-  tau <- phi * (p-1) * mu^( p-1 )
-  alpha <- (2-p) / ( 1-p )
+  lambda <- mu ^ (2 - p) / ( phi * (2 - p) )
+  tau <- phi * (p - 1) * mu ^ ( p - 1 )
+  alpha <- (2 - p) / ( 1 - p )
   
   
   # Now find the limits on N:
@@ -1055,9 +1125,9 @@ ptweedie.series <- function(q, power, mu, phi) {
   
   # Now for the upper limit on N
   
-  lambda <- mu^(2-p) / ( phi * (2-p) )
+  lambda <- mu ^ (2 - p) / ( phi * (2 - p) )
   lambda <- min( lambda )
-  logfmax <-  -log(lambda)/2
+  logfmax <-  -log(lambda) / 2
   estlogf <- logfmax
   
   N <- max( lambda )
@@ -1071,20 +1141,21 @@ ptweedie.series <- function(q, power, mu, phi) {
   
   # Now evaluate between limits of N
   
-  cdf <- array( dim=length(y), 0 )
+  cdf <- array( dim = length(y), 0 )
   
-  lambda <- mu^(2-p) / ( phi * (2-p) )
-  tau <- phi * (p-1) * mu^( p-1 )
-  alpha <- (2-p) / ( 1-p )
+  lambda <- mu ^ (2 - p) / ( phi * (2 - p) )
+  tau <- phi * (p - 1) * mu ^ ( p - 1 )
+  alpha <- (2 - p) / ( 1 - p )
   
   
-  for (N in (lo.N:hi.N)) {
+  for (N in (lo.N : hi.N)) {
     
     # Poisson density
     pois.den <- dpois( N, lambda)
     
     # Incomplete gamma
-    incgamma.den <- pchisq(2*y/tau, -2*alpha*N )
+    incgamma.den <- pchisq(2 * y / tau, 
+                           -2 * alpha * N )
     
     # What we want
     cdf <- cdf + pois.den * incgamma.den
@@ -1114,7 +1185,7 @@ stored.grids <- function(power){
   ##### PART 1:  1 < p < 2 ####
   #
   # 1.5 < p < 2 (A)
-  if ( (power>1.5) && ( power<2) ) {
+  if ( (power > 1.5) && ( power < 2) ) {
     grid <- c(0.619552027046892,
               -1.99653020187375,
               -8.41322974185725,
@@ -1534,7 +1605,7 @@ stored.grids <- function(power){
   }
   
   # 1.4 < p < 1.5 (B)
-  if ( (power>1.4) && (power<=1.5) ) {
+  if ( (power > 1.4) && (power <= 1.5) ) {
     grid <- c(0.52272502143588,
               -2.37970276267028,
               -4.50105382434541,
@@ -1954,7 +2025,7 @@ stored.grids <- function(power){
   }
   # 1.3 < p < 1.4 (C)
   
-  if ( (power>1.3) && (power<=1.4) ) {
+  if ( (power > 1.3) && (power <= 1.4) ) {
     grid <- c(0.897713960567798,
               -0.47040810564112,
               -1.43992915137813,
@@ -2374,7 +2445,7 @@ stored.grids <- function(power){
   }
   
   # 1.2 < p < 1.3 (D)
-  if ( (power>1.2) && (power<=1.3) ) {
+  if ( (power > 1.2) && (power <= 1.3) ) {
     grid <- c(0.959582735112296,
               -0.196662499936635,
               -0.301224766165899,
@@ -2794,7 +2865,7 @@ stored.grids <- function(power){
   }
   
   # 1.1 < p < 1.2 (E)
-  if ( (power>=1.1) && (power<=1.2) ) {
+  if ( (power >= 1.1) && (power <= 1.2) ) {
     grid <- c(0.989973425448979,
               -0.111802566436515,
               -0.128138198419178,
@@ -3216,7 +3287,7 @@ stored.grids <- function(power){
   
   # 2 < p < 3 (F)
   
-  if ( (power>2) && (power<3) ) {
+  if ( (power > 2) && (power < 3) ) {
     grid <- c(
       0.999320859444135,
       -0.00339863996520666,
@@ -3637,7 +3708,7 @@ stored.grids <- function(power){
   }
   
   # 3<=p<4 (G)
-  if ( (power>=3) && (power<4) ) {
+  if ( (power >= 3) && (power < 4) ) {
     grid <- c(
       0.807045029092288,
       -0.742817271116966,
@@ -4058,7 +4129,7 @@ stored.grids <- function(power){
   }
   
   # 4 <= p < 5 (H)
-  if ( (power>=4) && (power<5) ) {
+  if ( (power >= 4) && (power < 5) ) {
     grid <- c(
       0.699925346022531,
       -0.967077543569014,
@@ -4479,7 +4550,7 @@ stored.grids <- function(power){
   }
   
   # 5 <= p < 7 (I)
-  if ( (power>=5) && (power<7) ) {
+  if ( (power >= 5) && (power < 7) ) {
     grid <- c(
       0.786434222068313,
       -0.346012079815851,
@@ -4900,7 +4971,7 @@ stored.grids <- function(power){
   }
   
   # 7 <= p <= 10 (J)
-  if ( (power>=7) && (power<=10) ) {
+  if ( (power >= 7) && (power <= 10) ) {
     grid <- c(
       0.77536534618895,
       -0.430563489144848,
@@ -5338,21 +5409,21 @@ tweedie.dev <- function(y, mu, power)
   
   p <- power
   if(p == 1) {
-    dev <- array( dim=length(y) )
-    mu <- array( dim=length(y), mu )
-    dev[y!=0] <- y[y!=0] * log(y[y!=0]/mu[y!=0]) - (y[y!=0] - mu[y!=0])
-    dev[y==0] <- mu[y==0]
+    dev <- array( dim = length(y) )
+    mu <- array( dim = length(y), mu )
+    dev[y != 0] <- y[y != 0] * log(y[y != 0] / mu[y != 0]) - (y[y != 0] - mu[y != 0])
+    dev[y == 0] <- mu[y == 0]
   } else{
     if(p == 2) {
-      dev <- log(mu/y) + (y/mu) - 1
+      dev <- log(mu / y) + (y / mu) - 1
     } else{
-      if (p== 0) {
-        dev <- (y-mu)^2
-        dev <- dev/2
+      if (p == 0) {
+        dev <- (y - mu) ^ 2
+        dev <- dev / 2
       } else{
-        dev <- (y^(2 - p))/((1 - p) * (2 - p)) - 
-          (y * (mu^(1 - p)))/(1 - p) + 
-          (mu^(2 - p))/(2 - p)
+        dev <- (y ^ (2 - p)) / ((1 - p) * (2 - p)) - 
+          (y * (mu ^ (1 - p)))/(1 - p) + 
+          (mu ^ (2 - p)) / (2 - p)
       }
     }
   }
@@ -5375,7 +5446,7 @@ dtweedie.dldphi <- function(phi, mu, power, y ){
   
   if ( (power != 2 ) & ( power != 1 ) ) {
     
-    k <- phi^(1/(power-2))
+    k <- phi ^ (1 / (power - 2))
     # cat("k=",k,"\n")
     # cat("phi=",phi,"\n")
     # cat("power=",power,"\n")
@@ -5383,19 +5454,31 @@ dtweedie.dldphi <- function(phi, mu, power, y ){
       # Use the transform f(y; mu, phi) = c f(c*y; c*mu, c^(2-p)*phi)
       # and differentiate with c=phi^(1/(p-2)):
       #    d log f / d phi = c^(2-p) * {df(cy; c*mu, 1)/dphi} / f(cy; c*mu, 1)
-      f <- dtweedie( y=k*y, power=power, mu=k*mu, phi=1 )
-      d <- dtweedie.dlogfdphi( y=k*y, power=power, mu=k*mu, phi=1 )
+      f <- dtweedie( y = k * y, 
+                     power = power, 
+                     mu = k * mu, 
+                     phi = 1 )
+      d <- dtweedie.dlogfdphi( y = k * y, 
+                               power = power, 
+                               mu = k * mu, 
+                               phi = 1 )
       # Note:  We need dlogf/dphi = dlogf.dphi * f
       top <- d * f
-      d <- -2* sum( top / f * k^(2-power) )
+      d <- -2* sum( top / f * k ^ (2 - power) )
       
     } else{
       # Compute directly
-      d <- -2*sum( dtweedie.dlogfdphi(y=y, power=power, mu=mu, phi=phi) )
+      d <- -2 * sum( dtweedie.dlogfdphi(y = y, 
+                                        power = power, 
+                                        mu = mu, 
+                                        phi = phi) )
     }
   } else{
-    # Cases p==1 and  p=2
-    d <- -2*sum( dtweedie.dlogfdphi(y=y, power=power, mu=mu, phi=phi) )
+    # Cases p == 1 and  p == 2 
+    d <- -2 * sum( dtweedie.dlogfdphi(y = y, 
+                                      power = power, 
+                                      mu = mu, 
+                                      phi = phi) )
   }
   d
 }
@@ -5417,65 +5500,80 @@ dtweedie.dlogfdphi <- function(y, mu, phi, power)
   #
   
   p <- power
-  a <- (2 - p)/(1 - p)
+  a <- (2 - p) / (1 - p)
   if(length(phi) == 1) {
     phi <- array(dim = length(y), phi)
   }
   if(length(mu) == 1) {
     mu <- array(dim = length(y), mu)
   }
-  A <- (y * mu^(1 - p))/(phi^2 * (p - 1))
-  B <- mu^(2 - p)/(phi^2 * (2 - p))
+  A <- (y * mu ^ (1 - p)) / (phi ^ 2 * (p - 1))
+  B <- mu^(2 - p)/(phi ^ 2 * (2 - p))
   
   if(power > 2) {
     f <- array(dim = c(length(y)))
     # Here, we evaluate logv and everything as normal.
     # If logv has infinite values then we resort to other tactics.
     
-    kv <- dtweedie.kv.bigp(power = power, phi = phi, y = y)$kv
-    dv.dphi <- (kv * (a - 1))/phi
-    out.logv <- dtweedie.logv.bigp(power = power, phi = phi, y = y)
+    kv <- dtweedie.kv.bigp(power = power, 
+                           phi = phi, 
+                           y = y)$kv
+    dv.dphi <- (kv * (a - 1)) / phi
+    out.logv <- dtweedie.logv.bigp(power = power, 
+                                   phi = phi, 
+                                   y = y)
     
     # Now see if this causes problems.
     logv <- out.logv$logv
     
     # Now detect problem computing  logv  and remedy them
-    probs <- (is.infinite(logv)) | (is.nan(logv)) | (y<1)
+    probs <- (is.infinite(logv)) | (is.nan(logv)) | (y < 1)
     
     if(any(probs)) {
       
       # OK then:  Troubles computing log(V).
       # best we can do is use definition I think.
       delta <- 1.0e-5
-      a1 <- dtweedie(power=power, phi=phi[probs], mu=mu[probs], y=y[probs])
-      a2 <- dtweedie(power=power, phi=phi[probs]+delta, mu=mu[probs], y=y[probs])
+      a1 <- dtweedie(power = power, 
+                     phi = phi[probs], 
+                     mu = mu[probs], 
+                     y = y[probs])
+      a2 <- dtweedie(power = power, 
+                     phi = phi[probs] + delta, 
+                     mu = mu[probs], 
+                     y = y[probs])
       f[probs] <- (log(a2) - log(a1) ) / delta
       
     }
     
-    f[!probs] <- A[!probs] + B[!probs] + dv.dphi[!probs]/exp(logv[!probs])
+    f[!probs] <- A[!probs] + B[!probs] + dv.dphi[ !probs] / exp(logv[!probs])
   }
   #  END p>2
   
   if(power == 2) {
-    f <-   -log(y)  + ( y/mu ) + digamma(1/phi) - 1 + log( mu*phi )
-    f <- f / (phi^2)
+    f <-   -log(y)  + ( y / mu ) + digamma(1 / phi) - 1 + log( mu * phi )
+    f <- f / (phi ^ 2)
   }
   
   if(power == 1) {
     
-    f <- mu - y - y*log(mu/phi) + y*digamma(1+(y/phi))
-    f <- f / (phi^2)
+    f <- mu - y - y * log(mu / phi) + y * digamma(1 + (y / phi))
+    f <- f / (phi ^ 2)
   }
   
   if((power > 1) && (power < 2)) {
     # We need to treat y==0 separately.
     # We fill  f  with the Y=0 case
-    f <- array(  dim = length(y), mu^(2-power) / ( phi^2 * (2-power) )  )
-    jw <- dtweedie.jw.smallp(power=power, phi=phi[y > 0], y=y[y > 0])$jw
+    f <- array(  dim = length(y), 
+                 mu ^ (2 - power) / ( phi ^ 2 * (2 - power) )  )
+    jw <- dtweedie.jw.smallp(power = power, 
+                             phi = phi[y > 0], 
+                             y = y[y > 0])$jw
     dw.dphi <- (jw * (a - 1)) / phi[y > 0]
-    logw <- dtweedie.logw.smallp(power=power, phi=phi[y > 0], y=y[y > 0])$logw
-    f[y>0] <- A[y > 0] + B[y > 0] + dw.dphi/exp(logw)
+    logw <- dtweedie.logw.smallp(power = power, 
+                                 phi = phi[y > 0], 
+                                 y = y[y > 0])$logw
+    f[y>0] <- A[y > 0] + B[y > 0] + dw.dphi / exp(logw)
   }
   f
 }
@@ -5493,11 +5591,11 @@ dtweedie.interp <- function(grid, nx, np, xix.lo, xix.hi,
   # xi-dimension
   jt <- seq(0, nx, 1)
   ts <- cos((2 * jt + 1)/(2 * nx + 2) * pi)
-  ts <- ((xix.hi + xix.lo) + ts * (xix.hi - xix.lo))/2    #
+  ts <- ((xix.hi + xix.lo) + ts * (xix.hi - xix.lo)) / 2    #
   
   # p-dimension
   jp <- seq(0, np, 1)
-  ps <- cos((2 * jp + 1)/(2 * np + 2) * pi)
+  ps <- cos((2 * jp + 1) / (2 * np + 2) * pi)
   ps <- ((p.hi + p.lo) + ps * (p.hi - p.lo))/2    #
   
   rho <- array(dim = nx + 1)
@@ -5534,31 +5632,31 @@ dtweedie.inversion <- function(y, power, mu, phi, exact=TRUE, method=3){
   #
   
   # Error checks
-  if ( power<1) stop("power must be greater than 1.")
+  if ( power < 1) stop("power must be greater than 1.")
   if ( any(phi <= 0)) stop("phi must be positive.")
   #if ( power>2) if ( any(y <= 0) ) stop("y must be a positive vector.")
   #if ( (power>1 & (power<2) ) if ( any(y < 0) ) stop("y must be a non-negative vector.")
   if ( any(mu <= 0) ) stop("mu must be positive.")
-  if ( length(mu)>1) {
-    if ( length(mu)!=length(y) ) {
+  if ( length(mu) > 1) {
+    if ( length(mu) != length(y) ) {
       stop("mu must be scalar, or the same length as y.")
     }
   } else {
-    mu <- array( dim=length(y), mu )
+    mu <- array( dim = length(y), mu )
     # A vector of all mu's
   }
-  if ( length(phi)>1) {
-    if ( length(phi)!=length(y) ) stop("phi must be scalar, or the same length as y.")
+  if ( length(phi) > 1) {
+    if ( length(phi) != length(y) ) stop("phi must be scalar, or the same length as y.")
   } else {
-    phi <- array( dim=length(y), phi )
+    phi <- array( dim = length(y), phi )
     # A vector of all phi's
   }
   save.method <- method
   if ( !is.null(method)){
-    if ( length(method)>1 ) {
+    if ( length(method) > 1 ) {
       method <- save.method <- method[1]
     }
-    if ( !(method %in% c(1,2,3)) ) stop("method must be 1, 2 or 3 (or left empty).")
+    if ( !(method %in% c(1, 2, 3)) ) stop("method must be 1, 2 or 3 (or left empty).")
   }
   
   y.len <- length(y)
@@ -5567,9 +5665,9 @@ dtweedie.inversion <- function(y, power, mu, phi, exact=TRUE, method=3){
   verbose <- FALSE
   
   if ( is.null(method)){
-    method <- array( dim=length(y))
+    method <- array( dim = length(y))
   } else {
-    method <- array( method, dim=length(y))
+    method <- array( method, dim = length(y))
   }
   
   for (i in (1:y.len)) {
@@ -5584,9 +5682,9 @@ dtweedie.inversion <- function(y, power, mu, phi, exact=TRUE, method=3){
     # Method 3: Rescale y to 1 and evaluate b.
     
     if ( y[i] <= 0 ) {
-      if ( (power>1) & (power<2) ) {
-        if ( y[i]==0 ) {
-          density[i] <- exp( -mu[i] ^ (2-power) / ( phi[i] * (2-power) ) )
+      if ( (power > 1) & (power < 2) ) {
+        if ( y[i] == 0 ) {
+          density[i] <- exp( -mu[i] ^ (2 - power) / ( phi[i] * (2 - power) ) )
         } else {
           density[i] <- 0
         }
@@ -5595,27 +5693,29 @@ dtweedie.inversion <- function(y, power, mu, phi, exact=TRUE, method=3){
       }
     } else {
       # Here, y > 0
-      m2 <- 1/mu[i]
+      m2 <- 1 / mu[i]
       
-      theta <- ( mu[i]^(1-power) - 1 ) / ( 1 - power )
+      theta <- ( mu[i] ^ (1 - power) - 1 ) / ( 1 - power )
       if ( ( abs(power - 2 ) ) < 1.0e-07 ){
-        kappa <- log(mu[i]) + (2 - power) * ( log(mu[i])^2 ) / 2
+        kappa <- log(mu[i]) + (2 - power) * ( log(mu[i]) ^ 2 ) / 2
       } else {
-        kappa <- ( mu[i]^(2-power) - 1 ) / ( 2 - power )
+        kappa <- ( mu[i] ^ (2 - power) - 1 ) / (2 - power)
       }
-      m1 <- exp( (y[i]*theta - kappa )/phi[i] )
+      m1 <- exp( (y[i]*theta - kappa ) / phi[i] )
       
-      dev <- tweedie.dev(y=y[i], mu=mu[i], power=power )
-      m3 <- exp( -dev/(2*phi[i]) ) / y[i]
+      dev <- tweedie.dev(y = y[i], 
+                         mu = mu[i],
+                         power = power )
+      m3 <- exp( -dev/(2 * phi[i]) ) / y[i]
       
       min.method <- min( m1, m2, m3 )
       
       # Now if no method requested, find the notional "optimal"
       if ( is.null(method[i]) ) {
-        if ( min.method==m1 ){
+        if ( min.method == m1 ){
           use.method <- 1
         } else {
-          if ( min.method==m2 ) {
+          if ( min.method == m2 ) {
             use.method <- 2
           } else {
             use.method <- 3
@@ -5628,11 +5728,11 @@ dtweedie.inversion <- function(y, power, mu, phi, exact=TRUE, method=3){
       # Now use the method
       # NOTE: FOR ALL  METHODS, WE HAVE mu=1
       
-      if ( use.method==2 ) {
+      if ( use.method == 2 ) {
         tmp <- .Fortran( "twpdf",
                          as.double(power),
-                         as.double(phi[i] / (mu[i]^(2-power)) ), # phi
-                         as.double(y[i]/mu[i]), # y
+                         as.double(phi[i] / (mu[i] ^ (2 - power)) ), # phi
+                         as.double(y[i] / mu[i]), # y
                          as.double(1), # mu
                          as.integer( exact ), #exact as an integer
                          as.integer( verbose ), #verbose as an integer
@@ -5647,7 +5747,7 @@ dtweedie.inversion <- function(y, power, mu, phi, exact=TRUE, method=3){
         density[i] <- den * m2
         
       } else {
-        if ( use.method==1 ) {
+        if ( use.method == 1 ) {
           tmp <- .Fortran( "twpdf",
                            as.double(power),
                            as.double(phi[i]), # phi
@@ -5665,10 +5765,10 @@ dtweedie.inversion <- function(y, power, mu, phi, exact=TRUE, method=3){
           den <- tmp[[7]]
           density[i] <- den * m1
           
-        } else { # use.method==3
+        } else { # use.method == 3
           tmp <- .Fortran( "twpdf",
                            as.double(power),
-                           as.double(phi[i]/(y[i]^(2-power))), # phi
+                           as.double(phi[i] / (y[i] ^ (2 - power))), # phi
                            as.double(1), # y
                            as.double(1), # mu
                            as.integer( exact ), #exact as an integer
@@ -5703,20 +5803,19 @@ dtweedie.jw.smallp <- function(y, phi, power ){
   # Error traps
   #
   
-  if ( power<1) stop("power must be between 1 and 2.")
-  if ( power>2) stop("power must be between 1 and 2.")
-  if ( any(phi<=0) ) stop("phi must be strictly positive.")
-  if ( any(y<=0) ) stop("y must be a strictly positive vector.")
+  if ( power < 1) stop("power must be between 1 and 2.")
+  if ( power > 2) stop("power must be between 1 and 2.")
+  if ( any(phi <= 0) ) stop("phi must be strictly positive.")
+  if ( any(y <= 0) ) stop("y must be a strictly positive vector.")
   
   #
   # Set up
   #
   p <- power
-  a <- ( 2-p ) / ( 1-p )         # Note that a<0 for 1<p<2
+  a <- ( 2 - p ) / ( 1 - p )         # Note that a<0 for 1<p<2
   
   a1 <- 1 - a
-  r <- -a*log(y) + a*log(p-1) - a1*log(phi) -
-    log(2-p)        # All terms to power j
+  r <- -a * log(y) + a * log(p - 1) - a1 * log(phi) - log(2 - p)        # All terms to power j
   
   drop <- 37             # Accuracy of terms: exp(-37)
   #
@@ -5724,33 +5823,33 @@ dtweedie.jw.smallp <- function(y, phi, power ){
   # to approximate gamma terms, and find max as j.max
   #
   logz <- max(r)             # To find largest  j  needed
-  j.max <- max( y^( 2-p ) / ( phi * (2-p) ) )
+  j.max <- max( y^( 2 - p ) / ( phi * (2 - p) ) )
   j <- max( 1, j.max )
   
-  c <- logz + a1 + a*log(-a)
-  wmax <- a1*j.max
+  c <- logz + a1 + a * log(-a)
+  wmax <- a1 * j.max
   estlogw <- wmax
   
   # First, the upper limit of j
   
-  while(estlogw > (wmax-drop) ){
+  while(estlogw > (wmax - drop) ){
     j <- j + 2
-    estlogw <- j*(c - a1*log(j))
+    estlogw <- j * (c - a1 * log(j))
   }
   
   hi.j <- ceiling(j)
   
   # Now the lower limit of j
   logz <- min(r) 
-  j.max <- min( y^( 2-power ) / ( phi * (2-power) ) )
+  j.max <- min( y ^ ( 2 - power ) / ( phi * (2 - power) ) )
   
   j <- max( 1, j.max)
-  wmax <- a1*j.max 
+  wmax <- a1 * j.max 
   estlogw <- wmax 
   
-  while ( ( estlogw > (wmax-drop) ) && ( j>=2) ) {
-    j <- max(1, j-2)
-    estlogw <- j*(c-a1*log(j))
+  while ( ( estlogw > (wmax - drop) ) && ( j >= 2) ) {
+    j <- max(1, j - 2)
+    estlogw <- j*(c - a1 * log(j))
   }
   
   lo.j <- max(1, floor(j))
@@ -5759,22 +5858,27 @@ dtweedie.jw.smallp <- function(y, phi, power ){
   # We ensure it works for vector y.
   
   j <- seq( lo.j, hi.j)                 # sequence of j terms needed
-  o <- matrix( 1, nrow=length(y))     # matrix of ones
+  o <- matrix( 1, nrow = length(y))     # matrix of ones
   
-  g <- matrix(lgamma( j+1 ) + lgamma( -a*j ),
-              nrow=1, ncol=hi.j - lo.j + 1) 
+  g <- matrix(lgamma( j + 1 ) + lgamma( -a * j ),
+              nrow = 1, 
+              ncol = hi.j - lo.j + 1) 
   logj <- matrix(log(j),
-                 nrow=1, ncol=hi.j - lo.j + 1) 
+                 nrow = 1, 
+                 ncol = hi.j - lo.j + 1) 
   og <- o %*% g                             # matrix of gamma terms
   ologj <- o %*% logj 
-  A <- outer(r,j) - og + ologj        # the series, almost ready to sum
-  m <- apply(A,1,max)                    # avoid overflow; find maximum values
+  A <- outer(r, j) - og + ologj        # the series, almost ready to sum
+  m <- apply(A, 1, max)                    # avoid overflow; find maximum values
   we <- exp( A - m )                    # evaluate terms, less max.
-  sum.we <- apply( we,1,sum)            # sum terms
+  sum.we <- apply( we, 1, sum)            # sum terms
   jw <- sum.we * exp( m )                # now restore max.
   # Since derivs may be negative, can't use log-scale
   
-  list(lo=lo.j, hi=hi.j, jw=jw, j.max=j.max )
+  list(lo = lo.j, 
+       hi = hi.j, 
+       jw = jw, 
+       j.max = j.max )
   
 }
 
@@ -5791,11 +5895,11 @@ dtweedie.kv.bigp <- function(y, phi, power){
   # Error traps
   #
   
-  if ( power<2) stop("power must be greater than 2.")
-  if ( any(phi<=0) ) stop("phi must be positive.")
-  if ( any(y<=0) ) stop("y must be a strictly positive vector.")
-  if ( length(phi)>1) {
-    if ( length(phi)!=length(y) ) stop("phi must be scalar, or the same length as y.")
+  if ( power < 2) stop("power must be greater than 2.")
+  if ( any(phi <= 0) ) stop("phi must be positive.")
+  if ( any(y <= 0) ) stop("y must be a strictly positive vector.")
+  if ( length(phi) > 1) {
+    if ( length(phi) != length(y) ) stop("phi must be scalar, or the same length as y.")
   } else {
     phi <- array( dim = length(y), phi )
     # A vector of all phi's
@@ -5811,8 +5915,7 @@ dtweedie.kv.bigp <- function(y, phi, power){
   a <- ( 2 - p ) / ( 1 - p )
   a1 <- 1 - a
   
-  r <- -a1*log(phi) - log(p-2) - a*log(y) +
-    a*log(p-1)
+  r <- -a1 * log(phi) - log(p - 2) - a * log(y) + a * log(p - 1)
   drop <- 37
   
   #
@@ -5821,10 +5924,10 @@ dtweedie.kv.bigp <- function(y, phi, power){
   #
   
   logz <- max(r)
-  k.max <- max( y^(2-p) / ( phi * (p-2) ) )
+  k.max <- max( y ^ (2 - p) / ( phi * (p - 2) ) )
   k <- max( 1, k.max )
   
-  c <- logz + a1 + a*log(a)
+  c <- logz + a1 + a * log(a)
   vmax <- k.max * a1
   estlogv <- vmax
   #
@@ -5836,8 +5939,8 @@ dtweedie.kv.bigp <- function(y, phi, power){
   # First:  the upper limit of k
   
   while ( estlogv > (vmax - drop) ) {
-    k <- k+2
-    estlogv <- k*( c -a1*log(k) )
+    k <- k + 2
+    estlogv <- k * ( c - a1 * log(k) )
   }
   
   hi.k <- ceiling(k)
@@ -5845,15 +5948,15 @@ dtweedie.kv.bigp <- function(y, phi, power){
   # Now the lower limit of k
   #
   logz <- min(r)
-  k.max <- min( y^(2-p) / ( phi * (p-2) ) ) 
+  k.max <- min( y ^ (2 - p) / ( phi * (p - 2) ) ) 
   k <- max( 1, k.max )
-  c <- logz + a1 + a*log(a)
+  c <- logz + a1 + a * log(a)
   vmax <- k.max * a1
   estlogv <- vmax
   
-  while ( (estlogv > (vmax-drop) ) && ( k>=2) ) {
-    k <- max(1, k-2)
-    estlogv <- k*( c - a1*log(k) )
+  while ( (estlogv > (vmax - drop) ) && ( k >= 2) ) {
+    k <- max(1, k - 2)
+    estlogv <- k * ( c - a1 * log(k) )
   }
   
   lo.k <- max(1, floor(k) )
@@ -5863,20 +5966,23 @@ dtweedie.kv.bigp <- function(y, phi, power){
   # We ensure it works for vector y.
   #
   k <- seq(lo.k, hi.k) 
-  o <- matrix( 1, nrow=length(y)) 
+  o <- matrix( 1, nrow = length(y)) 
   
-  g <- matrix( lgamma( 1+a*k) - lgamma(1+k),
-               nrow=1, ncol=length(k) )
+  g <- matrix( lgamma( 1 + a * k) - lgamma(1 + k),
+               nrow = 1, 
+               ncol  =length(k) )
   logk <- matrix( log(k),
-                  nrow=1, ncol=length(k) )
+                  nrow = 1, 
+                  ncol = length(k) )
   
   og <- o %*% g
   ologk <- o %*% logk
   
-  A <- outer(r,k) + og + ologk
+  A <- outer(r, k) + og + ologk
   
-  C <- matrix( sin( -a*pi*k ) * (-1)^k,
-               nrow=1, ncol=length(k) )
+  C <- matrix( sin( -a * pi * k ) * (-1) ^ k,
+               nrow = 1, 
+               ncol = length(k) )
   C <- o %*% C
   
   m <- apply(A, 1, max)
@@ -5885,13 +5991,16 @@ dtweedie.kv.bigp <- function(y, phi, power){
   kv <- sum.ve * exp( m )
   # Since derivs may be negative, can't use log-scale
   
-  list(lo=lo.k, hi=hi.k, kv=kv, k.max=k.max )
+  list(lo = lo.k, 
+       hi = hi.k, 
+       kv = kv, 
+       k.max = k.max )
   
 }
 
 
 #############################################################################
-qtweedie <- function(p, xi=NULL, mu, phi, power=NULL){
+qtweedie <- function(p, xi = NULL, mu, phi, power = NULL){
   
   # Sort out the xi/power notation
   if ( is.null(power) & is.null(xi) ) stop("Either xi or power must be given\n")
@@ -5909,25 +6018,25 @@ qtweedie <- function(p, xi=NULL, mu, phi, power=NULL){
     cat("Different values for xi and power given; the value of xi used.\n")
     power <- xi
   }
-  index.par       <- ifelse( xi.notation, "xi","p")
-  index.par.long  <- ifelse( xi.notation, "xi","power")
+  index.par       <- ifelse( xi.notation, "xi", "p")
+  index.par.long  <- ifelse( xi.notation, "xi", "power")
   
   # Error checks
-  if ( any(power<1) )  stop( paste(index.par.long, "must be greater than 1.\n") )
+  if ( any(power < 1) )  stop( paste(index.par.long, "must be greater than 1.\n") )
   if ( any(phi <= 0) ) stop("phi must be positive.")
-  if ( any(p<0) ) stop("p must be between zero and one.\n")
-  if ( any(p>1) ) stop("p must be between zero and one.\n")
+  if ( any(p < 0) ) stop("p must be between zero and one.\n")
+  if ( any(p > 1) ) stop("p must be between zero and one.\n")
   if ( any(mu <= 0) ) stop("mu must be positive.\n")
-  if ( length(mu)>1) {
-    if ( length(mu)!=length(p) ) stop("mu must be scalar, or the same length as p.\n")
+  if ( length(mu) > 1) {
+    if ( length(mu) != length(p) ) stop("mu must be scalar, or the same length as p.\n")
   } else {
-    mu <- array( dim=length(p), mu )
+    mu <- array( dim = length(p), mu )
     # A vector of all mu's
   }
-  if ( length(phi)>1) {
-    if ( length(phi)!=length(p) ) stop("phi must be scalar, or the same length as p.\n")
+  if ( length(phi) > 1) {
+    if ( length(phi) != length(p) ) stop("phi must be scalar, or the same length as p.\n")
   } else {
-    phi <- array( dim=length(p), phi )
+    phi <- array( dim = length(p), phi )
     # A vector of all phi's
   }
   # Now, if mu is a vector, make power correct length
@@ -5944,16 +6053,16 @@ qtweedie <- function(p, xi=NULL, mu, phi, power=NULL){
   len <- length(p) 
   
   # Some monkeying around to explicitly account for the cases p=1 and p=0
-  ans <- ans2 <- rep( NA, length=len )
-  if ( any(p==1) ) ans2[p==1] <- Inf
-  if ( any(p==0) ) ans2[p==0] <- 0
+  ans <- ans2 <- rep( NA, length = len )
+  if ( any(p == 1) ) ans2[p == 1] <- Inf
+  if ( any(p == 0) ) ans2[p == 0] <- 0
   
-  ans     <-  ans[ ( (p>0) & (p<1) ) ]
-  mu.vec  <-  mu[ ( (p>0) & (p<1) ) ]
-  phi.vec <-  phi[ ( (p>0) & (p<1) ) ]
-  p.vec   <- p[ ( (p>0) & (p<1) ) ]
+  ans     <-  ans[ ( (p > 0) & (p < 1) ) ]
+  mu.vec  <-  mu[ ( (p > 0) & (p < 1) ) ]
+  phi.vec <-  phi[ ( (p > 0) & (p < 1) ) ]
+  p.vec   <- p[ ( (p > 0) & (p < 1) ) ]
   
-  for (i in (1:length(ans)) ) {
+  for (i in (1 : length(ans)) ) {
     
     mu.1 <- mu.vec[i]
     phi.1 <- phi.vec[i]
@@ -5962,27 +6071,33 @@ qtweedie <- function(p, xi=NULL, mu, phi, power=NULL){
     
     prob <- p.1 # Rename p to avoid confusion with  pwr: This is the  qtweedie()  input p (a probability)
     
-    if ( pwr<2 ) {
-      qp <- qpois(prob, lambda=mu.1/phi.1)
+    if ( pwr < 2 ) {
+      qp <- qpois(prob, 
+                  lambda = mu.1 / phi.1)
       if ( pwr == 1 ) ans[i] <- qp   
     }
     
-    qg <- qgamma(prob,  rate=1/(phi.1*mu.1), shape=1/phi.1 )
-    if ( pwr==2 ) ans[i] <- qg
+    qg <- qgamma(prob,  
+                 rate = 1 / (phi.1 * mu.1), 
+                 shape = 1 / phi.1 )
+    if ( pwr == 2 ) ans[i] <- qg
     
     # Starting values
     # - for 1<pwr<2, linearly interpolate between Poisson and gamma
-    if ( (pwr>1) & ( pwr<2) ) {
-      start <- (qg - qp)*pwr + (2*qp - qg)
+    if ( (pwr > 1) & ( pwr < 2) ) {
+      start <- (qg - qp) * pwr + (2 * qp - qg)
     }
     
     # - for pwr>2, start with gamma
-    if ( pwr>2 ) start <- qg
+    if ( pwr > 2 ) start <- qg
     
     # Solve!
-    if ( ( pwr>1) & (pwr<2) ) { # This gives a *lower* bound on the value of the answer (if y>0)
-      step <- dtweedie(y=0, mu=mu.1, phi=phi.1, power=pwr)
-      # This is P(Y=0), the discrete "step"
+    if ( ( pwr > 1) & (pwr < 2) ) { # This gives a *lower* bound on the value of the answer (if y>0)
+      step <- dtweedie(y = 0, 
+                       mu = mu.1, 
+                       phi = phi.1, 
+                       power = pwr)
+      # This is P(Y = 0), the discrete "step"
       
       if ( prob <= step ) {
         ans[i] <- 0
@@ -5992,12 +6107,23 @@ qtweedie <- function(p, xi=NULL, mu, phi, power=NULL){
     if ( is.na(ans[i]) ) { # All cases except Y=0 when 1 < pwr < 2
       
       
-      pt2 <- function( q, mu, phi, pwr, p.given=prob ){ 
+      pt2 <- function( q, 
+                       mu, 
+                       phi, 
+                       pwr, 
+                       p.given = prob ){ 
         
-        ptweedie(q=q, mu=mu, phi=phi, power=pwr ) - p.given
+        ptweedie(q = q, 
+                 mu = mu, 
+                 phi = phi, 
+                 power = pwr ) - p.given
       }
       
-      pt <- pt2( q=start, mu=mu.1, phi=phi.1, pwr=pwr, p.given=prob)
+      pt <- pt2( q = start, 
+                 mu = mu.1, 
+                 phi = phi.1, 
+                 pwr = pwr,
+                 p.given = prob)
       
       #      cat("*** Start   =",start,"; pt =",pt,"\n")
       
@@ -6009,8 +6135,12 @@ qtweedie <- function(p, xi=NULL, mu, phi, power=NULL){
         #start.2 <- 0   # Perhaps set this if too many attempts otherwise
         while ( loop ) {
           # Try harder
-          start.2 <- 0.5*start.2
-          if (pt2( q=start.2, mu.1, phi.1, pwr, p.given=prob )<0 ) loop=FALSE
+          start.2 <- 0.5 * start.2
+          if (pt2( q = start.2, 
+                   mu.1, 
+                   phi.1, 
+                   pwr, 
+                   p.given = prob )<0 ) loop = FALSE
           #      cat(">>> Start.2 =",start.2,"; pt = ",pt2( q=start.2, mu.1, phi.1, pwr, p.given=prob ),"\n")
           # RECALL:  We are only is this part of the loop if  pt>0
         }
@@ -6023,8 +6153,12 @@ qtweedie <- function(p, xi=NULL, mu, phi, power=NULL){
         
         while ( loop ) {
           # Try harder
-          start.2 <- 1.5*(start.2 + 2)
-          if (pt2( q=start.2, mu.1, phi.1, pwr, p.given=prob )>0 ) loop=FALSE
+          start.2 <- 1.5 * (start.2 + 2)
+          if (pt2( q = start.2, 
+                   mu.1, 
+                   phi.1, 
+                   pwr, 
+                   p.given = prob ) > 0 ) loop = FALSE
           # RECALL:  We are only is this part of the loop if  pt<0
         }
       }
@@ -6034,12 +6168,21 @@ qtweedie <- function(p, xi=NULL, mu, phi, power=NULL){
       #   pt2(start, mu=mu.1, phi=phi.1, pwr=pwr, p.given=prob), 
       #   pt2(start.2, mu=mu.1, phi=phi.1, pwr=pwr, p.given=prob),"\n")
       
-      out <- uniroot(pt2, c(start, start.2), mu=mu.1, phi=phi.1, p=pwr, 
-                     p.given=prob )
+      out <- uniroot(pt2, 
+                     c(start, start.2), 
+                     mu = mu.1, 
+                     phi = phi.1, 
+                     p = pwr, 
+                     p.given = prob )
       #print(out)
       
-      ans[i] <- uniroot(pt2, c(start, start.2), mu=mu.1, phi=phi.1, p=pwr, 
-                        p.given=prob, tol=0.000000000001 )$root
+      ans[i] <- uniroot(pt2, 
+                        c(start, start.2), 
+                        mu = mu.1, 
+                        phi = phi.1, 
+                        p = pwr, 
+                        p.given = prob, 
+                        tol = 0.000000000001 )$root
     }
     
   }
@@ -6051,7 +6194,7 @@ qtweedie <- function(p, xi=NULL, mu, phi, power=NULL){
 
 
 #############################################################################
-rtweedie <- function(n, xi=NULL, mu, phi, power=NULL){
+rtweedie <- function(n, xi = NULL, mu, phi, power = NULL){
   
   # Sort out the xi/power notation
   if ( is.null(power) & is.null(xi) ) stop("Either xi or power must be given\n")
@@ -6069,52 +6212,61 @@ rtweedie <- function(n, xi=NULL, mu, phi, power=NULL){
     cat("Different values for xi and power given; the value of xi used.\n")
     power <- xi
   }
-  index.par       <- ifelse( xi.notation, "xi","p")
-  index.par.long  <- ifelse( xi.notation, "xi","power")
+  index.par       <- ifelse( xi.notation, "xi", "p")
+  index.par.long  <- ifelse( xi.notation, "xi", "power")
   
   # Error checks
-  if ( any(power<1) )  stop( paste(index.par.long, "must be greater than 1.\n") )
-  if ( any(phi<=0) ) stop("phi must be positive.")
-  if ( n<1 ) stop("n must be a positive integer.\n")
-  if ( any(mu<=0) ) stop("mu must be positive.\n")
-  if ( length(mu)>1) {
-    if ( length(mu)!=n ) stop("mu must be scalar, or of length n.\n")
+  if ( any(power < 1) )  stop( paste(index.par.long, "must be greater than 1.\n") )
+  if ( any(phi <= 0) ) stop("phi must be positive.")
+  if ( n < 1 ) stop("n must be a positive integer.\n")
+  if ( any(mu <= 0) ) stop("mu must be positive.\n")
+  if ( length(mu) > 1) {
+    if ( length(mu) != n ) stop("mu must be scalar, or of length n.\n")
   } else {
-    mu <- array( dim=n, mu )
+    mu <- array( dim = n, mu )
     # A vector of all mu's
   }
-  if ( length(phi)>1) {
-    if ( length(phi)!=n ) stop("phi must be scalar, or of length n.\n")
+  if ( length(phi) > 1) {
+    if ( length(phi) != n ) stop("phi must be scalar, or of length n.\n")
   } else {
-    phi <- array( dim=n, phi )
+    phi <- array( dim = n, phi )
     # A vector of all phi's
   }
   if (power==1) {
-    rt <- phi * rpois(n, lambda=mu / ( phi  ) )
+    rt <- phi * rpois(n, 
+                      lambda = mu / ( phi  ) )
   }
   
-  if (power==2) {
-    alpha <- (2-power)/(1-power)
-    gam <- phi * (power-1) * mu ^(power-1)
-    rt <- rgamma( n, shape=1/phi, scale=gam )
+  if (power == 2) {
+    alpha <- (2 - power) / (1 - power)
+    gam <- phi * (power - 1) * mu ^ (power - 1)
+    rt <- rgamma( n, 
+                  shape = 1 / phi, 
+                  scale = gam )
   }
   
-  if ( power>2) {
-    rt <- qtweedie( runif(n), mu=mu ,phi=phi , power=power)
+  if ( power > 2) {
+    rt <- qtweedie( runif(n),
+                    mu = mu,
+                    phi = phi, 
+                    power = power)
   }
   
-  if ( (power>1) & (power<2) ) {
+  if ( (power > 1) & (power < 2) ) {
     # Two options:  As above or directly.
     # Directly is faster
-    rt <- array( dim=n, NA)
+    rt <- array( dim = n, NA)
     
-    lambda <- mu^(2-power) / ( phi * (2-power) )
-    alpha <- (2-power)/(1-power)
-    gam <- phi * (power-1) * mu ^(power-1)
+    lambda <- mu ^ (2 - power) / ( phi * (2 - power) )
+    alpha <- (2 - power) / (1 - power)
+    gam <- phi * (power - 1) * mu ^ (power - 1)
     
-    N <- rpois(n, lambda=lambda)
+    N <- rpois(n, 
+               lambda = lambda)
     for (i in (1:n) ){
-      rt[i] <- rgamma(1, shape = -N[i] * alpha, scale=gam[i])
+      rt[i] <- rgamma(1, 
+                      shape = -N[i] * alpha, 
+                      scale = gam[i])
     }
   }
   as.vector(rt)
@@ -6122,13 +6274,13 @@ rtweedie <- function(n, xi=NULL, mu, phi, power=NULL){
 
 
 #############################################################################
-tweedie.profile <- function(formula, p.vec=NULL, xi.vec=NULL, link.power = 0, 
-                            data, weights, offset, fit.glm=FALSE, 
-                            do.smooth=TRUE, do.plot=FALSE, 
-                            do.ci=do.smooth, eps=1/6,
-                            control=list( epsilon=1e-09, maxit=glm.control()$maxit, trace=glm.control()$trace ),
-                            do.points=do.plot, method="inversion", conf.level=0.95, 
-                            phi.method=ifelse(method=="saddlepoint","saddlepoint","mle"), verbose=FALSE, add0=FALSE) {
+tweedie.profile <- function(formula, p.vec = NULL, xi.vec = NULL, link.power = 0, 
+                            data, weights, offset, fit.glm = FALSE, 
+                            do.smooth = TRUE, do.plot = FALSE, 
+                            do.ci = do.smooth, eps = 1/6,
+                            control = list( epsilon = 1e-09, maxit = glm.control()$maxit, trace = glm.control()$trace ),
+                            do.points = do.plot, method = "inversion", conf.level = 0.95, 
+                            phi.method = ifelse(method == "saddlepoint", "saddlepoint", "mle"), verbose = FALSE, add0 = FALSE) {
   # verbose gives feedback on screen:
   #    0 : minimal (FALSE)
   #    1 : small amount (TRUE)
@@ -6202,10 +6354,12 @@ tweedie.profile <- function(formula, p.vec=NULL, xi.vec=NULL, link.power = 0,
   }
   
   if ( is.null( p.vec ) & is.null(xi.vec)) { # Neither xi.vec or p.vec are given
-    if ( any(Y==0) ){
-      p.vec <- seq(1.2, 1.8, by=0.1)
+    if ( any(Y == 0) ){
+      p.vec <- seq(1.2, 1.8, 
+                   by = 0.1)
     } else {
-      p.vec <- seq(1.5, 5, by=0.5)
+      p.vec <- seq(1.5, 5, 
+                   by = 0.5)
     }
     xi.vec <- p.vec
     xi.notation <- TRUE
@@ -6216,29 +6370,29 @@ tweedie.profile <- function(formula, p.vec=NULL, xi.vec=NULL, link.power = 0,
   
   
   # Determine notation to use in output (consistent with what was supplied by the user)
-  index.par <- ifelse( xi.notation, "xi","p")
+  index.par <- ifelse( xi.notation, "xi", "p")
   
   # Find if values of p/xi have been specified that are not appropriate
-  xi.fix <- any( xi.vec<=1 & xi.vec!=0, na.rm=TRUE)
+  xi.fix <- any( xi.vec <= 1 & xi.vec != 0, na.rm = TRUE)
   
   if ( xi.fix ) {
-    xi.fix.these <- (xi.vec<=1 & xi.vec!=0)
+    xi.fix.these <- (xi.vec <= 1 & xi.vec != 0)
     xi.vec[ xi.fix.these ] <- NA 
     if ( length(xi.vec) == 0 ) {
-      stop(paste("No values of",index.par,"between 0 and 1, or below 0, are possible.\n"))
+      stop(paste("No values of", index.par, "between 0 and 1, or below 0, are possible.\n"))
     } else {
-      cat("Values of",index.par,"between 0 and 1 and less than zero have been removed: such values are not possible.\n")
+      cat("Values of", index.par, "between 0 and 1 and less than zero have been removed: such values are not possible.\n")
     }
   }
   
   # Warnings
-  if ( any( Y == 0 ) & any( (xi.vec >= 2) | (xi.vec <=0) ) ) {
-    xi.fix.these <- (xi.vec>=2 | xi.vec<=0)
+  if ( any( Y == 0 ) & any( (xi.vec >= 2) | (xi.vec <= 0) ) ) {
+    xi.fix.these <- (xi.vec >= 2 | xi.vec <= 0)
     xi.vec[ xi.fix.these ] <- NA 
     if ( length(xi.vec) == 0 ) {
-      stop(paste("When the response variable contains exact zeros, all values of",index.par,"must be between 1 and 2.\n"))
+      stop(paste("When the response variable contains exact zeros, all values of", index.par, "must be between 1 and 2.\n"))
     } else {
-      cat("When the response variable contains exact zeros, all values of",index.par,"must be between 1 and 2; other values have been removed.\n")
+      cat("When the response variable contains exact zeros, all values of", index.par, "must be between 1 and 2; other values have been removed.\n")
     }
   }
   
@@ -6247,11 +6401,11 @@ tweedie.profile <- function(formula, p.vec=NULL, xi.vec=NULL, link.power = 0,
   xi.vec <- xi.vec[ !is.na(xi.vec) ] 
   
   if ( do.smooth & (length(xi.vec) < 5) ) {
-    warning(paste("Smoothing needs at least five values of",index.par,".") )
+    warning(paste("Smoothing needs at least five values of", index.par,".") )
     do.smooth <- FALSE
     do.ci <- FALSE
   }
-  if ( (conf.level >= 1) | (conf.level <=0)  ){
+  if ( (conf.level >= 1) | (conf.level <= 0)  ){
     stop("Confidence level must be between 0 and 1.")
   }
   
@@ -6279,12 +6433,20 @@ tweedie.profile <- function(formula, p.vec=NULL, xi.vec=NULL, link.power = 0,
   # since we want a *maximum* likelihood estimator,
   # define the negative.
   dtweedie.nlogl <- function(phi, y, mu, power) {
-    ans <- -2 * sum( log( dtweedie( y=y, mu=mu, phi=phi, power=power ) ) )
+    ans <- -2 * sum( log( dtweedie( y = y, 
+                                    mu = mu, 
+                                    phi = phi, 
+                                    power = power ) ) )
     if ( is.infinite( ans ) ) {
       # If infinite, replace with saddlepoint estimate?
-      ans <- sum( tweedie.dev(y=y, mu=mu, power=power) )/length( y )
+      ans <- sum( tweedie.dev(y = y, 
+                              mu = mu, 
+                              power = power) ) / length( y )
     }
-    attr(ans, "gradient") <- dtweedie.dldphi(y=y, mu=mu, phi=phi, power=power)
+    attr(ans, "gradient") <- dtweedie.dldphi(y = y, 
+                                             mu = mu, 
+                                             phi = phi, 
+                                             power = power)
     
     ans
   }
@@ -6301,12 +6463,12 @@ tweedie.profile <- function(formula, p.vec=NULL, xi.vec=NULL, link.power = 0,
   b.vec  <- L
   c.vec  <- L
   mu.vec <- L
-  b.mat  <- array( dim=c(xi.len, length(ydata) ) )
+  b.mat  <- array( dim = c(xi.len, length(ydata) ) )
   
   for (i in (1:xi.len)) {
     
-    if ( verbose>0) {
-      cat( paste(index.par," = ",xi.vec[i],"\n", sep="") )
+    if ( verbose > 0) {
+      cat( paste(index.par," = ", xi.vec[i], "\n", sep="") )
     } else {
       cat(".")
     }
@@ -6322,24 +6484,28 @@ tweedie.profile <- function(formula, p.vec=NULL, xi.vec=NULL, link.power = 0,
     bnd.neg <- -Inf
     bnd.pos <- Inf
     
-    if (verbose==2) cat("* Fitting initial model:")
+    if (verbose == 2) cat("* Fitting initial model:")
     
     # Fit the model with given p
     catch.possible.error <- try(
-      fit.model <- glm.fit( x=model.x, y=ydata, weights=weights, offset=offset,
-                            control=control,
-                            family=statmod::tweedie(var.power=p, link.power=link.power)),
+      fit.model <- glm.fit( x = model.x, 
+                            y = ydata, 
+                            weights = weights, 
+                            offset = offset,
+                            control = control,
+                            family = statmod::tweedie(var.power = p, 
+                                                      link.power = link.power)),
       silent = TRUE
     )
     
     
     skip.obs <- FALSE
-    if ( class( catch.possible.error )=="try-error" ) {
+    if ( is( catch.possible.error, "try-error" ) ) {
       skip.obs <- TRUE 
     }
     
     if( skip.obs ) {
-      warning(paste("  Problem near ",index.par," = ",p,"; this error reported:\n     ",
+      warning(paste("  Problem near ", index.par, " = ", p,"; this error reported:\n     ",
                     catch.possible.error,
                     " Examine the data and function inputs carefully.") )
       
@@ -6350,21 +6516,23 @@ tweedie.profile <- function(formula, p.vec=NULL, xi.vec=NULL, link.power = 0,
     } else {
       mu <- fitted( fit.model )
     }
-    if (verbose==2) cat(" Done\n")
+    if (verbose == 2) cat(" Done\n")
     
     ### -- Start:  Estimate phi
-    if (verbose>=1) cat("* Phi estimation, method: ", phi.method)
+    if (verbose >= 1) cat("* Phi estimation, method: ", phi.method)
     
     if( skip.obs ) {
-      if (verbose>=1) cat("; but skipped for this obs\n")
+      if (verbose >= 1) cat("; but skipped for this obs\n")
       phi.est <- phi <- phi.vec[i] <- NA
     } else {
-      if ( phi.method=="mle"){
+      if ( phi.method == "mle"){
         
-        if (verbose>=1) cat(" (using optimize): ")
+        if (verbose >= 1) cat(" (using optimize): ")
         
         # Saddlepoint approx of phi:
-        phi.saddle <- sum( tweedie.dev(y=ydata, mu=mu, power=p) )/length( ydata )
+        phi.saddle <- sum( tweedie.dev(y = ydata, 
+                                       mu = mu, 
+                                       power = p) ) / length( ydata )
         
         if ( is.nan(phi) ) {
           
@@ -6377,25 +6545,32 @@ tweedie.profile <- function(formula, p.vec=NULL, xi.vec=NULL, link.power = 0,
         } else {
           phi.est <- phi
         }
-        low.limit <- min( 0.001, phi.saddle/2)
+        low.limit <- min( 0.001, phi.saddle / 2)
         
         #    ans <- nlm(p=phi.est, f=dtweedie.nlogl, 
         #                hessian=FALSE,
         #                power=p, mu=mu, y=data)
-        if ( p!= 0 ) {
-          ans <- optimize(f=dtweedie.nlogl, maximum=FALSE, interval=c(low.limit, 10*phi.est),
-                          power=p, mu=mu, y=ydata )
+        if ( p != 0 ) {
+          ans <- optimize(f = dtweedie.nlogl, 
+                          maximum = FALSE, 
+                          interval = c(low.limit, 
+                                       10*phi.est),
+                          power = p, 
+                          mu = mu, 
+                          y = ydata )
           phi <- phi.vec[i] <- ans$minimum
         } else {
-          phi <- phi.vec[i] <- sum( (ydata-mu)^2 ) / length(ydata)
+          phi <- phi.vec[i] <- sum( (ydata - mu) ^ 2 ) / length(ydata)
         }
-        if (verbose>=1) cat(" Done (phi =",phi.vec[i],")\n")
+        if (verbose >= 1) cat(" Done (phi =", phi.vec[i], ")\n")
         
       } else{ # phi.method=="saddlepoint")
         
-        if (verbose>=1) cat(" (using mean deviance/saddlepoint): ")
-        phi <- phi.est <- phi.vec[i] <- sum( tweedie.dev(y=ydata, mu=mu, power=p) )/length( ydata )
-        if (verbose>=1) cat(" Done (phi =",phi,")\n")
+        if (verbose >= 1) cat(" (using mean deviance/saddlepoint): ")
+        phi <- phi.est <- phi.vec[i] <- sum( tweedie.dev(y = ydata, 
+                                                         mu = mu, 
+                                                         power = p) )/ length( ydata )
+        if (verbose >= 1) cat(" Done (phi =", phi, ")\n")
       }
     }
     
@@ -6405,33 +6580,42 @@ tweedie.profile <- function(formula, p.vec=NULL, xi.vec=NULL, link.power = 0,
     # Now determine log-likelihood at this p
     # Best to use the same density evaluation for all:  series or inversion
     
-    if (verbose>=1) cat("* Computing the log-likelihood ")
+    if (verbose >= 1) cat("* Computing the log-likelihood ")
     
     # Now compute the log-likelihood
-    if (verbose>=1) cat("(method =", method, "):")
+    if (verbose >= 1) cat("(method =", method, "):")
     
     if ( skip.obs ) {
-      if (verbose>=1) cat(" but skipped for this obs\n")
+      if (verbose >= 1) cat(" but skipped for this obs\n")
       L[i] <- NA
     } else {   
-      if ( method=="saddlepoint") {
-        L[i] <- dtweedie.logl.saddle(y=ydata, mu=mu, power=p, phi=phi, eps=eps)
+      if ( method == "saddlepoint") {
+        L[i] <- dtweedie.logl.saddle(y = ydata, 
+                                     mu = mu, 
+                                     power = p, 
+                                     phi = phi, 
+                                     eps = eps)
       } else {
-        if (p==2) {
-          L[i] <- sum( log( dgamma( rate=1/(phi*mu), shape=1/phi, x=ydata ) ) )
+        if (p == 2) {
+          L[i] <- sum( log( dgamma( rate = 1 / (phi * mu), 
+                                    shape = 1 / phi, 
+                                    x = ydata ) ) )
         } else {
           if ( p == 1 ) {
-            if ( phi==1 ){
+            if ( phi == 1 ){
               # The phi==1 part added 30 Sep 2010.
-              L[i] <- sum( log( dpois(x=ydata/phi, lambda=mu/phi ) ) )
+              L[i] <- sum( log( dpois(x = ydata / phi, 
+                                      lambda = mu / phi ) ) )
             } else { # p=1, but phi is not equal to zero
               # As best as we can, we determine if the values
               # of  ydata  are multiples of  phi
               y.on.phi <- ydata/phi
-              close.enough <- array( dim=length(y.on.phi))
-              for (i in (1:length(y.on.phi))){
-                if (isTRUE(all.equal(y.on.phi, as.integer(y.on.phi)))){
-                  L[i] <- sum( log( dpois(x=round(y/phi), lambda=mu/phi ) ) )
+              close.enough <- array( dim = length(y.on.phi))
+              for (i in (1 : length(y.on.phi))){
+                if (isTRUE(all.equal(y.on.phi, 
+                                     as.integer(y.on.phi)))){
+                  L[i] <- sum( log( dpois(x = round(y / phi), 
+                                          lambda = mu / phi ) ) )
                 } else {
                   L[i] <- 0
                 }
@@ -6439,22 +6623,35 @@ tweedie.profile <- function(formula, p.vec=NULL, xi.vec=NULL, link.power = 0,
             }
           } else {
             if ( p == 0 ) {
-              L[i] <- sum( dnorm(x=ydata, mean=mu, sd=sqrt(phi), log=TRUE) )
+              L[i] <- sum( dnorm(x = ydata, 
+                                 mean = mu, 
+                                 sd = sqrt(phi), 
+                                 log = TRUE) )
             } else {
               L[i] <- switch(
-                pmatch(method, c("interpolation","series", "inversion"), 
-                       nomatch=2),
-                "1" = dtweedie.logl( mu=mu, power=p, phi=phi, y=ydata),
-                "2" = sum( log( dtweedie.series( y=ydata, mu=mu, power=p, phi=phi) ) ),
-                "3" = sum( log( dtweedie.inversion( y=ydata, mu=mu, power=p, phi=phi) ) ) )
+                pmatch(method, 
+                       c("interpolation", "series", "inversion"), 
+                       nomatch = 2),
+                "1" = dtweedie.logl( mu = mu, 
+                                     power = p, 
+                                     phi = phi, 
+                                     y = ydata),
+                "2" = sum( log( dtweedie.series( y = ydata, 
+                                                 mu = mu, 
+                                                 power =p, 
+                                                 phi =phi) ) ),
+                "3" = sum( log( dtweedie.inversion( y = ydata, 
+                                                    mu = mu, 
+                                                    power = p, 
+                                                    phi = phi) ) ) )
             }
           }
         }
       }
     }
     
-    if (verbose>=1) {
-      cat(" Done: L =",L[i],"\n")
+    if (verbose >= 1) {
+      cat(" Done: L =", L[i], "\n")
     } 
   }
   
@@ -6486,20 +6683,23 @@ tweedie.profile <- function(formula, p.vec=NULL, xi.vec=NULL, link.power = 0,
       #         phi.vec.fix <- phi.vec.fix[ !is.infinite(L.fix) ]
       #         L.fix <- L.fix[ !is.infinite(L.fix) ]
       
-      if (verbose>=1) cat("Smooth perhaps inaccurate--log-likelihood contains  Inf  or  NA.\n")
+      if (verbose >= 1) cat("Smooth perhaps inaccurate--log-likelihood contains  Inf  or  NA.\n")
     }
     #else {
     
     if ( length( L.fix ) > 0 ) {
-      if (verbose>=1) cat(".")
-      if (verbose>=1) cat(" --- \n")
-      if (verbose>=1) cat("* Smoothing: ")
+      if (verbose >= 1) cat(".")
+      if (verbose >= 1) cat(" --- \n")
+      if (verbose >= 1) cat("* Smoothing: ")
       # Smooth the points
       # - get smoothing spline
-      ss <- splinefun( xi.vec.fix, L.fix )
+      ss <- splinefun( xi.vec.fix, 
+                       L.fix )
       
       # Plot smoothed data
-      xi.smooth <- seq(min(xi.vec.fix), max(xi.vec.fix), length=50 )
+      xi.smooth <- seq(min(xi.vec.fix), 
+                       max(xi.vec.fix), 
+                       length = 50 )
       L.smooth <- ss(xi.smooth )
       
       if ( do.plot) {
@@ -6510,20 +6710,26 @@ tweedie.profile <- function(formula, p.vec=NULL, xi.vec=NULL, link.power = 0,
           cat(" (Some values of L are infinite or NA for the smooth; these are ignored)\n")
         }
         
-        yrange <- range( L.smooth, na.rm=TRUE )
+        yrange <- range( L.smooth, na.rm = TRUE )
         
         plot( yrange ~ range(xi.vec),
-              type="n",
-              las=1,
-              xlab=ifelse(xi.notation, expression(paste( xi," index")), expression(paste( italic(p)," index")) ),
-              ylab=expression(italic(L)))
+              type = "n",
+              las = 1,
+              xlab = ifelse(xi.notation, 
+                            expression(paste( xi, " index")), 
+                            expression(paste( italic(p), " index")) ),
+              ylab = expression(italic(L)))
         lines( xi.smooth, L.smooth,
-               lwd=2)
+               lwd = 2)
         rug( xi.vec )
         if (do.points) {
-          points( L ~ xi.vec, pch=19)
+          points( L ~ xi.vec, 
+                  pch = 19)
         }
-        if (add0) lines(xi.smooth[xi.smooth<1], L.smooth[xi.smooth<1], col="gray", lwd=2)
+        if (add0) lines(xi.smooth[xi.smooth < 1], 
+                        L.smooth[xi.smooth < 1], 
+                        col = "gray",
+                        lwd = 2)
       }
       x <- xi.smooth
       y <- L.smooth
@@ -6539,29 +6745,33 @@ tweedie.profile <- function(formula, p.vec=NULL, xi.vec=NULL, link.power = 0,
       xi.vec <- xi.vec[ keep.these ] 
       L <- L[ keep.these ] 
       phi.vec <- phi.vec[ keep.these ]
-      if ( verbose>=1 & any( keep.these ) ) {
+      if ( verbose >= 1 & any( keep.these ) ) {
         cat(" Some values of L are infinite or NA, and hence ignored\n")
       }
       
-      yrange <- range( L, na.rm=TRUE )
+      yrange <- range( L, na.rm = TRUE )
       # Plot the data we have
       plot( yrange ~ range(xi.vec),
-            type="n",     
-            las=1,
-            xlab=ifelse( xi.notation, expression(paste(xi," index")), expression(paste(italic(p)," index")) ),
+            type = "n",     
+            las = 1,
+            xlab = ifelse( xi.notation, 
+                           expression(paste(xi, " index")), 
+                           expression(paste(italic(p), " index")) ),
             ylab=expression(italic(L)))
-      lines( L ~ xi.vec, lwd=2)
+      lines( L ~ xi.vec, 
+             lwd = 2)
       
       rug( xi.vec )
       if (do.points) {
-        points( L ~ xi.vec, pch=19)
+        points( L ~ xi.vec, 
+                pch = 19)
       }
       
     }
     x <- xi.vec
     y <- L
   }
-  if (verbose>=2) cat(" Done\n")
+  if (verbose >= 2) cat(" Done\n")
   
   ### Maximum likelihood estimates
   if ( do.smooth ){
@@ -6569,30 +6779,31 @@ tweedie.profile <- function(formula, p.vec=NULL, xi.vec=NULL, link.power = 0,
     #           through the given points.  This should
     #           be seen as a deficiency in the method.
     
-    if (verbose>=2) cat(" Estimating phi:  ")
+    if (verbose >= 2) cat(" Estimating phi:  ")
     
     # Find maximum from profile
     
-    L.max <- max(y, na.rm=TRUE)
-    xi.max <- x[ y==L.max ]
+    L.max <- max(y, na.rm = TRUE)
+    xi.max <- x[ y == L.max ]
     
     # In some unusual cases, when add0=TRUE, the maximum of p/xi
     # may be between 0 and 1.
     # In this situation, we... set the mle to either 0 or 1,
     # whichever gives the larger values of the log-likelihood
     if ( (xi.max > 0)  & ( xi.max < 1 ) ) {
-      L.max <- max( c( y[xi.vec==0], y[xi.vec==1]) )
+      L.max <- max( c( y[xi.vec == 0], 
+                       y[xi.vec == 1]) )
       xi.max <- xi.vec[ L.max == y ]
-      cat("MLE of",index.par,"is between 0 and 1, which is impossible.",
-          "Instead, the MLE of",index.par,"has been set to",xi.max,
+      cat("MLE of", index.par, "is between 0 and 1, which is impossible.",
+          "Instead, the MLE of", index.par, "has been set to", xi.max,
           ".  Please check your data and the call to tweedie.profile().")
     }
     
     # Now need to find mle of  phi  at this very value of  p
     # - Find bounds
     
-    phi.1 <-   2 * max( phi.vec.fix, na.rm=TRUE )
-    phi.2 <- 0.5 * min( phi.vec.fix, na.rm=TRUE )
+    phi.1 <-   2 * max( phi.vec.fix, na.rm = TRUE )
+    phi.2 <- 0.5 * min( phi.vec.fix, na.rm = TRUE )
     
     if ( phi.1 > phi.2 ) {
       phi.hi <- phi.1
@@ -6602,14 +6813,14 @@ tweedie.profile <- function(formula, p.vec=NULL, xi.vec=NULL, link.power = 0,
       phi.lo <- phi.1
     }
     
-    if (verbose>=2) cat(" Done\n")
+    if (verbose >= 2) cat(" Done\n")
     
     # Now, if the maximum happens to be at an endpoint,
     # we have to do things differently:
-    if ( (xi.max==xi.vec[1]) | (xi.max==xi.vec[length(xi.vec)]) ) {
+    if ( (xi.max == xi.vec[1]) | (xi.max == xi.vec[length(xi.vec)]) ) {
       
-      if ( xi.max==xi.vec[1]) phi.max <- phi.vec[1]
-      if ( xi.max==xi.vec[length(xi.vec)]) phi.max <- phi.vec[length(xi.vec)]
+      if ( xi.max == xi.vec[1]) phi.max <- phi.vec[1]
+      if ( xi.max == xi.vec[length(xi.vec)]) phi.max <- phi.vec[length(xi.vec)]
       #      phi.max <- phi.lo # and is same as phi.max
       warning("True maximum possibly not detected.")
       
@@ -6617,22 +6828,36 @@ tweedie.profile <- function(formula, p.vec=NULL, xi.vec=NULL, link.power = 0,
       
       # - solve
       
-      if ( phi.method=="saddlepoint"){
+      if ( phi.method == "saddlepoint"){
         
-        mu <- fitted( glm.fit( y=ydata, x=model.x, weights=weights, offset=offset,
-                               family=statmod::tweedie(xi.max, link.power=link.power)))
-        phi.max <- sum( tweedie.dev(y=ydata, mu=mu, power=xi.max) )/length( ydata )
+        mu <- fitted( glm.fit( y = ydata, 
+                               x = model.x, 
+                               weights = weights, 
+                               offset = offset,
+                               family = statmod::tweedie(xi.max, 
+                                                         link.power = link.power)))
+        phi.max <- sum( tweedie.dev(y = ydata, 
+                                    mu = mu, 
+                                    power = xi.max) ) / length( ydata )
         
       } else {
         #        phi.max <- nlm(p=phi.est, f=dtweedie.nlogl, 
         #                    hessian=FALSE,
         #                    power=p, mu=mu, y=data, 
         #                    gradient=dtweedie.dldphi)$estimate
-        mu <- fitted( glm.fit( y=ydata, x=model.x, weights=weights, offset=offset,
-                               family=statmod::tweedie(xi.max, link.power=link.power)))
-        phi.max <- optimize( f=dtweedie.nlogl, maximum=FALSE, interval=c(phi.lo, phi.hi ), 
+        mu <- fitted( glm.fit( y = ydata, 
+                               x = model.x, 
+                               weights = weights, 
+                               offset = offset,
+                               family = statmod::tweedie(xi.max, 
+                                                         link.power = link.power)))
+        phi.max <- optimize( f = dtweedie.nlogl, 
+                             maximum = FALSE, 
+                             interval = c(phi.lo, phi.hi ), 
                              # set lower limit phi.lo???
-                             power=xi.max, mu=mu, y=ydata)$minimum
+                             power = xi.max, 
+                             mu = mu,
+                             y = ydata)$minimum
         
         #       Note that using the Hessian often produces computational problems
         #       for little (no?) advantage.
@@ -6641,29 +6866,29 @@ tweedie.profile <- function(formula, p.vec=NULL, xi.vec=NULL, link.power = 0,
     }
   } else {
     # Find maximum from computed data
-    if (verbose>=2) cat(" Finding maximum likelihood estimates:  ")
+    if (verbose >= 2) cat(" Finding maximum likelihood estimates:  ")
     
     L.max <- max(L)
     
     xi.max   <- xi.vec  [ L == L.max ]
     phi.max <- phi.vec[ L == L.max ]
     
-    if (verbose>=2) cat(" Done\n")
+    if (verbose >= 2) cat(" Done\n")
   }
   
   # Now report
   if ( verbose >= 2 ) {
-    cat( "ML Estimates:  ",index.par,"=",xi.max," with phi=",phi.max," giving L=",L.max,"\n")
+    cat( "ML Estimates:  ", index.par, "=",xi.max, " with phi=", phi.max, " giving L=", L.max, "\n")
     cat(" ---\n")
   }
   
   # Now find approximate, nominal 95% CI info
   ht <- L.max - ( qchisq(conf.level, 1) / 2 )
-  ci <- array( dim=2, NA )
+  ci <- array( dim = 2, NA )
   
   
   if ( do.ci ) {
-    if (verbose==2) cat("* Finding confidence interval:")
+    if (verbose == 2) cat("* Finding confidence interval:")
     if ( !do.smooth ) {
       warning("Confidence interval may be very inaccurate without smoothing.\n")
       y <- L
@@ -6671,8 +6896,10 @@ tweedie.profile <- function(formula, p.vec=NULL, xi.vec=NULL, link.power = 0,
     }
     
     if ( do.plot ) {
-      abline(h=ht, lty=2)
-      title( sub=paste("(",100*conf.level,"% confidence interval)", sep="") )
+      abline(h = ht, 
+             lty = 2)
+      title( sub=paste("(", 100*conf.level, "% confidence interval)",
+                       sep = "") )
     }
     
     # Now find limits on p:
@@ -6681,18 +6908,20 @@ tweedie.profile <- function(formula, p.vec=NULL, xi.vec=NULL, link.power = 0,
     
     # --- Left side ---
     cond.left <- (y < ht ) & (x < xi.max )
-    if ( all(cond.left==FALSE) ) {
+    if ( all(cond.left == FALSE) ) {
       warning("Confidence interval cannot be found: insufficient data to find left CI.\n")
     }else{
       # Now find it!
       approx.left <- max( x[cond.left] )
       index.left <- seq(1, length(cond.left) )
-      index.left <- index.left[x==approx.left]
+      index.left <- index.left[x == approx.left]
       left.left <- max( 1, index.left - 5)
-      left.right <- min( length(cond.left), index.left + 5)
+      left.right <- min( length(cond.left), 
+                         index.left + 5)
       
       # Left-side spline
-      ss.left <- splinefun( y[left.left:left.right], x[left.left: left.right] )
+      ss.left <- splinefun( y[left.left:left.right],
+                            x[left.left: left.right] )
       ci.new.left <- ss.left( ht )
       
       ci[1] <- ci.new.left
@@ -6700,17 +6929,20 @@ tweedie.profile <- function(formula, p.vec=NULL, xi.vec=NULL, link.power = 0,
     
     # --- Right side ---
     cond.right <- (y < ht ) & (x > xi.max )
-    if ( all( cond.right==FALSE ) ) {
+    if ( all( cond.right == FALSE ) ) {
       warning("Confidence interval cannot be found: insufficient data to find right CI.\n")
     }else{
       approx.right <- min( x[cond.right] )
       index.right <- seq(1, length(cond.right) )
-      index.right <- index.right[x==approx.right]
-      right.left <- max( 1, index.right - 5)
-      right.right <- min( length(cond.left), index.right + 5)
+      index.right <- index.right[x == approx.right]
+      right.left <- max( 1, 
+                         index.right - 5)
+      right.right <- min( length(cond.left), 
+                          index.right + 5)
       
       # Right-side spline
-      ss.right <- splinefun( y[right.left:right.right], x[right.left: right.right] )
+      ss.right <- splinefun( y[right.left : right.right], 
+                             x[right.left : right.right] )
       ci.new.right <- ss.right(ht )
       
       ci[2] <- ci.new.right
@@ -6719,26 +6951,70 @@ tweedie.profile <- function(formula, p.vec=NULL, xi.vec=NULL, link.power = 0,
   }
   
   if ( fit.glm ) {
-    out.glm <- glm.fit( x=model.x, y=ydata, weights=weights, offset=offset,
-                        family=statmod::tweedie(var.power=xi.max, link.power=link.power) )
+    out.glm <- glm.fit( x = model.x, 
+                        y = ydata, 
+                        weights = weights, 
+                        offset = offset,
+                        family = statmod::tweedie(var.power = xi.max, 
+                                                  link.power = link.power) )
     
     if ( xi.notation){
-      out <- list( y=y, x=x, ht=ht, L=L, xi=xi.vec, xi.max=xi.max, L.max=L.max, 
-                   phi=phi.vec, phi.max=phi.max, ci=ci, method=method, phi.method=phi.method,
+      out <- list( y = y,
+                   x = x,
+                   ht = ht,
+                   L = L, 
+                   xi = xi.vec, 
+                   xi.max = xi.max,
+                   L.max = L.max, 
+                   phi = phi.vec, 
+                   phi.max = phi.max, 
+                   ci = ci,
+                   method = method, 
+                   phi.method = phi.method,
                    glm.obj = out.glm)
     } else {
-      out <- list( y=y, x=x, ht=ht, L=L, p=p.vec, p.max=xi.max, L.max=L.max, 
-                   phi=phi.vec, phi.max=phi.max, ci=ci, method=method, phi.method=phi.method,
+      out <- list( y = y, 
+                   x = x, 
+                   ht = ht, 
+                   L = L, 
+                   p = p.vec, 
+                   p.max = xi.max, 
+                   L.max = L.max, 
+                   phi = phi.vec, 
+                   phi.max = phi.max, 
+                   ci = ci,
+                   method = method, 
+                   phi.method = phi.method,
                    glm.obj = out.glm)
     }
   } else {
     if (xi.notation ){
-      out <- list( y=y, x=x, ht=ht, L=L, xi=xi.vec, xi.max=xi.max, L.max=L.max, 
-                   phi=phi.vec, phi.max=phi.max, ci=ci, method=method, phi.method=phi.method)
+      out <- list( y = y, 
+                   x = x, 
+                   ht = ht, 
+                   L = L, 
+                   xi = xi.vec,
+                   xi.max = xi.max, 
+                   L.max = L.max, 
+                   phi = phi.vec, 
+                   phi.max = phi.max, 
+                   ci = ci,
+                   method = method, 
+                   phi.method = phi.method)
       
     } else {
-      out <- list( y=y, x=x, ht=ht, L=L, p=p.vec, p.max=xi.max, L.max=L.max, 
-                   phi=phi.vec, phi.max=phi.max, ci=ci, method=method, phi.method=phi.method)
+      out <- list( y = y, 
+                   x = x, 
+                   ht = ht, 
+                   L = L, 
+                   p = p.vec, 
+                   p.max = xi.max, 
+                   L.max = L.max, 
+                   phi = phi.vec, 
+                   phi.max = phi.max, 
+                   ci = ci,
+                   method = method, 
+                   phi.method = phi.method)
     }
     
   }
@@ -6755,34 +7031,39 @@ tweedie.profile <- function(formula, p.vec=NULL, xi.vec=NULL, link.power = 0,
 dtweedie.stable <- function(y, power, mu, phi)
 {
   # Error checks
-  if ( power<1) stop("power must be greater than 2.\n")
-  if ( any(phi<=0) ) stop("phi must be positive.")
-  if ( any(y<0) ) stop("y must be a non-negative vector.\n")
-  if ( any(mu<=0) ) stop("mu must be positive.\n")
-  if ( length(mu)>1) {
-    if ( length(mu)!=length(y) ) stop("mu must be scalar, or the same length as y.\n")
+  if ( power < 1) stop("power must be greater than 2.\n")
+  if ( any(phi <= 0) ) stop("phi must be positive.")
+  if ( any(y < 0) ) stop("y must be a non-negative vector.\n")
+  if ( any(mu <= 0) ) stop("mu must be positive.\n")
+  if ( length(mu) > 1) {
+    if ( length(mu) != length(y) ) stop("mu must be scalar, or the same length as y.\n")
   } else {
-    mu <- array( dim=length(y), mu )
+    mu <- array( dim = length(y), mu )
     # A vector of all mu's
   }
-  if ( length(phi)>1) {
-    if ( length(phi)!=length(y) ) stop("phi must be scalar, or the same length as y.\n")
+  if ( length(phi) > 1) {
+    if ( length(phi) != length(y) ) stop("phi must be scalar, or the same length as y.\n")
   } else {
-    phi <- array( dim=length(y), phi )
+    phi <- array( dim = length(y), phi )
     # A vector of all phi's
   }
   
   density <- y
-  alpha <- (2-power)/(1-power)
+  alpha <- (2 - power) / (1 - power)
   beta <- 1
   k <- 1  # The parameterization used
   delta <- 0
-  gamma <- phi * (power-1) * 
-    ( 1/(phi*(power-2)) * cos( alpha * pi / 2 ) ) ^ (1/alpha)
+  gamma <- phi * (power - 1) * 
+    ( 1 / (phi * (power - 2)) * cos( alpha * pi / 2 ) ) ^ (1 / alpha)
   
   #        require(stabledist) # Needed for  dstable
-  ds <- stabledist::dstable(y, alpha=alpha, beta=beta, gamma=gamma, delta=delta, pm=k)
-  density <- exp((y*mu^(1-power)/(1-power)-mu^(2-power)/(2-power))/phi)*ds
+  ds <- stabledist::dstable(y,
+                            alpha = alpha, 
+                            beta = beta, 
+                            gamma = gamma, 
+                            delta = delta, 
+                            pm = k)
+  density <- exp((y * mu ^ (1 - power) / (1 - power) - mu ^ (2 - power) / (2 - power)) / phi) * ds
   
   
   density
@@ -6790,9 +7071,9 @@ dtweedie.stable <- function(y, power, mu, phi)
 
 
 #############################################################################
-tweedie.plot <- function(y, xi=NULL, mu, phi, type="pdf", power=NULL, 
-                         add=FALSE, ...) {
-  
+tweedie.plot <- function(y, xi = NULL, mu, phi, type = "pdf", power = NULL, 
+                         add =FALSE, ...) {
+   
   # Sort out the xi/power notation
   if ( is.null(power) & is.null(xi) ) stop("Either xi or power must be given\n")
   xi.notation <- TRUE
@@ -6809,54 +7090,67 @@ tweedie.plot <- function(y, xi=NULL, mu, phi, type="pdf", power=NULL,
     cat("Different values for xi and power given; the value of xi used.\n")
     power <- xi
   }
-  index.par       <- ifelse( xi.notation, "xi","p")
-  index.par.long  <- ifelse( xi.notation, "xi","power")
+  index.par       <- ifelse( xi.notation, "xi", "p")
+  index.par.long  <- ifelse( xi.notation, "xi", "power")
   
   if ( ( power < 0 ) | ( ( power > 0 ) & ( power < 1 ) ) ) {
-    stop( paste("Plots cannot be produced for",index.par.long,"=",power,"\n") )
+    stop( paste("Plots cannot be produced for", index.par.long, "=", power, "\n") )
   }   
   
   is.pg <- ( power > 1 ) & ( power < 2 )
   
-  if ( type=="pdf") {
-    fy <- dtweedie( y=y, power=power, mu=mu, phi=phi)
+  if ( type == "pdf") {
+    fy <- dtweedie( y = y, 
+                    power = power, 
+                    mu = mu,
+                    phi = phi)
   } else {
-    fy <- ptweedie( q=y, power=power, mu=mu, phi=phi)
+    fy <- ptweedie( q = y, 
+                    power = power, 
+                    mu = mu,
+                    phi = phi)
   }
   
   if ( !add ) {
     if ( is.pg ) {
       plot( range(fy) ~ range( y ), 
-            type="n", ...)
-      if ( any( y==0 ) ) { # The exact zero
-        points( fy[y==0] ~ y[y==0], pch=19, ... )
+            type = "n", ...)
+      if ( any( y == 0 ) ) { # The exact zero
+        points( fy[y == 0] ~ y[y == 0], 
+                pch = 19, ... )
       }
-      if ( any( y>0 ) ) { # The exact zero
-        lines( fy[y>0]   ~ y[y>0], pch=19, ... )
+      if ( any( y > 0 ) ) { # The exact zero
+        lines( fy[y > 0]   ~ y[y > 0], 
+               pch = 19, ... )
       }
     } else {  # Not a Poison-gamma dist
       plot( range(fy) ~ range( y ), 
-            type="n", ...)
-      lines( fy ~ y, pch=19, ... )
+            type = "n", ...)
+      lines( fy ~ y, 
+             pch = 19, ... )
     }
   } else {# Add; no new plot
     if ( is.pg ) {
-      if ( any( y==0 ) ) { # The exact zero
-        points( fy[y==0] ~ y[y==0], pch=19, ... )
+      if ( any( y == 0 ) ) { # The exact zero
+        points( fy[y == 0] ~ y[y == 0], 
+                pch = 19, ... )
       }
-      if ( any( y>0 ) ) { # The exact zero
-        lines( fy[y>0]   ~ y[y>0], pch=19, ... )
+      if ( any( y > 0 ) ) { # The exact zero
+        lines( fy[y > 0]   ~ y[y > 0], 
+               pch = 19, ... )
       }
     } else {  # Not a Poison-gamma dist
-      lines( fy ~ y, pch=19, ... )
+      lines( fy ~ y, 
+             pch = 19, ... )
     }
     
   }
-  return(invisible(list(y=fy, x=y) ))
+  return(invisible(list(y = fy, 
+                        x = y) ))
   
 }
 #############################################################################
-AICtweedie <- function( glm.obj, dispersion=NULL, k=2, verbose=TRUE){ 
+AICtweedie <- function( glm.obj, dispersion = NULL, k = 2, verbose = TRUE){ 
   # New  dispersion  input for (e.g.) Poisson case, added October 2017
   
   wt <- glm.obj$prior.weights
@@ -6868,36 +7162,39 @@ AICtweedie <- function( glm.obj, dispersion=NULL, k=2, verbose=TRUE){
   p <- get("p", envir = environment(glm.obj$family$variance))
   
   if ( is.null(dispersion)) {  # New section
-    if (p==1 & verbose) message("*** Tweedie index power = 1: Consider using  dispersion=1  in call to  AICtweedie().\n")
+    if (p == 1 & verbose) message("*** Tweedie index power = 1: Consider using  dispersion=1  in call to  AICtweedie().\n")
     dev <- deviance(glm.obj)
-    disp <- dev/sum(wt)  # In line with Gamma()$aic
-    edf <- edf+1  # ADD one as we are estimating phi too
+    disp <- dev / sum(wt)  # In line with Gamma()$aic
+    edf <- edf + 1  # ADD one as we are estimating phi too
   } else {
     disp <- dispersion
   }
   
-  den <- dtweedie( y=y, mu=mu, phi=disp, power=p)
-  AIC <- -2*sum( log(den) * wt) 
+  den <- dtweedie( y = y, 
+                   mu = mu, 
+                   phi = disp, 
+                   power = p)
+  AIC <- -2 * sum( log(den) * wt) 
   
-  return( AIC + k*(edf) )
+  return( AIC + k * (edf) )
   
 }
 
 #############################################################################
 
-tweedie.convert <- function(xi=NULL, mu, phi, power=NULL){
+tweedie.convert <- function(xi = NULL, mu, phi, power = NULL){
   ### ADDED 14 July 2017
   
   if ( is.null(power) & is.null(xi) ) stop("Either xi or power must be given\n")
   xi.notation <- TRUE
-  if ( is.null(power) ) {
-    if ( !is.numeric(xi)) stop("xi must be numeric.")
+  if ( is.null(power) ) {   # Then  xi  is given
+    if ( !is.numeric(xi)) stop("xi  must be numeric.\n")
     power <- xi
   } else {
     xi.notation <- FALSE
   }
-  if ( is.null(xi) ) {
-    if ( !is.numeric(power)) stop("power must be numeric.")
+  if ( is.null(xi) ) {   # Then   power  is given
+    if ( !is.numeric(xi)) stop("power  must be numeric.\n")
     xi.notation <- FALSE
     xi <- power
   }
@@ -6905,36 +7202,35 @@ tweedie.convert <- function(xi=NULL, mu, phi, power=NULL){
     cat("Different values for xi and power given; the value of xi used.\n")
     power <- xi
   }
-  index.par       <- ifelse( xi.notation, "xi","p")
-  index.par.long  <- ifelse( xi.notation, "xi","power")
+  index.par       <- ifelse( xi.notation, "xi", "p")
+  index.par.long  <- ifelse( xi.notation, "xi", "power")
   
   
   # Error checks
-  if ( power<1)      stop( paste(index.par.long, "must be greater than 1.\n") )
-  if ( power>=2)     stop( paste(index.par.long, "must be less than 2.\n") )
-  if ( any(phi<=0) ) stop("phi must be positive.")
-  if ( any(mu<=0) )  stop("mu must be positive.\n")
+  if ( power < 1)      stop( paste(index.par.long, "must be greater than 1.\n") )
+  if ( power >= 2)     stop( paste(index.par.long, "must be less than 2.\n") )
+  if ( any(phi <= 0) ) stop("phi must be positive.")
+  if ( any(mu <= 0) )  stop("mu must be positive.\n")
   
   if( length(mu) != length(phi) ){
-    if ( length(mu)  == 1 ) mu  <- array(dim=length(phi), mu  ) 
-    if ( length(phi) == 1 ) phi <- array(dim=length(mu),  phi ) 
+    if ( length(mu)  == 1 ) mu  <- array(dim = length(phi), mu  ) 
+    if ( length(phi) == 1 ) phi <- array(dim = length(mu),  phi ) 
   }
-  # Now  mu  and  phi  will be the same length if one of them happened to be a scalar, 
-  # so this works:
+  # Now  mu  and  phi  will be the same length if one of them happened to be a scalar, so this works:
   if( length(mu) != length(phi) ) stop("phi and mu must be scalars, or the same length.\n")
   
-  lambda <- ( mu^(2 - xi) ) / ( phi * (2 - xi) )  # Poisson distribution mean
+  lambda <- ( mu ^ (2 - xi) ) / ( phi * (2 - xi) )  # Poisson distribution mean
   alpha  <- (2 - xi)  / (xi - 1)           # gamma distribution alpha (shape)
-  gam    <- phi * (xi - 1) * mu^(xi - 1)   # gamma distribution beta  (scale)
+  gam    <- phi * (xi - 1) * mu ^ (xi - 1)   # gamma distribution beta  (scale)
   p0     <- exp( -lambda )
-  phi.g  <- (2 - xi) * (xi - 1) * phi^2 * mu^( 2 * (xi-1) )
-  mu     <- gam/phi
+  phi.g  <- (2 - xi) * (xi - 1) * phi ^ 2 * mu ^ ( 2 * (xi-1) )
+  mu     <- gam / phi
   
   list( poisson.lambda = lambda, 
         gamma.shape = alpha, 
         gamma.scale = gam, 
         p0 = p0,
         gamma.mean = mu,
-        gamma.phi = phi.g )
+        gamma.phi = phi.g)
   
 }

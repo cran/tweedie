@@ -12,3 +12,4 @@ importFrom("stats", "contrasts", "deviance", "dgamma", "dnorm",
              "model.response", "model.weights", "optimize", "pchisq",
              "pgamma", "pnorm", "ppois", "qchisq", "qgamma", "qpois",
              "rgamma", "rpois", "runif", "splinefun", "uniroot")
+importFrom("methods", "is")
