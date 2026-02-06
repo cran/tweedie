@@ -1,0 +1,21 @@
+#!/bin/sh
+
+# Use R to determine the Fortran compiler if FC is not set
+: ${FC:=$(${R_HOME}/bin/R CMD config FC)}
+
+# Check if the compiler is gfortran
+if echo "$(${FC} --version 2>&1)" | grep -iq gfortran; then
+  # We add -O2 at the end to ensure it overrides any previous -O0
+  PKG_FFLAGS="-fno-stack-arrays -O2"
+  PKG_FCFLAGS="-fno-stack-arrays -O2"
+else
+  PKG_FFLAGS="-O2"
+  PKG_FCFLAGS="-O2"
+fi
+
+# Generate Makevars from Makevars.in
+sed -e "s|@PKG_FFLAGS@|${PKG_FFLAGS}|g" \
+    -e "s|@PKG_FCFLAGS@|${PKG_FCFLAGS}|g" \
+    src/Makevars.in > src/Makevars
+
+exit 0

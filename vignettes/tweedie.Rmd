@@ -1,0 +1,164 @@
+---
+title: "Tweedie likelihood computations"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Tweedie likelihood computations}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(tweedie)
+```
+
+## Tweedie distributions
+
+Tweedie distributions are exponential dispersion models, with a mean $\mu$ and a variance $\phi \mu^\xi$, for some dispersion parameter $\phi > 0$ and a power index $\xi$ (sometimes called $p$) that uniquely defines the distribution within the Tweedie family (for all real values of $\xi$ **not** between 0 and 1).
+
+Special cases of the Tweedie distributions are:
+
+* the *normal* distribution, with $\xi = 0$ (i.e., the variance is $\phi$ and not related to the mean);
+* the *Poisson* distribution, with $\xi = 1$ and $\phi = 1$ (i.e., the variance is the same as the mean);
+* the *gamma* distribution, with $\xi = 2$; and
+* the *inverse Gaussian* distribution, with $\xi = 3$.
+
+For all other values of $\xi$, the probability functions and distribution functions have no closed forms.
+
+
+| Power index, $\xi$    | Distribution     | Support                       |
+|-----------------------|------------------|-------------------------------|
+| $\xi = 0$             | Normal           | $(-\infty, \infty)$           |
+| $0 < \xi < 1$         | Do not exist     |                               |
+| $\xi = 1$, $\phi = 1$ | Poisson          | Discrete: $(0, 1, 2, \dots)$  |
+| $1 < \xi < 2$         | Poisson--gamma   | $[ 0, \infty)$                |
+| $\xi = 2$             | gamma            | $(0, \infty)$                 |
+| $\xi > 2$             | Skewed right     | $(0, \infty$)                 |
+| $\xi = 3$             | inverse Gaussian | $(0, \infty)$                 |
+
+For $\xi < 1$, applications are limited (non-existent so far?), but have support on the entire real line and $\mu > 0$.
+
+For $1 < \xi < 2$, Tweedie distributions can be represented as a Poisson sum of gamma distributions. 
+These distributions are continuous for $Y > 0$ but have a discrete mass at $Y = 0$.
+
+
+## Examples
+
+Likelihood computations are not need to fit a Tweedie generalized linear model, using the `tweedie()` family from the [**statmod** package](https://CRAN.R-project.org/package=statmod):
+
+```{r TWexample}
+library(statmod)
+
+set.seed(96)
+N <- 25
+# Mean of the Poisson (lambda) and Gamma (shape/scale)
+lambda <- 1.5
+# Generating Compound Poisson-Gamma data manually
+y <- replicate(N, {
+  n_events <- rpois(1, lambda = lambda)
+  if (n_events == 0) 0 else sum(rgamma(n_events, shape = 2, scale = 1))
+})
+
+mod.tw <- glm(y ~ 1, 
+              family = statmod::tweedie(var.power = 1.5, link.power = 0) )
+              # link.power = 0  means the log-link
+```
+
+However, likelihood computations are necessary in other situations.
+
+### Generating random numbers
+
+Random numbers from a Tweedie distribution are generated using **rtweedie()**:
+
+```{r TWrandom}
+tweedie::rtweedie(10, xi = 1.1, mu = 2, phi = 1)
+```
+
+### Plotting density and probability functions
+
+Accurate density functions are generated using **dtweedie()**:
+
+
+```{r TWplotsPDF}
+y <- seq(0, 2, length = 100)
+xi <- 1.1
+mu <- 0.5
+phi <- 0.4
+
+twden <- tweedie::dtweedie(y, xi = xi, mu = mu, phi = phi)  
+twdtn <- tweedie::ptweedie(y, xi = xi, mu = mu, phi = phi)
+
+plot( twden[y > 0] ~ y[y > 0], 
+      type ="l",
+      lwd = 2,
+      xlab = expression(italic(y)),
+      ylab = "Density function")
+points(twden[y==0] ~ y[y == 0],
+      lwd = 2,
+      pch = 19,
+      xlab = expression(italic(y)),
+      ylab = "Distribution function")
+```
+
+Accurate probability functions are generated using **ptweedie()**:
+
+```{r TWplotsCDF}
+plot(twdtn ~ y,
+     type = "l",
+      lwd = 2,
+     ylim = c(0, 1),
+      xlab = expression(italic(y)),
+      ylab = "Distribution function")
+```
+
+However, the function **tweedie_plot()** is sometimes more convenient (especially for $1 < \xi \ < 2$, when a probability mass at $Y = 0$ is present):
+
+```{r TWplotsPDF2}
+tweedie::tweedie_plot(y, xi = xi, mu = mu, phi = phi,
+                      ylab = "Density function",
+                      xlab = expression(italic(y)),
+                      lwd = 2)
+```
+
+```{r TWplotsCDF2}
+tweedie::tweedie_plot(y, xi = xi, mu = mu, phi = phi, 
+                      ylab = "Distribution function",
+                      xlab = expression(italic(y)),
+                      lwd = 2, 
+                      ylim = c(0, 1), 
+                      type = "cdf")
+```
+
+### Computing the quantile residuals:
+
+Quantile residuals can be computed to assess the fit of a glm:
+
+```{r TWqqplot}
+library(tweedie)
+
+qqnorm( statmod::qresid(mod.tw) )
+```
+
+
+
+# Estimating $\xi$
+
+To use a Tweedie distribution in a glm, the value of $\xi$ is needed.
+To find the most suitable value of $\xi$, **tweedie_profile()** can be used:
+
+```{r TWprofile}
+out <- tweedie::tweedie.profile(y ~ 1, 
+                                xi.vec = seq(1.2, 1.8, by = 0.05), 
+                                do.plot = TRUE)
+
+# The estimated power index:
+out$xi.max
+```
+
+

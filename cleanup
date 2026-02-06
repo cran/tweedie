@@ -1,0 +1,3 @@
+#!/bin/sh
+rm -f src/Makevars
+# Do NOT rm src/Makevars.win, as that is a source file

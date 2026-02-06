@@ -1,8 +1,8 @@
-citHeader("To cite tweedie in publications, please use the following articles:")
+header = "To cite tweedie in publications, please use the following articles as appropriate:"
 
 
-citEntry(
-   entry = "article",
+bibentry(
+   bibtype = "article",
 	author = "Peter K. Dunn and Gordon K. Smyth",
 	year = 2005,
 	title = "Series evaluation of Tweedie exponential dispersion models",
@@ -14,10 +14,8 @@ citEntry(
 )
 
 
-
-
-citEntry(
-	entry = "article",
+bibentry(
+	bibtype = "article",
 	author = "Peter K. Dunn and Gordon K. Smyth",
  	year = 2008,
  	title = "Evaluation of Tweedie exponential dispersion models using Fourier inversion",
@@ -28,11 +26,11 @@ citEntry(
 	textVersion = "Dunn, P. K. and Smyth, G. K. (2008).  Evaluation of Tweedie exponential dispersion models using Fourier inversion. Statistics and Computing, 18(1), 73-86."
 )
 
-citEntry(
-	entry = "Manual",
+bibentry(
+	bibtype = "Manual",
 	author = "Peter K. Dunn",
  	year = 2022,
-  note = "R package version 2.3.5",
+  note = "R package version 3.0.5",
  	title = "Tweedie: Evaluation of Tweedie Exponential Family Models",
 	textVersion = "Dunn, P. K. (2022).  Tweedie: Evaluation of Tweedie exponential family models. R package version 2.3."
 

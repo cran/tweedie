@@ -1,3 +1,60 @@
+tweedie 3.0.10 (Release date: 2026-06-02)
+==============
+
+Changes:
+
+* Trying to fix bugs that pop up (seemingly at random) with rhub checks.
+
+
+
+tweedie 3.0.5 (Release date: 2026-01-30)
+==============
+
+Changes:
+
+* FORTRAN code restructured to make the similar flow in the three zones (initial; pre; accel) clearer
+* Some fixes to documentation to pass tests.
+* Some minor fizes to R code.
+
+
+
+tweedie 3.0.4 (Release date: 2026-01-20)
+==============
+
+Changes:
+
+* Some fixes to implementation of IGexact
+
+
+tweedie 3.0.3 (Release date: 2025-11-29)
+==============
+
+Changes:
+
+* Add IGexact for [dp]tweedie_inversion: whether to use exact values or inversion when p = 3.
+* Fixed some comments
+
+
+
+tweedie 3.0.2 (Release date: 2025-11-29)
+==============
+
+Changes:
+
+* All code moved from FORTRAN77 to FORTRAN90. Almost no FORTRAN code remains from version < 3.
+* PDF and CDF computations consolidated and code shared where possible, substantially reducing the amount of FORTRAN code.
+* Separated FORTRAN code into different files for easier debugging.
+* Improvements to the acceleration algorithm and root-finding algorithms, so should work better for more cases.
+* Added verbose (shows what's happening behind the scenes) and details (reports on the fitting) as options for many user-facing R functions.
+* Added  ptweedie_inversion()  to the man page for  dtweedie.
+* Tidied the man pages; added examples.
+* Removed the almost-never used dtweedie.stable() function.
+* Changed function names (e.g,  tweedie.convert()  to  tweedie_convert()).
+* Separated R functions into separate files depending on purpose (e.g., dtweedie.R  and  ptweedie.R).
+* Moved the  tweedie_Extra  files into the main package.
+* dtweedie.igrand()  (now tweedie_igrand()) to plot the integrand for the DF also.
+
+
 tweedie 2.3.5 (Release date: 2022-08-17)
 ==============
 
@@ -122,7 +179,7 @@ Changes:
 
 * Ensured tweedie.profile() does not use power = 1.  This case (power=1 and phi not equal to 1) is too hard for me to deal with at present.
 * Fixed an error introduced in version 2.0.5, where the value of xi/vec/p.vec was set to 1.2 (y >= 0) or 1.5 (y > 0) when not explicitly specified
-* Fixed an error that reported the wrong mle of phi when the mle occured at an endpoint of the given  xi  values.
+* Fixed an error that reported the wrong mle of phi when the mle occurred at an endpoint of the given  xi  values.
 
 tweedie 2.0.5 (Release date: 2010-08-27)
 ==============
@@ -131,7 +188,7 @@ Changes:
 
 * Change to dtweedie.inversion() to ensure density = 0 is returned when y < 0 (1 < p < 2) or p <- 0 (when p > 2)
 * Change to tweedie.profile() to fix a problem that p = 1 returned an error
-* Changed so that tweedie.profile() works withg p/xi = 0 when add0=TRUE (default is FALSE)
+* Changed so that tweedie.profile() works with p/xi = 0 when add0=TRUE (default is FALSE)
 * Fixed some minor outputting messages (when verbose == 2)  
 * Location of CITATION file moved to correct location
 
@@ -215,7 +272,7 @@ Changes:
 * Fixed error in tweedie.f()  (twice) where a float was used in a do-loop
 * Fixed a bug in ptweedie(): It now returns 0 when y < 0 (rather than reporting an error)
 * Fixed a bug in ptweedie.inversion(): y.len was undefined
-* Fixed a bug in dwteedie.inversion(): if( any(phi < 0) ) written as if (any(phi) < 0 )
+* Fixed a bug in dtweedie.inversion(): if( any(phi < 0) ) written as if (any(phi) < 0 )
 * Built for R version 2.6.0
 * Changed the tweedie.plot() to produce no default x and y labels
 
@@ -225,7 +282,7 @@ tweedie 1.5.2 (Release date: 2007-09-01)
 Changes:
 
 * Built for R version 2.5.1
-* Removed the inversion computation from the example for  dtweedi()e; it was very slow and hence caused problems
+* Removed the inversion computation from the example for  dtweedie(); it was very slow and hence caused problems
 
 tweedie 1.5.1 (Release date: 2007-05-03)
 ==============
@@ -236,7 +293,7 @@ tweedie 1.5.1 (Release date: 2007-05-03)
 * Added tweedie-package.Rd
 * Fixed a small bug in  dtweedie.inversion() (replaced  p  with   power)
 * Built for R version 2.5
-* Made change to use of pmatch in function  tweedie()
+* Made change to use of pmatch() in function  tweedie()
 * Swapped the order of methods 1 and 2 in the call of tweedie.inversion  to make consistent with a change in the associated paper Dunn and Smyth.
 * Fixed an uninitialized variable error in the FORTRAN code which sometimes caused the inversion procedure to fail.
 * Other minor changes (fixing spelling errors, updated Dunn and Smyth reference; etc.)
