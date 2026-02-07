@@ -1,9 +1,9 @@
-tweedie 3.0.10 (Release date: 2026-06-02)
+tweedie 3.0.12 (Release date: 2026-02-07)
 ==============
 
 Changes:
 
-* Trying to fix bugs that pop up (seemingly at random) with rhub checks.
+* Trying to fix bugs that pop up (seemingly at random) with rhub etc. checks.
 
 
 

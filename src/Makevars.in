@@ -5,11 +5,17 @@ PKG_LIBS = $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS)
 
 # Link all objects into the shared library
 $(SHLIB): 00tweedie_params.o rprintf_mod.o R_interfaces.o \
+          findAccelStart.o accelerate.o \
           Calcs_Real.o Calcs_Imag.o \
           Calcs_Solvers.o Calcs_K.o TweedieIntZones.o Integrands.o \
-          gaussianData.o GaussQuadrature.o TweedieIntegration.o
+          gaussianData.o GaussQuadrature.o TweedieIntegration.o \
+          twcomputation.o twcomputation_main.o
 
 # Dependencies only (R handles the actual compilation command)
+twcomputation.o: R_interfaces.o
+twcomputation_main.o: R_interfaces.o
+findAccelStart.o: 00tweedie_params.o
+accelerate.o: 00tweedie_params.o
 R_interfaces.o: rprintf_mod.o 00tweedie_params.o
 Calcs_Real.o: 00tweedie_params.o R_interfaces.o
 Calcs_Imag.o: 00tweedie_params.o R_interfaces.o

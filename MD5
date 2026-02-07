@@ -1,6 +1,6 @@
-6fa6ace9b1a0acaf2062eba90b3667a5 *DESCRIPTION
+818c4a00ff0be81c77ae4bd6910664a3 *DESCRIPTION
 902603df1454ec16ecc1b7299e097b2b *NAMESPACE
-86c005dee7cbba7518f350538d409006 *NEWS.md
+47be5ea934aa8d629c608876bf7a3f1e *NEWS.md
 72c582e36a69086077043bf2a24a53cc *R/dtweedie_interpolation.R
 334591336b4229b5f8a84cee31134e12 *R/dtweedie_inversion.R
 3d39869bc017fa8b2db8e210ab83980e *R/dtweedie_saddle.R
@@ -21,15 +21,15 @@ e5bad0c4862bad8fe0b852a1499c954c *R/tweedie_plot.R
 1ecce8caf6f36a538576b7bec0b349f1 *R/utils.R
 feaae713088b784a3df47239f76b21ee *R/zzz.R
 6857a02258673da76602fc6acc912d74 *README.md
-1bf18d9c216b8d95033f0bd2fe2906b2 *build/partial.rdb
-7b55686bb173013ac0b0806657bb4896 *build/vignette.rds
+20c8d3f97d93e2e318a22508275b5a02 *build/partial.rdb
+7359027c7962d4c22b6288c2a1542ec6 *build/vignette.rds
 5b12a816b57d2832f02b60b26d08c1cf *cleanup
 c6322a71827cae280a01a5ed7e124445 *configure
 7a66fa7d6fa9bc032e2e8eab202342e2 *configure.win
 d35071515be3d8841b02122ccb8c8391 *inst/CITATION
 c592327999e2e24f24a68915d4c26685 *inst/doc/tweedie.R
 61d57e79a73b486578f462a941230569 *inst/doc/tweedie.Rmd
-93fb1a0ec777e32100ae573e907e207d *inst/doc/tweedie.html
+0715ed821def1e8131aa7137315e55fc *inst/doc/tweedie.html
 f190d68cb86d95fccd8168e8dbb8102c *man/Tweedie.Rd
 b4453cae81582d46a949b4e558d8992b *man/dtweedie_inversion.Rd
 d36f13a93c58e86530fddbcb40bd9e53 *man/dtweedie_saddle.Rd
@@ -57,13 +57,12 @@ ffd536162ebfcdfe4bf2831231deedf9 *src/GaussQuadrature.f90
 84c55eaf2f927b095e4dc6a1039f3904 *src/Makevars-Working.makefile
 6fbd56b7e602c2fcf87f600141abdf01 *src/Makevars-WorksOnLinux.makefile
 31ce67fba9ad133da445e7945acffde1 *src/Makevars-workingOnMac.makefile
-c85af457ce7e48a67369b406e46bfa7f *src/Makevars.in
+3a16634ccbe98c11d59bd7bf32fa3e44 *src/Makevars.in
 8047ec2be8c283a782422b98a865b12f *src/Makevars.win
 f729ba3fccb1e6230ea19fcee531da14 *src/R_interfaces.f90
 e72cce986387b858edf57804f7a66201 *src/Rprintf_wrapper.c
 c704ef81d70e2e2c6af95b8109066f1f *src/TweedieIntZones.f90
 bb143df0f3c61edd0b1109dec7ced110 *src/TweedieIntegration.f90
-bb143df0f3c61edd0b1109dec7ced110 *src/TweedieIntegration.f90HIDING
 5de4878119e8c09162a9233eaac81e63 *src/accelerate.f90
 afc49229ef6f17852420a96962895ec4 *src/findAccelStart.f90
 6d4a0f078e1dfd5af92c6f62f4f05420 *src/gaussianData.f90
@@ -72,7 +71,7 @@ f935ec756ec242addc4a0f5591e39a07 *src/rprintf_mod.f90
 f9c5a5043da942badf23d27963bb32f5 *src/twcomputation.f90
 d669d7283f17320b7e8b0ecf2f84f702 *src/twcomputation_main.f90
 c309366a1f216a130bfe7e5bce0e9a63 *tests/testthat.R
-b4f0fb83ad911ca901a60b6d63b59d11 *tests/testthat/Rplots.pdf
+e4a5abe90692142ddff5f749bf07f03f *tests/testthat/Rplots.pdf
 880a0133a11a4c523ce617f5cdc03f92 *tests/testthat/test-deprecated.R
 2c2552b64ab37075fb60b4b471f1aca7 *tests/testthat/test-edgeValues.R
 12f2057c2b35a3cc80f197f35f55a9e7 *tests/testthat/test-inputs.R
@@ -80,4 +79,5 @@ b4f0fb83ad911ca901a60b6d63b59d11 *tests/testthat/Rplots.pdf
 e08e2fd11758a58a212d02abac0ba7e7 *tests/testthat/test-other-ptweedie.R
 e651cbbe974f4f3a12ed456ece0e21dd *tests/testthat/test-other.R
 19092bd1db6bc326495d6cdf9511c4a5 *tests/testthat/test-values.R
+4d9d3b32667632ec4a1227f456d7ed19 *tests/testthat/tests-valgrind.RHIDE
 61d57e79a73b486578f462a941230569 *vignettes/tweedie.Rmd
