@@ -16,7 +16,7 @@
 #' @param details logical; if \code{TRUE}, returns the value of the distribution and some information about the integration. The default is \code{FALSE}.
 #' @param IGexact logical; if \code{TRUE} (the default), evaluate the inverse Gaussian distribution using the 'exact' values, otherwise uses inversion.
 #' 
-#' @return If \code{details = FALSE}, a numeric vector of the distribution function values; if \code{details = TRUE}, a list containing \code{CDF} (a vector of the values of the distribution function) and \code{regions} (a vector of the number of integration regions used).
+#' @return If \code{details = FALSE}, a numeric vector of the distribution function values; if \code{details = TRUE}, a list containing \code{CDF} (a vector of the values of the distribution function), \code{regions} (a vector of the number of integration regions used), and \code{exitstatus} (a vector, where a \code{1} for any value means a computational problem or target relative accuracy not reached, for the corresponding observation).
 #' 
 #' For special cases of \eqn{p} (i.e., \eqn{p = 0, 1, 2, 3}), where no inversion is needed, \code{regions} is set to \code{NA} for all values of \code{q}.
 #' For special cases of \code{q} for other values of \eqn{p} (i.e., \eqn{P(Y = 0)}), \code{regions} is set to \code{NA}.
@@ -58,7 +58,7 @@ ptweedie_inversion <- function(q, mu, phi, power, verbose = FALSE, details = FAL
   # cdf    is the whole vector; the same length as  y.
   # All is resolved in the end.
   cdf <- numeric(length = length(q) )
-  regions <- integer(length = length(q)) # Filled with zeros by default
+  regions <- rep(NA, length(q)) 
   
   # IDENTIFY SPECIAL CASES
   special_y_cases <- rep(FALSE, 
@@ -118,7 +118,8 @@ ptweedie_inversion <- function(q, mu, phi, power, verbose = FALSE, details = FAL
   
   if (details) {
     return( list( cdf = cdf,
-                  regions = regions))
+                  regions = regions,
+                  exitstatus = tmp$exitstatus))
   } else {
     return(cdf)
   }

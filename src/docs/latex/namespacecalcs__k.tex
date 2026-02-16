@@ -1,0 +1,146 @@
+\doxysection{calcs\+\_\+k Module Reference}
+\hypertarget{namespacecalcs__k}{}\label{namespacecalcs__k}\index{calcs\_k@{calcs\_k}}
+\doxysubsubsection*{Functions/\+\+Subroutines}
+\begin{DoxyCompactItemize}
+\item 
+subroutine, public \doxymbox{\hyperlink{namespacecalcs__k_a2c44be4e111f33c6a2ae13c4d28d060c}{findkmax}} (i, kmax, tmax, mmax, mfirst, left\+\_\+of\+\_\+max)
+\item 
+real(kind=c\+\_\+double) function, public \doxymbox{\hyperlink{namespacecalcs__k_a4b3fde2be779da35c25707664a3936b0}{findkmaxsp}} ()
+\item 
+subroutine, public \doxymbox{\hyperlink{namespacecalcs__k_aa9c1cc0ced108f4259d98ea3cd337ef5}{improvekzerobounds}} (m, left\+\_\+of\+\_\+max, zeromid, zerol, zeror)
+\item 
+subroutine, public \doxymbox{\hyperlink{namespacecalcs__k_a36bb97fb20c9e89586ba91c905ada01e}{advancem}} (m, mmax, mold, left\+\_\+of\+\_\+max)
+\item 
+subroutine, public \doxymbox{\hyperlink{namespacecalcs__k_a364b651112e7d1e49aee1d4437227807}{findexactzeros}} (m, tl, tr, tstart, tzero, left\+\_\+of\+\_\+max)
+\item 
+subroutine \doxymbox{\hyperlink{namespacecalcs__k_adc86f44b1b0e457116d292b9b19b669f}{evaluateimkm\+\_\+wrapper}} (x, f, df)
+\end{DoxyCompactItemize}
+
+
+\label{doc-func-members}
+\Hypertarget{namespacecalcs__k_doc-func-members}
+\doxysubsection{Function/\+\+Subroutine Documentation}
+\Hypertarget{namespacecalcs__k_a36bb97fb20c9e89586ba91c905ada01e}\index{calcs\_k@{calcs\_k}!advancem@{advancem}}
+\index{advancem@{advancem}!calcs\_k@{calcs\_k}}
+\doxysubsubsection{\texorpdfstring{advancem()}{advancem()}}
+{\footnotesize\ttfamily \label{namespacecalcs__k_a36bb97fb20c9e89586ba91c905ada01e} 
+subroutine, public calcs\+\_\+k::\+advancem (\begin{DoxyParamCaption}\item[{integer(c\+\_\+int), intent(inout)}]{m}{, }\item[{integer(c\+\_\+int), intent(in)}]{mmax}{, }\item[{integer(c\+\_\+int), intent(out)}]{mold}{, }\item[{logical(c\+\_\+bool), intent(inout)}]{left\+\_\+of\+\_\+max}{}\end{DoxyParamCaption})}
+
+Here is the caller graph for this function:\+
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespacecalcs__k_a36bb97fb20c9e89586ba91c905ada01e_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{namespacecalcs__k_adc86f44b1b0e457116d292b9b19b669f}\index{calcs\_k@{calcs\_k}!evaluateimkm\_wrapper@{evaluateimkm\_wrapper}}
+\index{evaluateimkm\_wrapper@{evaluateimkm\_wrapper}!calcs\_k@{calcs\_k}}
+\doxysubsubsection{\texorpdfstring{evaluateimkm\_wrapper()}{evaluateimkm\_wrapper()}}
+{\footnotesize\ttfamily \label{namespacecalcs__k_adc86f44b1b0e457116d292b9b19b669f} 
+subroutine calcs\+\_\+k::\+evaluateimkm\+\_\+wrapper (\begin{DoxyParamCaption}\item[{real(kind=c\+\_\+double), intent(in)}]{x}{, }\item[{real(kind=c\+\_\+double), intent(out)}]{f}{, }\item[{real(kind=c\+\_\+double), intent(out)}]{df}{}\end{DoxyParamCaption})}
+
+Here is the call graph for this function:\+
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespacecalcs__k_adc86f44b1b0e457116d292b9b19b669f_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function:\+
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespacecalcs__k_adc86f44b1b0e457116d292b9b19b669f_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{namespacecalcs__k_a364b651112e7d1e49aee1d4437227807}\index{calcs\_k@{calcs\_k}!findexactzeros@{findexactzeros}}
+\index{findexactzeros@{findexactzeros}!calcs\_k@{calcs\_k}}
+\doxysubsubsection{\texorpdfstring{findexactzeros()}{findexactzeros()}}
+{\footnotesize\ttfamily \label{namespacecalcs__k_a364b651112e7d1e49aee1d4437227807} 
+subroutine, public calcs\+\_\+k::\+findexactzeros (\begin{DoxyParamCaption}\item[{integer(c\+\_\+int), intent(in)}]{m}{, }\item[{real(kind=c\+\_\+double), intent(inout)}]{tl}{, }\item[{real(kind=c\+\_\+double), intent(inout)}]{tr}{, }\item[{real(kind=c\+\_\+double), intent(inout)}]{tstart}{, }\item[{real(kind=c\+\_\+double), intent(out)}]{tzero}{, }\item[{logical(c\+\_\+bool), intent(in)}]{left\+\_\+of\+\_\+max}{}\end{DoxyParamCaption})}
+
+Here is the call graph for this function:\+
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespacecalcs__k_a364b651112e7d1e49aee1d4437227807_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function:\+
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespacecalcs__k_a364b651112e7d1e49aee1d4437227807_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{namespacecalcs__k_a2c44be4e111f33c6a2ae13c4d28d060c}\index{calcs\_k@{calcs\_k}!findkmax@{findkmax}}
+\index{findkmax@{findkmax}!calcs\_k@{calcs\_k}}
+\doxysubsubsection{\texorpdfstring{findkmax()}{findkmax()}}
+{\footnotesize\ttfamily \label{namespacecalcs__k_a2c44be4e111f33c6a2ae13c4d28d060c} 
+subroutine, public calcs\+\_\+k::\+findkmax (\begin{DoxyParamCaption}\item[{integer(c\+\_\+int), intent(in)}]{i}{, }\item[{real(kind=c\+\_\+double), intent(out)}]{kmax}{, }\item[{real(kind=c\+\_\+double), intent(out)}]{tmax}{, }\item[{integer(c\+\_\+int), intent(out)}]{mmax}{, }\item[{integer(c\+\_\+int), intent(out)}]{mfirst}{, }\item[{logical(c\+\_\+bool), intent(out)}]{left\+\_\+of\+\_\+max}{}\end{DoxyParamCaption})}
+
+Here is the call graph for this function:\+
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespacecalcs__k_a2c44be4e111f33c6a2ae13c4d28d060c_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function:\+
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespacecalcs__k_a2c44be4e111f33c6a2ae13c4d28d060c_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{namespacecalcs__k_a4b3fde2be779da35c25707664a3936b0}\index{calcs\_k@{calcs\_k}!findkmaxsp@{findkmaxsp}}
+\index{findkmaxsp@{findkmaxsp}!calcs\_k@{calcs\_k}}
+\doxysubsubsection{\texorpdfstring{findkmaxsp()}{findkmaxsp()}}
+{\footnotesize\ttfamily \label{namespacecalcs__k_a4b3fde2be779da35c25707664a3936b0} 
+real(kind=c\+\_\+double) function, public calcs\+\_\+k::\+findkmaxsp}
+
+Here is the call graph for this function:\+
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespacecalcs__k_a4b3fde2be779da35c25707664a3936b0_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function:\+
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=186pt]{namespacecalcs__k_a4b3fde2be779da35c25707664a3936b0_icgraph}
+\end{center}
+\end{figure}
+\Hypertarget{namespacecalcs__k_aa9c1cc0ced108f4259d98ea3cd337ef5}\index{calcs\_k@{calcs\_k}!improvekzerobounds@{improvekzerobounds}}
+\index{improvekzerobounds@{improvekzerobounds}!calcs\_k@{calcs\_k}}
+\doxysubsubsection{\texorpdfstring{improvekzerobounds()}{improvekzerobounds()}}
+{\footnotesize\ttfamily \label{namespacecalcs__k_aa9c1cc0ced108f4259d98ea3cd337ef5} 
+subroutine, public calcs\+\_\+k::\+improvekzerobounds (\begin{DoxyParamCaption}\item[{integer(c\+\_\+int), intent(in)}]{m}{, }\item[{logical(c\+\_\+bool), intent(in)}]{left\+\_\+of\+\_\+max}{, }\item[{real(kind=c\+\_\+double), intent(inout)}]{zeromid}{, }\item[{real(kind=c\+\_\+double), intent(inout)}]{zerol}{, }\item[{real(kind=c\+\_\+double), intent(inout)}]{zeror}{}\end{DoxyParamCaption})}
+
+Here is the call graph for this function:\+
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespacecalcs__k_aa9c1cc0ced108f4259d98ea3cd337ef5_cgraph}
+\end{center}
+\end{figure}
+Here is the caller graph for this function:\+
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{namespacecalcs__k_aa9c1cc0ced108f4259d98ea3cd337ef5_icgraph}
+\end{center}
+\end{figure}

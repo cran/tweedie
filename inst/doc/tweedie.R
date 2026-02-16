@@ -4,11 +4,9 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 
-## ----setup--------------------------------------------------------------------
-library(tweedie)
-
 ## ----TWexample----------------------------------------------------------------
-library(statmod)
+library(tweedie)
+library(statmod)   # For the tweedie() family function, for use in glm()
 
 set.seed(96)
 N <- 25
@@ -37,34 +35,40 @@ twden <- tweedie::dtweedie(y, xi = xi, mu = mu, phi = phi)
 twdtn <- tweedie::ptweedie(y, xi = xi, mu = mu, phi = phi)
 
 plot( twden[y > 0] ~ y[y > 0], 
+      xlab = expression(italic(y)),
+      ylab = "Density function",
       type ="l",
       lwd = 2,
-      xlab = expression(italic(y)),
-      ylab = "Density function")
+      las = 1)
 points(twden[y==0] ~ y[y == 0],
       lwd = 2,
-      pch = 19,
-      xlab = expression(italic(y)),
-      ylab = "Distribution function")
+      pch = 19)
 
 ## ----TWplotsCDF---------------------------------------------------------------
 plot(twdtn ~ y,
+     xlab = expression(italic(y)),
+     ylab = "Distribution function",
      type = "l",
+     las = 1,
+     lwd = 2,
+     las = 1,
+     ylim = c(0, 1) )
+points(twdtn[y==0] ~ y[y == 0],
       lwd = 2,
-     ylim = c(0, 1),
-      xlab = expression(italic(y)),
-      ylab = "Distribution function")
+      pch = 19)
 
 ## ----TWplotsPDF2--------------------------------------------------------------
 tweedie::tweedie_plot(y, xi = xi, mu = mu, phi = phi,
                       ylab = "Density function",
                       xlab = expression(italic(y)),
+                      las = 1,
                       lwd = 2)
 
 ## ----TWplotsCDF2--------------------------------------------------------------
 tweedie::tweedie_plot(y, xi = xi, mu = mu, phi = phi, 
                       ylab = "Distribution function",
                       xlab = expression(italic(y)),
+                      las = 1, 
                       lwd = 2, 
                       ylim = c(0, 1), 
                       type = "cdf")
@@ -72,13 +76,59 @@ tweedie::tweedie_plot(y, xi = xi, mu = mu, phi = phi,
 ## ----TWqqplot-----------------------------------------------------------------
 library(tweedie)
 
-qqnorm( statmod::qresid(mod.tw) )
+qqnorm( qr <- statmod::qresid(mod.tw),
+        las = 1)
+qqline(qr,
+       col = "grey")
 
 ## ----TWprofile----------------------------------------------------------------
-out <- tweedie::tweedie.profile(y ~ 1, 
+out <- tweedie::tweedie_profile(y ~ 1, 
                                 xi.vec = seq(1.2, 1.8, by = 0.05), 
                                 do.plot = TRUE)
 
 # The estimated power index:
 out$xi.max
+
+## ----PSNLoad------------------------------------------------------------------
+poison <- read.csv(system.file("extdata", "poison.csv", package = "tweedie"))
+
+# Convert to factors:
+poison$Psn <- factor(poison$Psn)
+poison$Trmt <- factor(poison$Trmt)
+
+head(poison)
+
+## ----PSNPlotPsn---------------------------------------------------------------
+plot(Time ~ Psn,
+     data = poison,
+     xlab = "Poison type",
+     ylab = "Survival time (tens of hours)",
+     las = 1)
+
+## ----PSNPlotTmt---------------------------------------------------------------
+plot(Time ~ Trmt,
+     data = poison,
+     xlab = "Treatment type",
+     ylab = "Survival time (tens of hours)",
+     las = 1)
+
+## ----PSNProfile---------------------------------------------------------------
+PSNPrf <- tweedie_profile(Time ~ Trmt + Psn, data = poison, 
+                          do.plot = TRUE, xi.vec = seq(2.5, 5.5, length = 11) )
+
+## ----PSNXi--------------------------------------------------------------------
+PSNPrf$xi.max
+
+## ----PSNModel-----------------------------------------------------------------
+PSNMod <- glm(Time ~ Trmt + Psn, 
+              data = poison,
+              family=statmod::tweedie(var = 4, link.power = 0))
+anova(PSNMod, test = "F")
+
+## ----PSNRes-------------------------------------------------------------------
+qr <- statmod::qresid(PSNMod)
+qqnorm(qr,
+       las = 1)
+qqline(qr,
+       col = "grey")
 

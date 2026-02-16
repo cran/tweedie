@@ -10,7 +10,7 @@ SUBROUTINE twcomputation(N, p, phi, y, mu, verbose, pdf, funvalue, exitstatus, r
 
 
   ! Call internal Fortran routine
-  CALL twcomputation_main(N, p, phi, y, mu, verbose, pdf,         & ! INPUTS
+  CALL twcomputation_loop(N, p, phi, y, mu, verbose, pdf,         & ! INPUTS
                           funvalue, exitstatus, relerr, its)        ! OUTPUTS
 
 END SUBROUTINE twcomputation

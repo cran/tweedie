@@ -30,6 +30,14 @@ test_that("Other functions work OK", {
              phi = c(0.25, 0.5, 1) )
   })
 
+  test_that("dtweedie power=1 returns 0 and warns", {
+    expect_warning(
+      val <- tweedie::dtweedie(1, mu = 2, phi = 2, power = 1),
+      regexp = "non-integer x"
+    )
+    expect_equal(val, 0)
+  })
+  
 
   # qtweedie
   expect_no_error({

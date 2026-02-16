@@ -1,0 +1,18 @@
+<map id="calcs_k::findkmax" name="calcs_k::findkmax">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,88,133,114"/>
+<area shape="rect" id="Node000002" href="$namespacecalcs__imag.html#a58d11b6dd22bace4fa9f77aaa6166619" title=" " alt="" coords="433,12,598,38"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="82,86,123,52,150,35,180,23,240,9,302,3,363,4,420,10,415,11,363,9,303,9,241,14,181,28,153,40,126,56,86,90"/>
+<area shape="rect" id="Node000003" href="$namespacecalcs__imag.html#adddd621338c5c8d9706786798817a41e" title=" " alt="" coords="430,88,602,114"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="133,99,415,99,413,104,133,104"/>
+<area shape="rect" id="Node000004" href="$namespacecalcs__imag.html#a3ad405b8c5ebd1e9fb6f05a4000de252" title=" " alt="" coords="181,188,378,214"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="86,112,128,144,182,175,198,183,193,183,179,180,125,148,85,117"/>
+<area shape="rect" id="Node000006" href="$namespacecalcs__solvers.html#aa8c6b5791adcbe3d6de3c1cabf121b81" title=" " alt="" coords="208,139,350,165"/>
+<area shape="poly" id="edge6_Node000001_Node000006" title=" " alt="" coords="125,112,211,134,206,136,125,117"/>
+<area shape="rect" id="Node000007" href="$_calcs___k_8f90.html#ad7ba2adf374325a856694f1921ccd03a" title=" " alt="" coords="234,38,324,63"/>
+<area shape="poly" id="edge7_Node000001_Node000007" title=" " alt="" coords="124,85,221,63,217,67,126,90"/>
+<area shape="poly" id="edge4_Node000004_Node000003" title=" " alt="" coords="345,185,377,175,432,148,479,124,484,122,435,153,379,180,346,190"/>
+<area shape="rect" id="Node000005" href="$namespacecalcs__imag.html#adda8c5db71905d0cb3d085de66679926" title=" " alt="" coords="426,188,605,214"/>
+<area shape="poly" id="edge5_Node000004_Node000005" title=" " alt="" coords="378,199,413,201,408,201,378,204"/>
+<area shape="poly" id="edge8_Node000007_Node000002" title=" " alt="" coords="324,43,420,35,415,37,325,48"/>
+<area shape="poly" id="edge9_Node000007_Node000003" title=" " alt="" coords="325,57,441,84,435,85,325,63"/>
+</map>

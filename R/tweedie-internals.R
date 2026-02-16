@@ -27,7 +27,6 @@ dtweedie_logl <- function(phi, y, mu, power) {
   
   # Peter Dunn
   # 26 April 2001
-  
   sum( log( dtweedie( y = y, 
                       mu = mu, 
                       phi = phi, 
@@ -70,7 +69,7 @@ dtweedie_series_bigp <- function(power, y, mu, phi){
   #
   # Error traps
   #
-  
+
   if ( power < 2) stop("power must be greater than 2.")
   if ( any(phi <= 0) ) stop("phi must be positive.")
   if ( any(y <= 0) ) stop("y must be a strictly positive vector.")
@@ -122,7 +121,7 @@ dtweedie_dldphi <- function(phi, mu, power, y ){
   # Peter Dunn
   # 31 Jan 2001
   #
-  
+
   if ( (power != 2 ) & ( power != 1 ) ) {
     
     k <- phi ^ (1 / (power - 2))
@@ -179,7 +178,6 @@ dtweedie_dlogfdphi <- function(y, mu, phi, power)
   # Peter Dunn
   # 31 Jan 2001
   #
-  
   p <- power
   a <- (2 - p) / (1 - p)
   if(length(phi) == 1) {
@@ -258,10 +256,5 @@ dtweedie_dlogfdphi <- function(y, mu, phi, power)
   }
   f
 }
-
-
-
-
-#############################################################################
 
 

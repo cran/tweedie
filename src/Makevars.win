@@ -2,14 +2,15 @@
 PKG_LIBS = $(LAPACK_LIBS) $(BLAS_LIBS) $(SHLIB_OPENMP_LIBS) $(FLIBS)
 
 # EVERY .f90 file from your 'ls' must have a matching .o here:
-OBJECTS = 00tweedie_params.o \
+OBJECTS = init.o \
+          00tweedie_params.o \
           rprintf_mod.o \
           R_interfaces.o \
           Calcs_Real.o \
           Calcs_Imag.o \
           Calcs_Solvers.o \
           Calcs_K.o \
-          TweedieIntZones.o \
+          TweedieIntHelpers.o \
           Integrands.o \
           gaussianData.o \
           GaussQuadrature.o \
@@ -17,7 +18,7 @@ OBJECTS = 00tweedie_params.o \
           accelerate.o \
           findAccelStart.o \
           twcomputation.o \
-          twcomputation_main.o
+          twcomputation_loop.o
 
 all: $(SHLIB)
 
@@ -29,9 +30,9 @@ Calcs_Real.o: 00tweedie_params.o R_interfaces.o
 Calcs_Imag.o: 00tweedie_params.o R_interfaces.o
 Calcs_Solvers.o: 00tweedie_params.o R_interfaces.o
 Calcs_K.o: Calcs_Solvers.o Calcs_Imag.o 00tweedie_params.o R_interfaces.o
-TweedieIntZones.o: Calcs_K.o 00tweedie_params.o R_interfaces.o
+TweedieIntHelpers.o: Calcs_K.o 00tweedie_params.o R_interfaces.o
 Integrands.o: Calcs_Real.o
 gaussianData.o: 00tweedie_params.o rprintf_mod.o
 GaussQuadrature.o: Integrands.o gaussianData.o
-TweedieIntegration.o: Integrands.o GaussQuadrature.o TweedieIntZones.o accelerate.o R_interfaces.o
+TweedieIntegration.o: Integrands.o GaussQuadrature.o TweedieIntHelpers.o accelerate.o R_interfaces.o
 

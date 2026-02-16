@@ -1,0 +1,9 @@
+<map id="integrands_mod::integrands" name="integrands_mod::integrands">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,55,187,80"/>
+<area shape="rect" id="Node000002" href="$namespacecalcs__imag.html#a58d11b6dd22bace4fa9f77aaa6166619" title=" " alt="" coords="242,5,407,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="158,51,249,34,244,36,160,57"/>
+<area shape="rect" id="Node000003" href="$namespacecalcs__real.html#a495e96acbfee7387160af73faa979c6c" title=" " alt="" coords="235,55,414,80"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="187,65,222,67,217,68,188,70"/>
+<area shape="rect" id="Node000004" href="$namespacecalcs__real.html#a79e24fa0de545bccb03e50b5dd040d1f" title=" " alt="" coords="247,104,402,130"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="159,78,249,99,244,101,159,84"/>
+</map>

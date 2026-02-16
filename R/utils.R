@@ -190,10 +190,10 @@ special_cases <- function(y, mu, phi, power, type = "PDF", verbose = FALSE, IGex
     if ( power == 1) {
       if (verbose) cat("power = 1 (Poisson case)\n")
       if (type == "PDF"){
-        f <- stats::dpois(y, 
+        f <- stats::dpois(y/phi, 
                           lambda = mu / phi )
       } else {
-        f <- stats::ppois(y, 
+        f <- stats::ppois(y/phi, 
                           lambda = mu / phi )
       }
     }

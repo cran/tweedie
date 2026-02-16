@@ -78,9 +78,10 @@
 #' \doi{10.1007/978-1-4419-0118-7}
 #'
 #' @examples 
-#' data(Loblolly)
-#' out <- tweedie_profile(height~age, data = Loblolly, 
-#'           do.plot = FALSE, p.vec = seq(3.5, 4.5, length = 7) )
+#' data(rock)
+#' out <- tweedie_profile(perm~1, data=rock, do.plot=FALSE, 
+#'                        xi.vec=seq(1.5, 2.75, length=11))
+#'
 #' # The estimate for the variance power index (p, or xi) is:
 #' out$p.max
 #' 
@@ -288,17 +289,20 @@ tweedie_profile <- function(formula,
   mu.vec <- L
   b.mat  <- array( dim = c(xi.len, length(ydata) ) )
 
+  pBar <- utils::txtProgressBar(min = 1, 
+                         max = xi.len,
+                         style = 2)
   for (i in (1:xi.len)) {
-    
+    utils::setTxtProgressBar(pBar, i)
     if ( verbose > 0) {
       cat( paste(index.par," = ", xi.vec[i], "\n", sep="") )
     } else {
-      cat(".")
+#      cat(".")
     }
 
     # We find the mle of phi.
     # We try to bound it as well as we can, 
-    # then use  uniroot to solve for it.
+    # then use  uniroot()  to solve for it.
     
     # Set things up
     p <- xi.vec[i]
@@ -339,8 +343,7 @@ tweedie_profile <- function(formula,
     } else {
       mu <- fitted( fit.model )
     }
-    if (verbose == 2) cat(" Done\n")
-    
+
     ### -- Start:  Estimate phi
     if (verbose >= 1) cat("* Phi estimation, method: ", phi.method)
     
@@ -419,6 +422,7 @@ tweedie_profile <- function(formula,
                                      phi = phi, 
                                      eps = eps)
       } else {
+
         if (p == 2) {
           L[i] <- sum( log( dgamma( rate = 1 / (phi * mu), 
                                     shape = 1 / phi, 
@@ -479,7 +483,6 @@ tweedie_profile <- function(formula,
   }
   
 
-  if ( verbose == 0 ) cat("Done.\n")
   ### Smoothing
   # If there are infs etc in the log-likelihood,
   # the smooth can't happen.  Perhaps this can be worked around.
@@ -506,7 +509,7 @@ tweedie_profile <- function(formula,
       #         phi.vec.fix <- phi.vec.fix[ !is.infinite(L.fix) ]
       #         L.fix <- L.fix[ !is.infinite(L.fix) ]
       
-      if (verbose >= 1) cat("Smooth perhaps inaccurate--log-likelihood contains  Inf  or  NA.\n")
+      cat("Smooth perhaps inaccurate--log-likelihood contains  Inf  or  NA.\n")
     }
     #else {
     
@@ -517,19 +520,19 @@ tweedie_profile <- function(formula,
       # Smooth the points
       # - get smoothing spline
       ss <- stats::splinefun( xi.vec.fix, 
-                       L.fix )
+                              L.fix )
       
       # Plot smoothed data
       xi.smooth <- seq(min(xi.vec.fix), 
                        max(xi.vec.fix), 
                        length = 50 )
       L.smooth <- ss(xi.smooth )
-      
+            
       if ( do.plot) {
         keep.these <- is.finite(L.smooth) & !is.na(L.smooth)
         L.smooth <- L.smooth[ keep.these ] 
         xi.smooth <- xi.smooth[ keep.these ] 
-        if ( verbose>=1 & any( !keep.these ) ) {
+        if ( (verbose >= 1) & any( !keep.these ) ) {
           cat(" (Some values of L are infinite or NA for the smooth; these are ignored)\n")
         }
         
@@ -554,6 +557,7 @@ tweedie_profile <- function(formula,
                         col = "gray",
                         lwd = 2)
       }
+
       x <- xi.smooth
       y <- L.smooth
       
@@ -594,6 +598,11 @@ tweedie_profile <- function(formula,
     x <- xi.vec
     y <- L
   }
+  
+  if ( any( is.infinite(y)) | any(is.na(y)) ) {
+    cat(" WARNING: Some values of L are infinite or NA\n")
+  }
+  
   if (verbose >= 2) cat(" Done\n")
   
   ### Maximum likelihood estimates

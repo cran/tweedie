@@ -16,5 +16,7 @@ MODULE tweedie_params_mod
   REAL(KIND=C_DOUBLE) :: current_y, current_mu, current_phi
   INTEGER(C_INT)      :: m_shared
 
+  REAL(KIND=C_DOUBLE), PARAMETER :: PI = 4.0_C_DOUBLE * DATAN(1.0_C_DOUBLE)
+
 END MODULE tweedie_params_mod
 

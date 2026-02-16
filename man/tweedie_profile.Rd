@@ -120,9 +120,10 @@ with only a small number of values and set \code{do.smooth = FALSE},
 and smoothing can be used.
 }
 \examples{
-data(Loblolly)
-out <- tweedie_profile(height~age, data = Loblolly, 
-          do.plot = FALSE, p.vec = seq(3.5, 4.5, length = 7) )
+data(rock)
+out <- tweedie_profile(perm~1, data=rock, do.plot=FALSE, 
+                       xi.vec=seq(1.5, 2.75, length=11))
+
 # The estimate for the variance power index (p, or xi) is:
 out$p.max
 

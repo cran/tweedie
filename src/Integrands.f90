@@ -22,12 +22,17 @@ CONTAINS
     REAL(KIND=C_DOUBLE), INTENT(IN)   :: t                ! The internal variable for integration
 
     REAL(KIND=C_DOUBLE)               :: integrand_result ! The result of the function
+    LOGICAL(C_BOOL)                   :: errorHere
      
     
     ! Grab the relevant scalar values for this iteration:
     current_y    = Cy(i)
     current_mu   = Cmu(i)
-
+    
+    ! Initialise
+    integrand_result = 0.0_C_DOUBLE
+    Rek = 0.0_C_DOUBLE
+    Imk = 0.0_C_DOUBLE
 
     ! Check for when t = 0 (t is very close to zero)
     IF (ABS(t) .LT. 1.0E-14_C_DOUBLE) THEN
@@ -37,10 +42,16 @@ CONTAINS
   
       RETURN
     ELSE
-      CALL evaluateRek(t, Rek)
-      CALL evaluateImk(t, Imk, error)
-      IF (error) CALL DBLEPR("ERROR: integrand zero =", -1, t, 1)
-      
+      CALL evaluateRek(t, Rek, errorHere)
+      IF (errorHere) error = .TRUE.
+!CALL INTPR("Integrands1: error", -1, MERGE(1, 0, error), 1)
+      IF (error) RETURN
+    
+      CALL evaluateImk(t, Imk, errorHere)
+      IF (errorHere) error = .TRUE.
+!CALL INTPR("Integrands1: error", -1, MERGE(1, 0, error), 1)
+      IF (error) RETURN 
+
       IF (Cpdf) THEN
         IF (CpSmall) THEN
           CALL evaluateLambda(lambda)

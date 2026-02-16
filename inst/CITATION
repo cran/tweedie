@@ -29,10 +29,10 @@ bibentry(
 bibentry(
 	bibtype = "Manual",
 	author = "Peter K. Dunn",
- 	year = 2022,
-  note = "R package version 3.0.5",
+ 	year = 2026,
+  note = "R package version 3.0.14",
  	title = "Tweedie: Evaluation of Tweedie Exponential Family Models",
-	textVersion = "Dunn, P. K. (2022).  Tweedie: Evaluation of Tweedie exponential family models. R package version 2.3."
+	textVersion = "Dunn, P. K. (2026).  Tweedie: Evaluation of Tweedie exponential family models. R package version 2.3."
 
 )
 

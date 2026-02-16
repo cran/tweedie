@@ -17,7 +17,7 @@
 #' @param details logical; if \code{TRUE}, return a list with basic details of the integration. The default is \code{FALSE}.
 #' @param IGexact logical; if \code{TRUE} (the default), evaluate the inverse Gaussian distribution using the 'exact' values, otherwise uses inversion.
 #'
-#' @return A numeric vector of densities if \code{details=FALSE}; if \code{details=TRUE}, return a list with \code{density} (the density values), \code{regions} (the number of integration regions used) and \code{methods} (which of the three methods was used).
+#' @return A numeric vector of densities if \code{details=FALSE}; if \code{details = TRUE}, a list containing \code{denisty} (a vector of the values of the density), \code{regions} (a vector of the number of integration regions used),\code{method} (a vector giving the evaluation method used; see the Note below on the three methods), and \code{exitstatus} (a vector, where a \code{1} for any value means a computational problem or target relative accuracy not reached, for the corresponding observation).
 #' 
 #' @note
 #' The 'exact' values for the inverse Gaussian distribution are not really exact, but evaluated using inverse normal distributions,
@@ -56,6 +56,11 @@ dtweedie_inversion <- function(y, mu, phi, power, method = 3, verbose = FALSE,
                                details = FALSE, IGexact = TRUE){ 
   ### NOTE: No notation checks
   
+  # Check
+  if (length(y) == 0L) {
+    return(numeric(0))
+  }
+  
   # CHECK THE INPUTS ARE OK AND OF CORRECT LENGTHS
   if (verbose) cat("- Checking, resizing inputs\n")
   out <- check_inputs(y, mu, phi, power)
@@ -65,6 +70,7 @@ dtweedie_inversion <- function(y, mu, phi, power, method = 3, verbose = FALSE,
   # cdf    is the whole vector; the same length as  y.
   # All is resolved in the end.
   density <- numeric(length = length(y) )
+  regions <- rep(NA, length(y)) 
   
   # IDENTIFY SPECIAL CASES
   special_y_cases <- rep(FALSE, length(y))
@@ -87,7 +93,6 @@ dtweedie_inversion <- function(y, mu, phi, power, method = 3, verbose = FALSE,
   if ( special_p_cases ) {
     density <- out$f
     optimal_Method <- array(NA, dim = length(y)) 
-    regions <- array(NA, dim = length(y)) 
   } else {
 		# NOT special p case; ONLY special y cases 
 		
@@ -199,7 +204,7 @@ dtweedie_inversion <- function(y, mu, phi, power, method = 3, verbose = FALSE,
 		
 		density[!special_y_cases] <- tmp$funvalue
 		regions[!special_y_cases] <- tmp$its
-		
+
 		# Reconstruct
 		if (any(optimal_Method == 1)){
 			use_M1 <- optimal_Method==1
@@ -220,7 +225,8 @@ dtweedie_inversion <- function(y, mu, phi, power, method = 3, verbose = FALSE,
   if (details) {
     return( list( density = density,
                   regions = regions,
-                  method = optimal_Method))
+                  method = optimal_Method,
+                  exitstatus = tmp$exitstatus))
   } else {
     return(density)
   }

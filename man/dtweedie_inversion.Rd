@@ -28,7 +28,7 @@ dtweedie.inversion(y, power, mu, phi, method = 3, verbose, details)
 \item{IGexact}{logical; if \code{TRUE} (the default), evaluate the inverse Gaussian distribution using the 'exact' values, otherwise uses inversion.}
 }
 \value{
-A numeric vector of densities if \code{details=FALSE}; if \code{details=TRUE}, return a list with \code{density} (the density values), \code{regions} (the number of integration regions used) and \code{methods} (which of the three methods was used).
+A numeric vector of densities if \code{details=FALSE}; if \code{details = TRUE}, a list containing \code{denisty} (a vector of the values of the density), \code{regions} (a vector of the number of integration regions used),\code{method} (a vector giving the evaluation method used; see the Note below on the three methods), and \code{exitstatus} (a vector, where a \code{1} for any value means a computational problem or target relative accuracy not reached, for the corresponding observation).
 }
 \description{
 Evaluates the probability density function (\acronym{pdf}) for Tweedie distributions using Fourier inversion, 

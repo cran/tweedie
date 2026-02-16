@@ -1,3 +1,15 @@
+tweedie 3.0.14 (Release date: 2026-02-16)
+==============
+
+Changes:
+
+* Improved the vignette.
+* Some internal renaming.
+* Fix some xi = 1 cases (thanks Milan Bouchet-Valat).
+* Relocate some messages in tweedie_profile().
+* Add poison example to vignette.
+
+
 tweedie 3.0.12 (Release date: 2026-02-07)
 ==============
 
@@ -12,9 +24,10 @@ tweedie 3.0.5 (Release date: 2026-01-30)
 
 Changes:
 
-* FORTRAN code restructured to make the similar flow in the three zones (initial; pre; accel) clearer
+* FORTRAN code restructured to make the similar flow in the three zones 
+  (initial; pre-acceleration; acceleration) clearer
 * Some fixes to documentation to pass tests.
-* Some minor fizes to R code.
+* Some minor fixes to R code.
 
 
 
@@ -178,7 +191,7 @@ tweedie 2.0.7 (Release date: 2010-09-30)
 Changes:
 
 * Ensured tweedie.profile() does not use power = 1.  This case (power=1 and phi not equal to 1) is too hard for me to deal with at present.
-* Fixed an error introduced in version 2.0.5, where the value of xi/vec/p.vec was set to 1.2 (y >= 0) or 1.5 (y > 0) when not explicitly specified
+* Fixed an error introduced in version 2.0.5, where the value of xi.vec/p.vec was set to 1.2 (y >= 0) or 1.5 (y > 0) when not explicitly specified
 * Fixed an error that reported the wrong mle of phi when the mle occurred at an endpoint of the given  xi  values.
 
 tweedie 2.0.5 (Release date: 2010-08-27)

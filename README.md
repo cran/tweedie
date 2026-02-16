@@ -61,4 +61,4 @@ For $\xi \ge 2$, the distributions have support on the positive reals.
 
 The vignette contains examples.
 
-<!-- REMEMBER to commit and push the resulting figure files, so they display on GitHub and CRAN. -->
+<!-- REMEMBER: commit and push the resulting figure files, so they display on GitHub and CRAN. -->

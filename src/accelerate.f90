@@ -1,7 +1,8 @@
+
 SUBROUTINE accelerate(xvec, wvec, nzeros, Mmatrix, Nmatrix, West)
   ! Accelerate the convergence of the infinite integral., the tail area
   
-  USE ISO_C_BINDING, ONLY: C_INT, C_DOUBLE
+  USE ISO_C_BINDING, ONLY: C_INT, C_DOUBLE, C_BOOL
   
   IMPLICIT NONE
   
