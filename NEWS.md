@@ -1,4 +1,4 @@
-tweedie 3.0.15 (Release date: 2026-02-25)
+tweedie 3.0.16 (Release date: 2026-02-26)
 ==============
 
 Changes:
@@ -7,7 +7,7 @@ Changes:
   (thanks Milan Bouchet-Valat).
 * Added a test to prevent this again.
 * Relocated hex.R and fixed the hex-producing script.
-
+* Fix Makefile.
 
 tweedie 3.0.14 (Release date: 2026-02-16)
 ==============

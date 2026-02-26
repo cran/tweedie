@@ -1,6 +1,6 @@
-467e81d5df127bc961c4024edcdca3f1 *DESCRIPTION
+dce4fd83510a419fa31a0a0a22a96e2f *DESCRIPTION
 902603df1454ec16ecc1b7299e097b2b *NAMESPACE
-f9b5f7fda74b9773b691a23160bc9294 *NEWS.md
+b8864a235be24e416b93ec4a802ffd92 *NEWS.md
 72c582e36a69086077043bf2a24a53cc *R/dtweedie_interpolation.R
 df342ea26c6f480efdaf9f2583b49b49 *R/dtweedie_inversion.R
 3d39869bc017fa8b2db8e210ab83980e *R/dtweedie_saddle.R
@@ -26,7 +26,7 @@ feaae713088b784a3df47239f76b21ee *R/zzz.R
 5b12a816b57d2832f02b60b26d08c1cf *cleanup
 c6322a71827cae280a01a5ed7e124445 *configure
 7a66fa7d6fa9bc032e2e8eab202342e2 *configure.win
-66dc212b0afcf89257609f779c42d787 *inst/CITATION
+3da8208e29f59b00d091e050c145f91d *inst/CITATION
 90a5cd41cf4bc5c6ccee741578ce5324 *inst/doc/tweedie.R
 d75f4537920fe620315a2500e0016c98 *inst/doc/tweedie.Rmd
 2074ddf87e17d3f4dc16149cf406725e *inst/doc/tweedie.html
