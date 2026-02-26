@@ -1,3 +1,14 @@
+tweedie 3.0.15 (Release date: 2026-02-25)
+==============
+
+Changes:
+
+* Fixed an error with xi = 1 and phi \ne 1 in qtweedie
+  (thanks Milan Bouchet-Valat).
+* Added a test to prevent this again.
+* Relocated hex.R and fixed the hex-producing script.
+
+
 tweedie 3.0.14 (Release date: 2026-02-16)
 ==============
 

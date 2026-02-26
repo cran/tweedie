@@ -588,7 +588,7 @@ qtweedie <- function(p, xi = NULL, mu, phi, power = NULL){
     if ( pwr < 2 ) {
       qp <- stats::qpois(prob, 
                          lambda = mu.1 / phi.1)
-      if ( pwr == 1 ) ans[i] <- qp   
+      if ( pwr == 1 ) ans[i] <- phi.1 * qp   
     }
     
     qg <- stats::qgamma(prob,  
@@ -599,7 +599,7 @@ qtweedie <- function(p, xi = NULL, mu, phi, power = NULL){
     # Starting values
     # - for 1 < pwr < 2, linearly interpolate between Poisson and gamma
     if ( (pwr > 1) & ( pwr < 2) ) {
-      start <- (qg - qp) * pwr + (2 * qp - qg)
+      start <- (qg - phi.1 * qp) * pwr + (2 * phi.1 * qp - qg)
     }
     
     # - for pwr > 2, start with gamma
