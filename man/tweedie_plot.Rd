@@ -27,7 +27,7 @@ tweedie.plot(
 
 \item{phi}{the dispersion parameter \eqn{\phi}{phi}.}
 
-\item{type}{the type of plot, either \code{PDF} (the default) or \code{CDF}.}
+\item{type}{the type of plot, either \code{pdf} (the default) or \code{cdf}.}
 
 \item{power}{the variance power \eqn{p}{power}.}
 

@@ -33,7 +33,7 @@ CONTAINS
     INTEGER(C_INT), INTENT(IN)          :: i
     LOGICAL(C_BOOL)                     :: error
   
-    REAL(KIND=C_DOUBLE)     :: t_Start_Point, slope_At_Zero, Imk_value
+    REAL(KIND=C_DOUBLE)     :: t_Start_Point, slope_At_Zero
     REAL(KIND=C_DOUBLE)     :: aimrerr, tmaxL, tmaxR, ratio, threshold, t_small
     LOGICAL(C_BOOL)         :: errorHere
     
@@ -58,6 +58,7 @@ CONTAINS
   
   
     ! Find starting points
+    errorHere = .FALSE._C_BOOL
     CALL evaluateImkd(0.0_C_DOUBLE, slope_At_Zero, errorHere)
     IF (errorHere) THEN
       error = .TRUE.
@@ -79,7 +80,7 @@ CONTAINS
     ELSE
       ! B. CASE: IF slope is initially UPWARDS: trickier, esp. with 1 < p < 2
       !    Need to solve  Im k'(t) = 0.
-  
+
       IF ( ( current_y ** (1.0_C_DOUBLE - Cp) / current_phi) .GT.  &
            (10.0_C_DOUBLE * threshold ) ) THEN 
         ! B.1. Sometimes kmax and co are MASSIVE, making things slow and difficult, and 
@@ -224,7 +225,7 @@ CONTAINS
       SUBROUTINE improveKmaxSPBounds(startTKmax, tmaxL, tmaxR, error)
         ! Crudely improve the bounds that bracket the starting point for finding Kmax.
         ! Sometime a decent starting point is crucial for timely convergence.
-        USE ISO_C_BINDING, ONLY: C_INT, C_DOUBLE
+        USE ISO_C_BINDING, ONLY: C_INT, C_DOUBLE, C_BOOL
       
         IMPLICIT NONE
         REAL(KIND=C_DOUBLE), INTENT(IN)     :: startTKmax
@@ -233,11 +234,13 @@ CONTAINS
         ! --- Local Variables ---
         REAL(KIND=C_DOUBLE)     :: boundL, boundR, slopeL, slopeR
         REAL(KIND=C_DOUBLE)     :: oldBoundL, oldBoundR
+        REAL(KIND=C_DOUBLE)     :: Imk_value
         INTEGER(C_INT)          :: max_Search, search_Its
-        LOGICAL(C_BOOL)         :: keep_Searching, error
+        LOGICAL(C_BOOL)         :: keep_Searching, error, errorHere
         
 
         max_Search = 10
+        errorHere = .FALSE._C_BOOL
         
         !!!!! LOWER BOUND
         !   - If slope at SP is *positive* (which it should be), only need to creep to the right
