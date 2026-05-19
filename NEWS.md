@@ -1,11 +1,30 @@
+tweedie 3.1.0 (Release date: )
+==============
+
+## Summary
+Minor fixes and improvements
+
+## Changed
+* Added  details  input to dtweedie_series(), that returns the  lo  and  hi  index for the summing of terms.
+  Other necessary changes made downstream.
+* Added (tweedie_integrand(), tweedie_profile()) and improved (tweedie_plot()) the passing of plotting parameters.
+
+## Fixed
+* Fixed tweedie_integrand: Plot 2 now plots cos( Im k(t) ) for the PDF (not sin).
+
+
+
 tweedie 3.0.19 (Release date: 2026-04-26)
 ==============
 
-Changes:
+## Summary
+Minor fixes and improvements
 
+## Changed
 * Improvements to tweedie_plot() and passing plotting options
-* Fix error with accelerate when returning early: return properly
-  (Thanks Jeonghwan Lee)
+
+## Fixed
+* Fix error with accelerate when returning early: return properly(Thanks Jeonghwan Lee)
 
 
 tweedie 3.0.17 (Release date: 2026-02-26)

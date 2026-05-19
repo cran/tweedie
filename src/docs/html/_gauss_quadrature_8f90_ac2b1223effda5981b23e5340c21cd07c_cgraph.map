@@ -1,0 +1,11 @@
+<map id="gaussquadrature" name="gaussquadrature">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,55,123,80"/>
+<area shape="rect" id="Node000002" href="$namespaceintegrands__mod.html#ab40aee3def130dac27809497d3d0f9ca" title=" " alt="" coords="171,55,352,80"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="123,65,158,67,153,68,124,70"/>
+<area shape="rect" id="Node000003" href="$namespacecalcs__imag.html#a58d11b6dd22bace4fa9f77aaa6166619" title=" " alt="" coords="407,5,572,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="324,51,414,34,409,36,325,57"/>
+<area shape="rect" id="Node000004" href="$namespacecalcs__real.html#a495e96acbfee7387160af73faa979c6c" title=" " alt="" coords="400,55,579,80"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="352,65,387,67,382,68,353,70"/>
+<area shape="rect" id="Node000005" href="$namespacecalcs__real.html#a79e24fa0de545bccb03e50b5dd040d1f" title=" " alt="" coords="412,104,567,130"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="325,78,414,100,409,100,324,84"/>
+</map>

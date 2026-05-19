@@ -4,7 +4,8 @@
 #'
 #' @usage
 #' tweedie_integrand(y, power, mu, phi, t = seq(0, 5, length = 200), 
-#'                   type = "PDF", whichPlots = 1:4, yLimits = NULL)
+#'                   type = "PDF", whichPlots = 1:4, 
+#'                   plot_args  = list())
 #'
 #' @param y vector of quantiles.
 #' @param power a synonym for \eqn{\xi}{xi}; the Tweedie power-index on the variance.
@@ -13,7 +14,8 @@
 #' @param t the values of the variable over which to integrate; the default is \code{t = seq(0, 5, length = 200)}.
 #' @param type either \code{"PDF"} (the default) for the (probability) density function, or \code{"CDF"} for the (cumulative) distribution function.
 #' @param whichPlots which combination of the four plots (described below) are produced; by default, all four are produced (i.e., \code{whichPlots = 1:4}).
-#' @param yLimits the \eqn{y}{y}-limits to use when plotting the integrand; the default is \code{NULL} which uses R defaults.
+#' @param plot_args A named list of arguments controlling the main plot.
+#'   These are passed to \code{\link[graphics]{plot}}.
 #'
 #' @details The Tweedie family of distributions belong to the class of exponential dispersion models (\acronym{edm}s), famous for their role in generalized linear models. 
 #' The Tweedie distributions are the \acronym{edm}s with a variance of the form \eqn{\mbox{var}[Y] = \phi\mu^p}{var(Y) = phi * mu^power} where \eqn{p}{power} is greater than or equal to one, or less than or equal to zero.
@@ -29,7 +31,7 @@
 #' @return A list containing the real and imaginary parts of \eqn{k(t)}{k(t)}, \code{Real} and \code{Imag} respectively, plus the values of the integrand as \code{IG}.
 #' The main purpose of the function is the side-effect of producing a \eqn{2\times2}{2x2} grid of plots.
 #' The first is the imaginary parts of \eqn{k(t)}{k(t)}.
-#' The second is \eqn{\sin\Im k(t)}{sinIm[k(t)]}.
+#' The second is \eqn{\cos\Im k(t)}{sinIm[k(t)]} (for \code{type=="PDF"}) or \eqn{\sin\Im k(t)}{sinIm[k(t)]} (for \code{type=="CDF"}).
 #' The third is the real part of \eqn{\Re k(t)}{Re[k(t)]}
 #' The fourth is the integrand, with the envelope shown as a dashed line.
 #'
@@ -49,7 +51,8 @@
 #' Tweedie, M. C. K. (1984). An index which distinguishes between some important exponential families. \emph{Statistics: Applications and New Directions. Proceedings of the Indian Statistical Institute Golden Jubilee International Conference} (Eds. J. K. Ghosh and J. Roy), pp. 579-604. Calcutta: Indian Statistical Institute.
 #'
 #' @examples
-#' tweedie_integrand(2, power = 3, mu = 1, phi = 1)
+#' tweedie_integrand(2, power = 3, mu = 1, phi = 1,
+#'                   plot_args = list(lwd = 2))
 #'
 #' @seealso \code{\link{dtweedie}}
 #' 
@@ -60,7 +63,7 @@
 tweedie_integrand <- function(y, power, mu, phi, 
                               t = seq(0, 5, length = 200), 
                               type = "PDF", whichPlots = 1:4, 
-                              yLimits = NULL) {
+                              plot_args  = list()) {
 
   # BEGIN: Define function to be used
   k <- function(p, mu, phi, y, t){
@@ -75,6 +78,19 @@ tweedie_integrand <- function(y, power, mu, phi,
                  Imag = Imag) )
   }
   # END: Define function to be used
+  
+  
+  
+  # BEGIN: Check for some given parameters supplied via args
+  plot_defaults <- list(
+    las = 1,
+    xlab = expression(Values~of~italic(t)),
+    col = "black", 
+    lwd = 2)
+  
+  plot_args  <- utils::modifyList(plot_defaults, 
+                                  plot_args)
+  # END: Check for some given parameters supplied via args
 
   
   kvals <- k(p = power, 
@@ -104,15 +120,20 @@ tweedie_integrand <- function(y, power, mu, phi,
             par( mfrow = c(1, 1))
     )
   }
+
+  ###
   ### PLOT 1: Im k(t) vs t
+  ###
   if (1 %in% whichPlots) {
-    plot(k_Imag ~ t,
-         main = expression( bold(Imaginary~part~of~italic(k)*(italic(t)))),
-         xlab = expression(Values~of~italic(t)),
-         ylab = expression(Im*"("*italic(k)*")"),
-         las = 1,
-         lwd = 2,
-         type = "l")
+    do.call(plot,
+            c(list(
+              x = t,
+              y = k_Imag,
+              type = "l",
+              main = expression( bold(Imaginary~part~of~italic(k)*(italic(t)))),
+              ylab = expression(Im*"("*italic(k)*")")),
+              plot_args
+            ))
     
     # Determine  m  values to display
     mMax <- max(0, max(kvals$Imag)) / pi + ifelse(type == "CDF", 0, pi/2)
@@ -139,47 +160,68 @@ tweedie_integrand <- function(y, power, mu, phi,
          labels = mValues )
   }
   
-  
-  ### PLOT 2: sin( Im k(t) ) vs t
+  ###
+  ### PLOT 2: cos( Im k(t) ) (PDF) or sin( Im k(t) ) (CDF) vs t
+  ###
   if (2 %in% whichPlots){
-    plot(sin(k_Imag) ~ t,
-         main = expression(sin(Im*"("*italic(k)*")")),
-         xlab = expression(Values~of~italic(t)),
-         ylab = expression(sin(Im*"("*italic(k)*")")),
-         las = 1,
-         lwd = 2,
-         type = "l")
+    if (type == "PDF"){
+      do.call(plot,
+              c(list(
+                x = t,
+                y = cos(k_Imag),
+                type = "l",
+                main = expression(cos(Im*"("*italic(k)*")")),
+                ylab = expression(cos(Im*"("*italic(k)*")"))),
+                plot_args
+              ))
+    } else {
+      do.call(plot,
+              c(list(
+                x = t,
+                y = sin(k_Imag),
+                type = "l",
+                main = expression(sin(Im*"("*italic(k)*")")),
+                ylab = expression(cos(Im*"("*italic(k)*")"))),
+                plot_args 
+              ))
+    }
     abline(h = 0, 
            col="grey")
   }
   
   
-  
+  ###
   ### PLOT 3: sin( Re k(t) ) vs t
-    if (3 %in% whichPlots) {
-    plot(k_Real ~ t,
-         main = "Real part of k(t)",
-         xlab = expression(Values~of~italic(t)),
-         ylab = expression(Re*"("*italic(k)*")"),
-         las = 1,
-         lwd = 2,
-         type = "l")
+  ###
+  if (3 %in% whichPlots) {
+    do.call(plot,
+            c(list(
+              x = t,
+              y = k_Real,
+              type = "l",
+              main = "Real part of k(t)",
+              ylab = expression(Re*"("*italic(k)*")")),
+              plot_args 
+            ))
     abline(h = 0, 
            col="grey")
     }
   
   
+  ###
   ### PLOT 4: Integrand
+  ###
   if (4 %in% whichPlots) {  
-    plot(  igrand ~ t,
-          main = "Integrand",
-          xlab = expression(Values~of~italic(t)),
-          ylab = "Integrand",
-          las = 1,
-          ylim = yLimits,
-          #ylim = c(-0.0001, 0.0001),
-          lwd = 2,
-          type = "l")
+    do.call(plot,
+            c(list(
+              x = t,
+              y = igrand,
+              type = "l",
+              main = "Integrand",
+              ylab = "Integrand"),
+              plot_args 
+            ))
+
     abline(h = 0, 
            col="grey")
     lines(x = t,

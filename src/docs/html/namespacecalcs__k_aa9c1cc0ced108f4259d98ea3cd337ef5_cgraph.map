@@ -1,0 +1,9 @@
+<map id="calcs_k::improvekzerobounds" name="calcs_k::improvekzerobounds">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,31,200,56"/>
+<area shape="rect" id="Node000002" href="$namespacecalcs__imag.html#a8e9fa78847250c552f1676695f9062da" title=" " alt="" coords="248,31,424,56"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="200,41,235,43,229,44,201,46"/>
+<area shape="rect" id="Node000003" href="$namespacecalcs__imag.html#a58d11b6dd22bace4fa9f77aaa6166619" title=" " alt="" coords="476,5,641,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="424,31,457,30,462,29,425,36"/>
+<area shape="rect" id="Node000004" href="$namespacecalcs__imag.html#adddd621338c5c8d9706786798817a41e" title=" " alt="" coords="472,55,644,80"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="425,50,459,57,454,57,425,56"/>
+</map>

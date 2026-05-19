@@ -5,12 +5,13 @@
 #' for given values of the dependent variable \code{y}, the mean \code{mu}, dispersion \code{phi}, and power parameter \code{power}.
 #' \emph{Not usually called by general users}, but can be used in the case of evaluation problems.
 #'
-#' @usage dtweedie_series(y, power, mu,phi)
+#' @usage dtweedie_series(y, power, mu, phi, details = FALSE)
 #'
 #' @param y vector of quantiles.
 #' @param power scalar; the value of \eqn{p}{power} such that the variance is \eqn{\mbox{var}[Y]=\phi\mu^{p}}{var[Y] = phi * mu^power}.
 #' @param mu vector of mean \eqn{\mu}{mu}.
 #' @param phi vector of dispersion parameters \eqn{\phi}{phi}.
+#' @param details logical; if \code{TRUE}, returns the value of the distribution function and some details.
 #' 
 #' @return A numeric vector of densities.
 #' 
@@ -33,7 +34,7 @@
 #' @keywords distribution
 #'
 #' @export
-dtweedie_series <- function(y, power, mu, phi){ 
+dtweedie_series <- function(y, power, mu, phi, details = FALSE){ 
   # Evaluates the Tweedie density using a series expansion
   
   if ( power < 1) stop("power must be between 1 and 2.")
@@ -56,7 +57,7 @@ dtweedie_series <- function(y, power, mu, phi){
   
   y0 <- (y == 0)
   yp <- (y != 0)
-  density <- array( dim = length(y))
+  density <- lo <- hi <-array( dim = length(y))
   
   if ( (power == 2) | (power == 1) ) { # Special cases
     if ( power == 2 ){
@@ -91,22 +92,34 @@ dtweedie_series <- function(y, power, mu, phi){
     
     if ( any( y!= 0 ) ) { 
       if (power > 2) {
-        density[yp] <- dtweedie_series_bigp(power = power,
-                                            mu = mu[yp], 
-                                            y = y[yp],
-                                            phi = phi[yp])$density
+        out <- dtweedie_series_bigp(power = power,
+                                    mu = mu[yp], 
+                                    y = y[yp],
+                                    phi = phi[yp])
+        density[yp] <- out$density 
+        lo[yp] <- out$lo
+        hi[yp] <- out$hi
       }
       
       if ( ( power > 1 ) && ( power < 2 ) ) {
-        density[yp] <- dtweedie_series_smallp(power = power,
-                                              mu = mu[yp], 
-                                              y = y[yp],
-                                              phi = phi[yp])$density
+        out <- dtweedie_series_smallp(power = power,
+                                      mu = mu[yp], 
+                                      y = y[yp],
+                                      phi = phi[yp])
+        density[yp] <- out$density 
+        lo[yp] <- out$lo
+        hi[yp] <- out$hi
       }
     }
   }
   
-  density
+  if (details) {
+    return(list( density = density,
+                 lo = lo,
+                 hi = hi) )
+  } else {
+    return(density)
+  }
   
 }
 
@@ -180,7 +193,7 @@ dtweedie_series_smallp <- function(power, y, mu, phi){
 
 
 #' @noRd
-dtweedie_jw_smallp <- function(y, phi, power ){ 
+dtweedie_jw_smallp <- function(y, phi, power){ 
   #
   # Peter K Dunn
   # 18 Jun 2002
@@ -602,4 +615,58 @@ dtweedie_logw_smallp <- function(y, phi, power){
        j.max = j.max )
   
 }
+
+
+
+#############################################################################
+
+#' @noRd
+dtweedie_series_bigp <- function(power, y, mu, phi){ 
+  
+  # 
+  # Peter K Dunn 
+  # 02 Feb 2000 
+  # 
+  
+  #
+  # Error traps
+  #
+  
+  if ( power < 2) stop("power must be greater than 2.")
+  if ( any(phi <= 0) ) stop("phi must be positive.")
+  if ( any(y <= 0) ) stop("y must be a strictly positive vector.")
+  if ( any(mu <= 0) ) stop("mu must be positive.")
+  if ( length(mu) > 1) {
+    if ( length(mu) != length(y) ) stop("mu must be scalar, or the same length as y.")
+  } else {
+    mu <- array( dim = length(y), mu )
+    # A vector of all mu's
+  }
+  if ( length(phi) > 1) {
+    if ( length(phi) != length(y) ) stop("phi must be scalar, or the same length as y.")
+  } else {
+    phi <- array( dim = length(y), phi )
+    # A vector of all phi's
+  }
+  
+  
+  result <- dtweedie_logv_bigp(power = power, 
+                               y = y, 
+                               phi = phi)
+  logv <- result$logv
+  
+  theta <- mu ^ (1 - power) / ( 1 - power )
+  kappa <- mu ^ (2 - power) / ( 2 - power )
+  
+  logfnew <- (y * theta - kappa) / phi - log( pi * y) + logv
+  f <- exp( logfnew )
+  
+  return( list(density = f,
+               logv = logv, 
+               lo = result$lo, 
+               hi = result$hi ) )
+  
+}
+
+
 

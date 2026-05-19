@@ -11,7 +11,8 @@
 #'   trace = glm.control()$trace ),
 #'   do.points = do.plot, method = "inversion", conf.level = 0.95, 
 #'   phi.method = ifelse(method == "saddlepoint", "saddlepoint", "mle"), 
-#'   verbose = FALSE, add0 = FALSE)
+#'   verbose = FALSE, add0 = FALSE,
+#'   plot_args = list(), point_args = list(), line_args = list())
 #'   
 #' @details
 #' For each value in \code{p.vec}, the function computes an estimate of \eqn{\phi}{phi}
@@ -70,6 +71,12 @@
 #' @param phi.method the method used to estimate \eqn{\phi}{phi}; one of \code{saddlepoint}, \code{mle} (the default).
 #' @param verbose logical; if \code{TRUE}, some details of the calculations are shown. The default is \code{FALSE}.
 #' @param add0 logical; if \code{TRUE}, adds \eqn{P(Y = 0)}{P(Y = 0)} to the plot. The default is \code{FALSE}.
+#' @param plot_args A named list of arguments controlling the main plot.
+#'   These are passed to \code{\link[graphics]{plot}}.
+#' @param point_args A named list of graphical parameters for plotted points.
+#'   These are passed to \code{\link[graphics]{points}}.
+#' @param line_args A named list of graphical parameters for plotted lines.
+#'   These are passed to \code{\link[graphics]{lines}}.
 #' 
 #' @references
 #' Dunn, P. K. and Smyth, G. K. (2018).
@@ -80,7 +87,8 @@
 #' @examples 
 #' data(rock)
 #' out <- tweedie_profile(perm~1, data=rock, do.plot=FALSE, 
-#'                        xi.vec=seq(1.5, 2.75, length=11))
+#'                        xi.vec=seq(1.5, 2.75, length=11),
+#'                        line_arg = list(lwd = 2))
 #'
 #' # The estimate for the variance power index (p, or xi) is:
 #' out$p.max
@@ -111,7 +119,10 @@ tweedie_profile <- function(formula,
                             conf.level = 0.95, 
                             phi.method = ifelse(method == "saddlepoint", "saddlepoint", "mle"), 
                             verbose = FALSE, 
-                            add0 = FALSE) {
+                            add0 = FALSE,
+                            plot_args  = list(),
+                            point_args = list(),
+                            line_args  = list()) {
   # verbose gives feedback on screen:
   #    0 : minimal (FALSE)
   #    1 : small amount (TRUE)
@@ -129,6 +140,25 @@ tweedie_profile <- function(formula,
   
   # Peter Dunn
   # 07 Dec 2004
+  
+  
+  # BEGIN: Check for some given parameters supplied via args
+  plot_defaults <- list(
+    col = "black"
+  )
+  point_defaults <- list(pch = 19,
+                         col = "black",
+                         cex = 1)
+  line_defaults  <- list(col = "black", 
+                         lwd = 1)
+  
+  plot_args  <- utils::modifyList(plot_defaults, 
+                                  plot_args)
+  point_args <- utils::modifyList(point_defaults, 
+                                  point_args)
+  line_args  <- utils::modifyList(line_defaults, 
+                                  line_args)
+  # END: Check for some given parameters supplied via args
   
   
   if ( is.logical( verbose ) ) verbose <- as.numeric(verbose)
@@ -538,19 +568,32 @@ tweedie_profile <- function(formula,
         
         yrange <- range( L.smooth, na.rm = TRUE )
         
-        plot( yrange ~ range(xi.vec),
-              type = "n",
-              las = 1,
-              xlab = ifelse(xi.notation, 
-                            expression(paste( xi, " index")), 
-                            expression(paste( italic(p), " index")) ),
-              ylab = expression(italic(L)))
-        lines( xi.smooth, L.smooth,
-               lwd = 2)
+        do.call(plot,
+                c(list(
+                  x = range(xi.vec),
+                  y = yrange,
+                  type = "n",
+                  las = 1,
+                  xlab = ifelse(xi.notation, 
+                                expression(paste( xi, " index")),
+                                expression(paste( italic(p), " index")) ),
+                  ylab = expression(italic(L))
+                ),
+                plot_args))
+
+        do.call(lines,
+                c(list(
+                  x = xi.smooth,
+                  y = L.smooth),
+                line_args))
+        
         rug( xi.vec )
         if (do.points) {
-          points( L ~ xi.vec, 
-                  pch = 19)
+          do.call(points,
+                  c(list(
+                    x = xi.vec,
+                    y - L),
+                  point_args))
         }
         if (add0) lines(xi.smooth[xi.smooth < 1], 
                         L.smooth[xi.smooth < 1], 
@@ -578,21 +621,32 @@ tweedie_profile <- function(formula,
       
       yrange <- range( L, na.rm = TRUE )
       # Plot the data we have
-      plot( yrange ~ range(xi.vec),
-            type = "n",     
-            las = 1,
-            xlab = ifelse( xi.notation, 
-                           expression(paste(xi, " index")), 
-                           expression(paste(italic(p), " index")) ),
-            ylab=expression(italic(L)))
-      lines( L ~ xi.vec, 
-             lwd = 2)
+      do.call(plot,
+              c(list(
+                x = range(xi.vec),
+                y = yrange,
+                type = "n",
+                xlab = ifelse( xi.notation, 
+                               expression(paste(xi, " index")), 
+                               expression(paste(italic(p), " index")) ),
+                ylab=expression(italic(L))),
+                plot_args))
+
+      do.call(lines,
+              c(list(
+                x = xi.vec,
+                y = L),
+              line_args
+              ))
       
       rug( xi.vec )
       if (do.points) {
-        points( L ~ xi.vec, 
-                pch = 19)
-      }
+        do.call(points,
+                c(list(
+                  x = xi.vec,
+                  y - L),
+                point_args))
+        }
       
     }
     x <- xi.vec

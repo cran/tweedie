@@ -12,7 +12,8 @@ tweedie_profile(formula, p.vec = NULL, xi.vec = NULL, link.power = 0,
   trace = glm.control()$trace ),
   do.points = do.plot, method = "inversion", conf.level = 0.95, 
   phi.method = ifelse(method == "saddlepoint", "saddlepoint", "mle"), 
-  verbose = FALSE, add0 = FALSE)
+  verbose = FALSE, add0 = FALSE,
+  plot_args = list(), point_args = list(), line_args = list())
 
 tweedie.profile(
   formula,
@@ -89,6 +90,15 @@ The defaults is the value of \code{do.plot}.}
 \item{verbose}{logical; if \code{TRUE}, some details of the calculations are shown. The default is \code{FALSE}.}
 
 \item{add0}{logical; if \code{TRUE}, adds \eqn{P(Y = 0)}{P(Y = 0)} to the plot. The default is \code{FALSE}.}
+
+\item{plot_args}{A named list of arguments controlling the main plot.
+These are passed to \code{\link[graphics]{plot}}.}
+
+\item{point_args}{A named list of graphical parameters for plotted points.
+These are passed to \code{\link[graphics]{points}}.}
+
+\item{line_args}{A named list of graphical parameters for plotted lines.
+These are passed to \code{\link[graphics]{lines}}.}
 }
 \description{
 This function profiles the (log-)likelihood over a vector of
@@ -122,7 +132,8 @@ and smoothing can be used.
 \examples{
 data(rock)
 out <- tweedie_profile(perm~1, data=rock, do.plot=FALSE, 
-                       xi.vec=seq(1.5, 2.75, length=11))
+                       xi.vec=seq(1.5, 2.75, length=11),
+                       line_arg = list(lwd = 2))
 
 # The estimate for the variance power index (p, or xi) is:
 out$p.max

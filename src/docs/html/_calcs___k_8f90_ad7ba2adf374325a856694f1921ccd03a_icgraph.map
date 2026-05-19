@@ -1,0 +1,11 @@
+<map id="tinitialguess" name="tinitialguess">
+<area shape="rect" id="Node000001" title=" " alt="" coords="695,5,785,31"/>
+<area shape="rect" id="Node000002" href="$namespacecalcs__k.html#a2c44be4e111f33c6a2ae13c4d28d060c" title=" " alt="" coords="519,5,647,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="677,18,647,21,647,16,682,18"/>
+<area shape="rect" id="Node000003" href="$_tweedie_integration_8f90.html#a362730fc98a30e5ded80690beb5cac05" title=" " alt="" coords="345,5,471,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="501,18,472,21,472,16,507,18"/>
+<area shape="rect" id="Node000004" href="$twcomputation__loop_8f90.html#a4ec1315c70f52d5174422443a18b470d" title=" " alt="" coords="160,5,297,31"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="327,18,298,21,298,16,332,18"/>
+<area shape="rect" id="Node000005" href="$twcomputation_8f90.html#ade00856707ed180c08c56cd268a0a3b9" title=" " alt="" coords="5,5,112,31"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="141,18,112,21,112,16,146,18"/>
+</map>

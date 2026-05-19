@@ -1,6 +1,0 @@
-test_that("Valgrind issue works", {
-  expect_no_error(
-    y <- seq(0, 5, length = 100),
-    Fy <- ptweedie(y, power = 1.1, mu = 1, phi = 1)
-  )
-})

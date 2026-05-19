@@ -55,58 +55,6 @@ dtweedie_logl_saddle <- function( phi, power, y, mu, eps=0){
 
 
 
-
-#############################################################################
-
-#' @noRd
-dtweedie_series_bigp <- function(power, y, mu, phi){ 
-  
-  # 
-  # Peter K Dunn 
-  # 02 Feb 2000 
-  # 
-  
-  #
-  # Error traps
-  #
-
-  if ( power < 2) stop("power must be greater than 2.")
-  if ( any(phi <= 0) ) stop("phi must be positive.")
-  if ( any(y <= 0) ) stop("y must be a strictly positive vector.")
-  if ( any(mu <= 0) ) stop("mu must be positive.")
-  if ( length(mu) > 1) {
-    if ( length(mu) != length(y) ) stop("mu must be scalar, or the same length as y.")
-  } else {
-    mu <- array( dim = length(y), mu )
-    # A vector of all mu's
-  }
-  if ( length(phi) > 1) {
-    if ( length(phi) != length(y) ) stop("phi must be scalar, or the same length as y.")
-  } else {
-    phi <- array( dim = length(y), phi )
-    # A vector of all phi's
-  }
-  
-  
-  result <- dtweedie_logv_bigp(power = power, 
-                               y = y, 
-                               phi = phi)
-  logv <- result$logv
-  
-  theta <- mu ^ (1 - power) / ( 1 - power )
-  kappa <- mu ^ (2 - power) / ( 2 - power )
-  
-  logfnew <- (y * theta - kappa) / phi - log( pi * y) + logv
-  f <- exp( logfnew )
-  
-  list(density = f, 
-       logv = logv, 
-       lo = result$lo, 
-       hi = result$hi )
-  
-}
-
-
 #############################################################################
 
 #' @noRd

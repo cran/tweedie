@@ -5,7 +5,9 @@
 \alias{tweedie.plot}
 \title{Plot Tweedie Models}
 \usage{
-tweedie_plot(y, xi = NULL, mu, phi, type = "pdf", power = NULL, add = FALSE, ...)
+tweedie_plot(y, xi = NULL, mu, phi, type = "pdf", power = NULL, 
+                    add = FALSE, 
+                    plot_args = list(), point_args = list(), line_args = list())
 
 tweedie.plot(
   y,
@@ -33,7 +35,18 @@ tweedie.plot(
 
 \item{add}{logical; if \code{TRUE}, the plot is added to the current plot; if \code{FALSE} (the default) the plot is produced on a fresh plot.}
 
-\item{...}{plotting parameters passed to \code{plot()}.}
+\item{plot_args}{A named list of arguments controlling the main plot.
+These are passed to \code{\link[graphics]{plot}}.}
+
+\item{point_args}{A named list of graphical parameters for plotted points.
+These are passed to \code{\link[graphics]{points}}.}
+
+\item{line_args}{A named list of graphical parameters for plotted lines.
+These are passed to \code{\link[graphics]{lines}}.}
+
+\item{...}{Additional graphical arguments, passed to \code{plot_args} for 
+backward compatibility. Deprecated; use \code{plot_args} in 
+\code{\link{tweedie_plot}} instead.}
 }
 \description{
 This function produced a plot of the specified Tweedie distribution.
@@ -43,7 +56,8 @@ If \eqn{1 < p < 2}{1 < power < 2}, the mass at \eqn{Y=0}{Y = 0} is automatically
 }
 \examples{
 y <- seq(0, 4, length = 50)
-tweedie_plot(y, power = 1.1, mu = 1, phi = 1)
+tweedie_plot(y, power = 1.1, mu = 1, phi = 1,
+             line_args = list(lwd = 2))
 
 
 }

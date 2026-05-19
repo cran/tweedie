@@ -5,7 +5,7 @@
 \alias{dtweedie.series}
 \title{Series Evaluation for the Tweedie Probability Function}
 \usage{
-dtweedie_series(y, power, mu,phi)
+dtweedie_series(y, power, mu, phi, details = FALSE)
 
 dtweedie.series(y, power, mu, phi)
 }
@@ -17,6 +17,8 @@ dtweedie.series(y, power, mu, phi)
 \item{mu}{vector of mean \eqn{\mu}{mu}.}
 
 \item{phi}{vector of dispersion parameters \eqn{\phi}{phi}.}
+
+\item{details}{logical; if \code{TRUE}, returns the value of the distribution function and some details.}
 }
 \value{
 A numeric vector of densities.
